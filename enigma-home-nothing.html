@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enigma — trusted business data.</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --nt-bg-primary: #FFFFFF;
+  --nt-bg-secondary: #F7F7F7;
+  --nt-bg-inverse: #000000;
+  --nt-bg-inverse-soft: #1A1A1A;
+  --nt-text-primary: #000000;
+  --nt-text-secondary: #666666;
+  --nt-text-tertiary: #999999;
+  --nt-text-inverse: #FFFFFF;
+  --nt-text-inverse-muted: #AAAAAA;
+  --nt-border: #E5E5E5;
+  --nt-border-inverse: #333333;
+  --nt-accent: #D71921;
+  --nt-dot: #E0E0E0;
+  --nt-dot-inverse: #333333;
+  --nt-font: "Helvetica Neue", "Arial", -apple-system, sans-serif;
+  --nt-font-mono: "SF Mono", "Courier New", monospace;
+  --nt-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { font-family: var(--nt-font); color: var(--nt-text-primary); background: var(--nt-bg-primary); line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+/* Scroll progress */
+.scroll-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--nt-text-primary); width: 0%; z-index: 200; transition: width 100ms linear; }
+
+/* Navigation */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--nt-border); transition: all 300ms ease; }
+.nav__inner { max-width: 1440px; margin: 0 auto; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+.nav__logo { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+.nav__links { display: flex; gap: 32px; }
+.nav__link { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--nt-text-secondary); position: relative; }
+.nav__link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: var(--nt-text-primary); transition: width 200ms ease; }
+.nav__link:hover::after { width: 100%; }
+.nav__link:hover { color: var(--nt-text-primary); }
+.nav__cta { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; background: var(--nt-text-primary); color: var(--nt-bg-primary); padding: 10px 24px; border: none; cursor: pointer; transition: background 200ms ease; }
+.nav__cta:hover { background: #333; }
+
+/* Container */
+.container { max-width: 1440px; margin: 0 auto; padding: 0 80px; }
+
+/* Hero */
+.hero { min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 160px 80px 96px; position: relative; background-image: radial-gradient(circle, var(--nt-dot) 1px, transparent 1px); background-size: 32px 32px; }
+.hero__eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nt-text-tertiary); margin-bottom: 24px; }
+.hero__title { font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 24px; max-width: 800px; }
+.hero__subtitle { font-size: 18px; color: var(--nt-text-secondary); max-width: 560px; line-height: 1.6; margin-bottom: 48px; }
+.hero__actions { display: flex; gap: 16px; }
+.hero__scroll { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); }
+.hero__scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+@keyframes scrollPulse { 0%,100% { opacity: 0.4; transform: scaleY(0.6); } 50% { opacity: 1; transform: scaleY(1); } }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; font-family: var(--nt-font); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 32px; border: none; cursor: pointer; transition: all 200ms ease; text-decoration: none; }
+.btn-primary { background: var(--nt-text-primary); color: var(--nt-bg-primary); }
+.btn-primary:hover { background: #333; }
+.btn-secondary { background: transparent; color: var(--nt-text-primary); border: 1px solid var(--nt-text-primary); }
+.btn-secondary:hover { background: var(--nt-bg-secondary); }
+.btn-ghost { background: transparent; color: var(--nt-text-primary); padding: 8px 0; }
+.btn-ghost:hover { text-decoration: underline; }
+.btn-inverse { background: var(--nt-text-inverse); color: var(--nt-bg-inverse); }
+.btn-inverse:hover { background: #E5E5E5; }
+
+/* Logo strip */
+.logos { padding: 64px 0; border-top: 1px solid var(--nt-border); border-bottom: 1px solid var(--nt-border); }
+.logos__grid { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 48px; }
+.logos__item { font-size: 16px; font-weight: 500; color: var(--nt-text-tertiary); letter-spacing: 0.02em; }
+
+/* Section */
+.section { padding: 128px 0; }
+.section--sm { padding: 96px 0; }
+.section--dark { background: var(--nt-bg-inverse); color: var(--nt-text-inverse); }
+.section--alt { background: var(--nt-bg-secondary); }
+.section--dots { background-image: radial-gradient(circle, var(--nt-dot) 1px, transparent 1px); background-size: 20px 20px; }
+.section--dots-inverse { background-image: radial-gradient(circle, var(--nt-dot-inverse) 1px, transparent 1px); background-size: 20px 20px; }
+
+/* Centered text */
+.centered { text-align: center; }
+.centered__eyebrow { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nt-text-tertiary); margin-bottom: 24px; }
+.centered__title { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 24px; }
+.centered__body { font-size: 18px; color: var(--nt-text-secondary); line-height: 1.6; max-width: 560px; margin: 0 auto; }
+.section--dark .centered__eyebrow { color: var(--nt-text-inverse-muted); }
+.section--dark .centered__body { color: var(--nt-text-inverse-muted); }
+
+/* Split */
+.split { display: grid; grid-template-columns: 1fr 1fr; min-height: 600px; }
+.split__media { background: var(--nt-bg-secondary); display: flex; align-items: center; justify-content: center; padding: 64px; overflow: hidden; position: relative; }
+.split__content { display: flex; flex-direction: column; justify-content: center; padding: 96px 64px; }
+.split__eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nt-text-tertiary); margin-bottom: 24px; }
+.split__title { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 24px; }
+.split__body { font-size: 16px; color: var(--nt-text-secondary); line-height: 1.6; margin-bottom: 32px; max-width: 440px; }
+
+/* Spec grid */
+.spec-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--nt-border); margin-top: 64px; }
+.spec-grid--dark { background: var(--nt-border-inverse); }
+.spec-card { background: var(--nt-bg-primary); padding: 32px; display: flex; flex-direction: column; gap: 8px; }
+.spec-card--dark { background: var(--nt-bg-inverse-soft); }
+.spec-card__value { font-size: clamp(2rem, 3vw, 2.5rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+.spec-card__label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--nt-text-secondary); }
+.section--dark .spec-card__label { color: var(--nt-text-inverse-muted); }
+.spec-grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+/* Feature cards */
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--nt-border); margin-top: 64px; }
+.feature-card { background: var(--nt-bg-primary); padding: 48px 32px; }
+.feature-card__title { font-size: 18px; font-weight: 500; margin-bottom: 12px; letter-spacing: -0.01em; }
+.feature-card__body { font-size: 14px; color: var(--nt-text-secondary); line-height: 1.6; }
+
+/* Code block */
+.code-block { background: var(--nt-bg-inverse); color: var(--nt-text-inverse); padding: 32px; font-family: var(--nt-font-mono); font-size: 13px; line-height: 1.7; overflow-x: auto; position: relative; }
+.code-block__label { position: absolute; top: 12px; right: 16px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--nt-text-inverse-muted); }
+.code-line { display: block; }
+.code-key { color: #AAAAAA; }
+.code-str { color: #FFFFFF; }
+.code-num { color: #FFFFFF; }
+.code-comment { color: #555555; }
+
+/* Quote */
+.quote { border-left: 2px solid var(--nt-text-primary); padding-left: 32px; max-width: 640px; }
+.quote__text { font-size: 20px; font-weight: 400; line-height: 1.5; letter-spacing: -0.01em; margin-bottom: 24px; }
+.quote__author { font-size: 14px; font-weight: 500; }
+.quote__role { font-size: 13px; color: var(--nt-text-secondary); }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; margin-top: 32px; }
+.data-table th { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--nt-text-secondary); text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--nt-border); }
+.data-table td { font-size: 14px; padding: 12px 16px; border-bottom: 1px solid var(--nt-border); }
+.data-table--dark th { color: var(--nt-text-inverse-muted); border-bottom-color: var(--nt-border-inverse); }
+.data-table--dark td { border-bottom-color: var(--nt-border-inverse); }
+
+/* Visual panels */
+.panel { background: var(--nt-bg-secondary); padding: 48px; position: relative; }
+.panel--dark { background: var(--nt-bg-inverse-soft); color: var(--nt-text-inverse); }
+
+/* Identity graph visualization */
+.graph-viz { position: relative; height: 400px; display: flex; align-items: center; justify-content: center; }
+.graph-node { position: absolute; width: 10px; height: 10px; background: var(--nt-text-primary); }
+.graph-node--center { width: 16px; height: 16px; background: var(--nt-text-primary); }
+.graph-line { position: absolute; height: 1px; background: var(--nt-border); transform-origin: left center; }
+
+/* Chart area */
+.chart-area { position: relative; height: 240px; border-left: 1px solid var(--nt-border); border-bottom: 1px solid var(--nt-border); margin-top: 32px; }
+.chart-bar { position: absolute; bottom: 0; background: var(--nt-text-primary); transition: height 600ms var(--nt-ease-out); }
+.chart-bar--accent { background: var(--nt-accent); }
+
+/* Comparison */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--nt-border); margin-top: 48px; }
+.compare-card { background: var(--nt-bg-primary); padding: 48px; }
+.compare-card__label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nt-text-tertiary); margin-bottom: 16px; }
+.compare-card__value { font-size: 48px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; margin-bottom: 8px; }
+.compare-card__desc { font-size: 14px; color: var(--nt-text-secondary); }
+
+/* Process steps */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 64px; }
+.step__num { font-size: 48px; font-weight: 500; color: var(--nt-border); margin-bottom: 16px; line-height: 1; }
+.step__title { font-size: 16px; font-weight: 500; margin-bottom: 8px; }
+.step__body { font-size: 14px; color: var(--nt-text-secondary); line-height: 1.6; }
+
+/* Dot loader */
+.dot-loader { display: grid; grid-template-columns: repeat(5, 6px); gap: 4px; }
+.dot-loader span { width: 6px; height: 6px; border-radius: 50%; background: var(--nt-dot); animation: dotPulse 1.4s ease-in-out infinite; }
+.dot-loader span:nth-child(1) { animation-delay: 0s; }
+.dot-loader span:nth-child(2) { animation-delay: 0.1s; }
+.dot-loader span:nth-child(3) { animation-delay: 0.2s; }
+.dot-loader span:nth-child(4) { animation-delay: 0.3s; }
+.dot-loader span:nth-child(5) { animation-delay: 0.4s; }
+@keyframes dotPulse { 0%,60%,100% { background: var(--nt-dot); } 30% { background: var(--nt-dot-active, #000); } }
+
+/* Divider */
+.divider { height: 1px; background: var(--nt-border); }
+.divider--dark { background: var(--nt-border-inverse); }
+
+/* Footer */
+.footer { background: var(--nt-bg-inverse); color: var(--nt-text-inverse); padding: 96px 0 48px; }
+.footer__grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 48px; margin-bottom: 96px; }
+.footer__heading { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nt-text-inverse-muted); margin-bottom: 16px; font-weight: 500; }
+.footer__link { display: block; font-size: 14px; color: var(--nt-text-inverse); padding: 4px 0; transition: opacity 200ms ease; }
+.footer__link:hover { opacity: 0.6; }
+.footer__bottom { border-top: 1px solid var(--nt-border-inverse); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer__copy { font-size: 12px; color: var(--nt-text-inverse-muted); }
+
+/* Scroll reveal */
+[data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1); }
+[data-reveal].revealed { opacity: 1; transform: translateY(0); }
+[data-reveal-stagger] > * { opacity: 0; transform: translateY(16px); transition: opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1); }
+[data-reveal-stagger].revealed > *:nth-child(1) { transition-delay: 0ms; }
+[data-reveal-stagger].revealed > *:nth-child(2) { transition-delay: 100ms; }
+[data-reveal-stagger].revealed > *:nth-child(3) { transition-delay: 200ms; }
+[data-reveal-stagger].revealed > *:nth-child(4) { transition-delay: 300ms; }
+[data-reveal-stagger].revealed > *:nth-child(5) { transition-delay: 400ms; }
+[data-reveal-stagger].revealed > *:nth-child(6) { transition-delay: 500ms; }
+[data-reveal-stagger].revealed > * { opacity: 1; transform: translateY(0); }
+
+/* Canvas */
+canvas { display: block; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .container, .nav__inner { padding: 0 48px; }
+  .hero { padding: 160px 48px 96px; }
+  .split { grid-template-columns: 1fr; }
+  .split__media { min-height: 400px; }
+  .spec-grid, .spec-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .feature-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; gap: 32px; }
+  .footer__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .container, .nav__inner { padding: 0 20px; }
+  .hero { padding: 140px 20px 80px; }
+  .nav__links { display: none; }
+  .split__content { padding: 48px 20px; }
+  .spec-grid, .spec-grid-3, .compare-grid { grid-template-columns: 1fr; }
+  .logos__grid { gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-bar" id="scrollBar"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="#" class="nav__logo">enigma</a>
+    <div class="nav__links">
+      <a href="#" class="nav__link">Solutions</a>
+      <a href="#" class="nav__link">Products</a>
+      <a href="#" class="nav__link">Resources</a>
+      <a href="#" class="nav__link">Pricing</a>
+    </div>
+    <button class="nav__cta">Sign up</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <span class="hero__eyebrow" data-reveal>Data intelligence platform</span>
+  <h1 class="hero__title" data-reveal>trusted business data.</h1>
+  <p class="hero__subtitle" data-reveal>Enigma provides foundational data on businesses, built on unparalleled entity identity, real-time signals, and synthesized intelligence.</p>
+  <div class="hero__actions" data-reveal>
+    <a href="#" class="btn btn-primary">Get started</a>
+    <a href="#" class="btn btn-secondary">Learn more</a>
+  </div>
+  <div class="hero__scroll">
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<!-- Logo Strip -->
+<section class="logos">
+  <div class="container">
+    <div class="logos__grid" data-reveal data-reveal-stagger>
+      <span class="logos__item">Capital One</span>
+      <span class="logos__item">Chase</span>
+      <span class="logos__item">Shopify</span>
+      <span class="logos__item">Ramp</span>
+      <span class="logos__item">Crossbeam</span>
+      <span class="logos__item">Alloy</span>
+      <span class="logos__item">CapitalStrategy</span>
+      <span class="logos__item">Bill</span>
+    </div>
+  </div>
+</section>
+
+<!-- Programmatic Intelligence -->
+<section class="section section--dark section--dots-inverse">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Platform</span>
+      <h2 class="centered__title">programmatic intelligence for every growth engine.</h2>
+      <p class="centered__body">Connect to every data signal that matters. Match, enrich, and score business entities in real time with ground-truth intelligence.</p>
+    </div>
+
+    <div class="split" style="margin-top: 64px; min-height: auto; gap: 1px; background: var(--nt-border-inverse);">
+      <div class="split__content" style="padding: 48px; background: var(--nt-bg-inverse-soft);">
+        <span class="split__eyebrow" style="color: var(--nt-text-inverse-muted);">Intelligence for your systems</span>
+        <p style="font-size: 14px; color: var(--nt-text-inverse-muted); line-height: 1.6;">Enigma is a system-to-system product. It is not a spreadsheet or search tool. Real-time API access with sub-second response times for matching, enrichment, and scoring at scale.</p>
+      </div>
+      <div class="code-block" data-reveal>
+        <span class="code-block__label">API</span>
+        <span class="code-line"><span class="code-key">query</span> matchBusiness {</span>
+        <span class="code-line">  <span class="code-key">match</span>(</span>
+        <span class="code-line">    <span class="code-key">name:</span> <span class="code-str">"Acme Corp"</span></span>
+        <span class="code-line">    <span class="code-key">city:</span> <span class="code-str">"New York"</span></span>
+        <span class="code-line">    <span class="code-key">state:</span> <span class="code-str">"NY"</span></span>
+        <span class="code-line">  ) {</span>
+        <span class="code-line">    <span class="code-key">enigmaId</span></span>
+        <span class="code-line">    <span class="code-key">revenue</span></span>
+        <span class="code-line">    <span class="code-key">employeeCount</span></span>
+        <span class="code-line">    <span class="code-key">riskScore</span></span>
+        <span class="code-line">  }</span>
+        <span class="code-line">}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GTM Solutions -->
+<section class="section">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Go-to-market</span>
+      <h2 class="centered__title">gtm solutions.</h2>
+    </div>
+
+    <div class="steps" data-reveal data-reveal-stagger>
+      <div>
+        <div class="step__num">01</div>
+        <div class="step__title">pinpoint your next best customer.</div>
+        <div class="step__body">Use Enigma's total addressable market data to identify your ideal customer profile with precision no other provider can match.</div>
+      </div>
+      <div>
+        <div class="step__num">02</div>
+        <div class="step__title">define your customer profile.</div>
+        <div class="step__body">Build high-fidelity customer segments using firmographic, transaction, and behavioral signals from the Enigma knowledge graph.</div>
+      </div>
+      <div>
+        <div class="step__num">03</div>
+        <div class="step__title">refine your ideal match.</div>
+        <div class="step__body">Continuously improve your CRM with real-time enrichment. Enigma keeps your data fresh and your targeting sharp.</div>
+      </div>
+    </div>
+
+    <div class="feature-grid" data-reveal data-reveal-stagger style="margin-top: 48px;">
+      <div class="feature-card">
+        <div class="feature-card__title">discover more leads.</div>
+        <div class="feature-card__body">Build your complete addressable market with comprehensive business entity coverage across every US business.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__title">enrich your pipeline.</div>
+        <div class="feature-card__body">Fill in the gaps across your CRM with firmographic, financial, and behavioral data for every matched entity.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__title">score with confidence.</div>
+        <div class="feature-card__body">Prioritize outreach using Enigma's proprietary scoring models built on ground-truth transaction data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonial -->
+<section class="section--sm" style="padding: 96px 0; background: var(--nt-bg-secondary);">
+  <div class="container">
+    <div class="quote" data-reveal>
+      <p class="quote__text">"Enigma's data helps our team identify the leads that precisely match our ideal customer profile."</p>
+      <div class="quote__author">Rob Hamlin</div>
+      <div class="quote__role">Head of Data, Chase Partner</div>
+    </div>
+  </div>
+</section>
+
+<!-- Ground Truth for Payments -->
+<section class="section">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Payments</span>
+      <h2 class="centered__title">ground truth for payments leaders.</h2>
+    </div>
+
+    <div class="spec-grid" data-reveal data-reveal-stagger>
+      <div class="spec-card">
+        <div class="spec-card__value">346</div>
+        <div class="spec-card__label">Million card transactions</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">97%</div>
+        <div class="spec-card__label">Match rate on merchants</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">24M+</div>
+        <div class="spec-card__label">US businesses tracked</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">27%</div>
+        <div class="spec-card__label">Lift in conversion</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Conversion Rates -->
+<section class="section section--dark">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Performance</span>
+      <h2 class="centered__title">conversion rates.</h2>
+    </div>
+
+    <div class="compare-grid" style="background: var(--nt-border-inverse);" data-reveal data-reveal-stagger>
+      <div class="compare-card" style="background: var(--nt-bg-inverse-soft);">
+        <div class="compare-card__label" style="color: var(--nt-text-inverse-muted);">Without Enigma</div>
+        <div class="compare-card__value" style="color: var(--nt-text-inverse);">1.8%</div>
+        <div class="compare-card__desc" style="color: var(--nt-text-inverse-muted);">Industry baseline using traditional data sources for merchant underwriting.</div>
+
+        <table class="data-table data-table--dark" style="margin-top: 32px;">
+          <tbody>
+            <tr><td style="color: var(--nt-text-inverse-muted);">Applications</td><td style="color: var(--nt-text-inverse);">10,000</td></tr>
+            <tr><td style="color: var(--nt-text-inverse-muted);">Approved</td><td style="color: var(--nt-text-inverse);">180</td></tr>
+            <tr><td style="color: var(--nt-text-inverse-muted);">Data sources</td><td style="color: var(--nt-text-inverse);">3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="compare-card" style="background: var(--nt-bg-inverse-soft); border-left: 2px solid var(--nt-text-inverse);">
+        <div class="compare-card__label" style="color: var(--nt-text-inverse-muted);">With Enigma</div>
+        <div class="compare-card__value" style="color: var(--nt-text-inverse);">4.2%</div>
+        <div class="compare-card__desc" style="color: var(--nt-text-inverse-muted);">Enigma-enriched decisioning using real-time transaction and entity signals.</div>
+
+        <table class="data-table data-table--dark" style="margin-top: 32px;">
+          <tbody>
+            <tr><td style="color: var(--nt-text-inverse-muted);">Applications</td><td style="color: var(--nt-text-inverse);">10,000</td></tr>
+            <tr><td style="color: var(--nt-text-inverse-muted);">Approved</td><td style="color: var(--nt-text-inverse);">420</td></tr>
+            <tr><td style="color: var(--nt-text-inverse-muted);">Data sources</td><td style="color: var(--nt-text-inverse);">12+</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KYB & Onboarding -->
+<section class="section">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Compliance</span>
+      <h2 class="centered__title">kyb and onboarding.</h2>
+    </div>
+
+    <div class="split" style="margin-top: 64px; min-height: auto; gap: 0;">
+      <div class="split__content" style="padding: 48px 48px 48px 0;" data-reveal>
+        <div class="split__title">cut operational overhead.</div>
+        <div class="split__body">Validate entity identity, confirm registration, and verify beneficial ownership in a single API call. Replace fragmented workflows with unified verification.</div>
+        <a href="#" class="btn btn-ghost">Learn more &#8594;</a>
+      </div>
+      <div class="panel" data-reveal>
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nt-text-tertiary); margin-bottom: 16px;">Verification flow</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--nt-bg-primary); border: 1px solid var(--nt-border);">
+              <div style="width: 8px; height: 8px; background: #00C853;"></div>
+              <span style="font-size: 13px; font-family: var(--nt-font-mono);">Business identity verified</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--nt-bg-primary); border: 1px solid var(--nt-border);">
+              <div style="width: 8px; height: 8px; background: #00C853;"></div>
+              <span style="font-size: 13px; font-family: var(--nt-font-mono);">EIN/Secretary of State match</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--nt-bg-primary); border: 1px solid var(--nt-border);">
+              <div style="width: 8px; height: 8px; background: #00C853;"></div>
+              <span style="font-size: 13px; font-family: var(--nt-font-mono);">Beneficial ownership confirmed</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--nt-bg-primary); border: 1px solid var(--nt-border);">
+              <div style="width: 8px; height: 8px; background: var(--nt-dot);"></div>
+              <span style="font-size: 13px; font-family: var(--nt-font-mono); color: var(--nt-text-tertiary);">Sanctions screening pending</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 16px; font-size: 12px; color: var(--nt-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em;">
+          <span>T.J. Maxx LLC</span>
+          <span>&middot;</span>
+          <span>EIN: 04-27*****</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer & Transaction Screening -->
+<section class="section section--alt section--dots">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Risk</span>
+      <h2 class="centered__title">customer and transaction screening.</h2>
+      <p class="centered__body">Meet your sanctions screening and transaction monitoring needs cost-effectively with always-current entity intelligence.</p>
+    </div>
+
+    <div class="spec-grid spec-grid-3" style="margin-top: 64px;" data-reveal data-reveal-stagger>
+      <div class="spec-card">
+        <div class="spec-card__value">Real-time</div>
+        <div class="spec-card__label">Screening updates</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">OFAC</div>
+        <div class="spec-card__label">Sanctions list coverage</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">50ms</div>
+        <div class="spec-card__label">Average response time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Identity Graph -->
+<section class="section section--dark section--dots-inverse">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Infrastructure</span>
+      <h2 class="centered__title">the enigma identity graph.<br>a single source of truth for every us business.</h2>
+      <p class="centered__body">Billions of data records across filings, transactions, and registrations, resolved into a single canonical identity for every business in America.</p>
+    </div>
+
+    <!-- Graph visualization -->
+    <div data-reveal style="margin-top: 64px;">
+      <canvas id="graphCanvas" width="1200" height="400" style="width: 100%; height: 400px;"></canvas>
+    </div>
+
+    <div class="spec-grid spec-grid-3" style="margin-top: 48px; background: var(--nt-border-inverse);" data-reveal data-reveal-stagger>
+      <div class="spec-card spec-card--dark">
+        <div class="spec-card__value" style="color: var(--nt-text-inverse);">comprehensive linking.</div>
+        <div class="spec-card__label">We link across 50+ data sources to build a unified entity record.</div>
+      </div>
+      <div class="spec-card spec-card--dark">
+        <div class="spec-card__value" style="color: var(--nt-text-inverse); font-size: 1.25rem;">a unified profile.</div>
+        <div class="spec-card__label">Every matched entity resolves to one canonical Enigma ID with full firmographic data.</div>
+      </div>
+      <div class="spec-card spec-card--dark">
+        <div class="spec-card__value" style="color: var(--nt-text-inverse); font-size: 1.25rem;">always current.</div>
+        <div class="spec-card__label">Continuous ingestion ensures your data reflects reality, not stale snapshots.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Explore Enigma Data -->
+<section class="section">
+  <div class="container">
+    <div class="centered" data-reveal>
+      <span class="centered__eyebrow">Data</span>
+      <h2 class="centered__title">explore enigma data.</h2>
+    </div>
+
+    <div class="spec-grid" style="margin-top: 64px;" data-reveal data-reveal-stagger>
+      <div class="spec-card">
+        <div class="spec-card__value">Small Business</div>
+        <div class="spec-card__label">Revenue under $10M</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">Restaurants</div>
+        <div class="spec-card__label">NAICS 722511</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">Healthcare</div>
+        <div class="spec-card__label">Providers & practices</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card__value">Retail</div>
+        <div class="spec-card__label">Physical & e-commerce</div>
+      </div>
+    </div>
+
+    <!-- Mini chart -->
+    <div data-reveal style="margin-top: 48px;">
+      <canvas id="chartCanvas" width="1200" height="200" style="width: 100%; height: 200px;"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--dark" style="text-align: center;">
+  <div class="container">
+    <div data-reveal>
+      <h2 class="centered__title" style="margin-bottom: 24px;">get started with enigma.</h2>
+      <p class="centered__body" style="margin-bottom: 48px;">See how Enigma's ground-truth business data can power your growth, risk, and compliance workflows.</p>
+      <div style="display: flex; gap: 16px; justify-content: center;">
+        <a href="#" class="btn btn-inverse">Request demo</a>
+        <a href="#" class="btn btn-secondary" style="color: var(--nt-text-inverse); border-color: var(--nt-text-inverse);">Documentation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <div style="font-size: 18px; font-weight: 500; margin-bottom: 16px;">enigma</div>
+        <p style="font-size: 14px; color: var(--nt-text-inverse-muted); max-width: 280px; line-height: 1.6;">
+          the source of truth for business data.
+        </p>
+      </div>
+      <div>
+        <div class="footer__heading">Products</div>
+        <a href="#" class="footer__link">Data Solutions</a>
+        <a href="#" class="footer__link">API Platform</a>
+        <a href="#" class="footer__link">Identity Graph</a>
+        <a href="#" class="footer__link">Enrichment</a>
+      </div>
+      <div>
+        <div class="footer__heading">Solutions</div>
+        <a href="#" class="footer__link">GTM Intelligence</a>
+        <a href="#" class="footer__link">Payments</a>
+        <a href="#" class="footer__link">KYB & Onboarding</a>
+        <a href="#" class="footer__link">Screening</a>
+      </div>
+      <div>
+        <div class="footer__heading">Company</div>
+        <a href="#" class="footer__link">About</a>
+        <a href="#" class="footer__link">Careers</a>
+        <a href="#" class="footer__link">Blog</a>
+        <a href="#" class="footer__link">Contact</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span class="footer__copy">2026 Enigma Technologies, Inc.</span>
+      <div style="display: flex; gap: 24px;">
+        <a href="#" class="footer__link" style="font-size: 12px;">Privacy</a>
+        <a href="#" class="footer__link" style="font-size: 12px;">Terms</a>
+        <a href="#" class="footer__link" style="font-size: 12px;">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('scrollBar');
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = (scrollTop / docHeight * 100) + '%';
+}, { passive: true });
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+
+// Identity Graph Canvas
+(function() {
+  const canvas = document.getElementById('graphCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  function resize() {
+    const w = canvas.parentElement.offsetWidth;
+    const h = 400;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(dpr, dpr);
+    draw(w, h);
+  }
+
+  function draw(w, h) {
+    ctx.clearRect(0, 0, w, h);
+
+    // Generate nodes
+    const nodes = [];
+    const centerX = w / 2;
+    const centerY = h / 2;
+
+    // Center node
+    nodes.push({ x: centerX, y: centerY, r: 6, type: 'center' });
+
+    // Surrounding nodes
+    const rings = [
+      { count: 8, radius: 80, size: 4 },
+      { count: 16, radius: 160, size: 3 },
+      { count: 24, radius: 240, size: 2 }
+    ];
+
+    rings.forEach(ring => {
+      for (let i = 0; i < ring.count; i++) {
+        const angle = (Math.PI * 2 / ring.count) * i + Math.random() * 0.3;
+        const dist = ring.radius + (Math.random() - 0.5) * 30;
+        nodes.push({
+          x: centerX + Math.cos(angle) * dist,
+          y: centerY + Math.sin(angle) * dist,
+          r: ring.size,
+          type: 'node'
+        });
+      }
+    });
+
+    // Draw connections
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 0.5;
+    for (let i = 1; i < nodes.length; i++) {
+      const n = nodes[i];
+      // Connect to closest inner node
+      let closest = nodes[0];
+      let minDist = Infinity;
+      for (let j = 0; j < i; j++) {
+        const dx = n.x - nodes[j].x;
+        const dy = n.y - nodes[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < minDist && d < 200) {
+          minDist = d;
+          closest = nodes[j];
+        }
+      }
+      ctx.beginPath();
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(closest.x, closest.y);
+      ctx.stroke();
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+      ctx.fillStyle = n.type === 'center' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)';
+      ctx.fillRect(n.x - n.r / 2, n.y - n.r / 2, n.r, n.r);
+    });
+
+    // Center label
+    ctx.font = '10px "SF Mono", "Courier New", monospace';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.textAlign = 'center';
+    ctx.fillText('ENIGMA ID', centerX, centerY + 20);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+})();
+
+// Chart Canvas
+(function() {
+  const canvas = document.getElementById('chartCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  function resize() {
+    const w = canvas.parentElement.offsetWidth;
+    const h = 200;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(dpr, dpr);
+    draw(w, h);
+  }
+
+  function draw(w, h) {
+    ctx.clearRect(0, 0, w, h);
+
+    const padding = { left: 40, right: 20, top: 20, bottom: 30 };
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
+    // Axes
+    ctx.strokeStyle = '#E5E5E5';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, h - padding.bottom);
+    ctx.lineTo(w - padding.right, h - padding.bottom);
+    ctx.stroke();
+
+    // Dot grid background
+    ctx.fillStyle = '#E0E0E0';
+    for (let x = padding.left + 20; x < w - padding.right; x += 20) {
+      for (let y = padding.top; y < h - padding.bottom; y += 20) {
+        ctx.beginPath();
+        ctx.arc(x, y, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Data line
+    const points = [0.3, 0.35, 0.32, 0.4, 0.38, 0.45, 0.5, 0.48, 0.55, 0.6, 0.58, 0.65, 0.7, 0.68, 0.75, 0.72, 0.8, 0.85, 0.82, 0.9, 0.88, 0.92, 0.95, 0.93];
+
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    points.forEach((p, i) => {
+      const x = padding.left + (chartW / (points.length - 1)) * i;
+      const y = padding.top + chartH * (1 - p);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // End dot
+    const lastX = padding.left + chartW;
+    const lastY = padding.top + chartH * (1 - points[points.length - 1]);
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(lastX - 3, lastY - 3, 6, 6);
+
+    // Labels
+    ctx.font = '9px "SF Mono", "Courier New", monospace';
+    ctx.fillStyle = '#999999';
+    ctx.textAlign = 'center';
+    const years = ['2020', '2021', '2022', '2023', '2024', '2025'];
+    years.forEach((y, i) => {
+      const x = padding.left + (chartW / (years.length - 1)) * i;
+      ctx.fillText(y, x, h - 10);
+    });
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+})();
+</script>
+
+</body>
+</html>

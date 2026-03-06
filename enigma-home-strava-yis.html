@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trusted Business Data | Enigma — Year in Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --orange:#FC4C02;--orange-light:#FF6B2B;--orange-dark:#E04400;
+  --navy:#1D1D3B;--navy-light:#2A2A52;--charcoal:#1A1A2E;--dark:#111;
+  --olive:#4A6741;--olive-light:#5C8A50;--teal:#1B8A8A;--coral:#FF6B6B;--gold:#FFB800;
+  --white:#FFF;--off-white:#F7F7F5;--light-gray:#EFEFEF;--mid-gray:#B0B0B0;
+  --text-dark:#1A1A1A;--text-light:#FFF;--text-muted:rgba(255,255,255,.6);--text-muted-dk:#888;
+  --font:"Inter","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono","Menlo","Courier New",monospace;
+  --ease:cubic-bezier(.25,.1,.25,1);
+  --max:1200px;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--font);font-weight:400;font-size:16px;line-height:1.6;color:var(--text-dark);background:var(--white);overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:var(--orange);text-decoration:none;transition:color .2s var(--ease)}
+a:hover{color:var(--orange-dark)}
+
+/* Container */
+.c{max-width:var(--max);margin:0 auto;padding:0 48px}
+.c--narrow{max-width:960px}
+@media(max-width:768px){.c{padding:0 24px}}
+
+/* Panels — the color-strip energy */
+.panel{width:100%;padding:96px 0;position:relative;overflow:hidden}
+.panel--navy{background:linear-gradient(180deg,var(--navy),var(--charcoal));color:var(--text-light)}
+.panel--orange{background:linear-gradient(135deg,var(--orange),var(--orange-light));color:var(--text-light)}
+.panel--olive{background:linear-gradient(135deg,var(--olive),var(--olive-light));color:var(--text-light)}
+.panel--dark{background:var(--dark);color:var(--text-light)}
+.panel--light{background:var(--off-white);color:var(--text-dark)}
+.panel--white{background:var(--white);color:var(--text-dark)}
+
+/* Dot pattern overlay */
+.dots::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+
+/* Orange glow */
+.glow::after{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(252,76,2,.12) 0%,transparent 70%);pointer-events:none}
+
+/* Typography — bold, athletic, massive stats */
+.stat-hero{font-size:clamp(72px,12vw,160px);font-weight:900;line-height:.9;letter-spacing:-.03em}
+.stat{font-size:clamp(48px,8vw,96px);font-weight:800;line-height:.95;letter-spacing:-.02em}
+.stat-sm{font-size:clamp(36px,5vw,64px);font-weight:700;line-height:1;letter-spacing:-.02em}
+.stat-xs{font-size:clamp(28px,3.5vw,48px);font-weight:700;line-height:1;letter-spacing:-.01em}
+.display{font-size:clamp(32px,4.5vw,56px);font-weight:700;line-height:1.1}
+.h1{font-size:clamp(28px,3.5vw,44px);font-weight:700;line-height:1.2}
+.h2{font-size:clamp(22px,2.5vw,32px);font-weight:600;line-height:1.2}
+.h3{font-size:clamp(18px,2vw,24px);font-weight:600;line-height:1.3}
+.body-lg{font-size:18px;line-height:1.6}
+.sm{font-size:14px}.caption{font-size:13px;color:var(--text-muted-dk)}
+.label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.1em}
+.label--light{color:var(--text-muted)}
+.label--dark{color:var(--text-muted-dk)}
+.muted{color:var(--text-muted)}.muted-dk{color:var(--text-muted-dk)}
+
+/* Stat card */
+.stat-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:32px 24px;border-radius:24px;background:rgba(255,255,255,.06)}
+.stat-card__num{font-size:clamp(36px,5vw,56px);font-weight:800;line-height:1;letter-spacing:-.02em}
+.stat-card__label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-top:12px;opacity:.6}
+.panel--light .stat-card,.panel--white .stat-card{background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.panel--light .stat-card__label,.panel--white .stat-card__label{color:var(--text-muted-dk);opacity:1}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}}
+
+/* Progress ring */
+.ring{position:relative;width:140px;height:140px;margin:0 auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring__track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:6}
+.ring__fill{fill:none;stroke:var(--orange);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.5s var(--ease)}
+.ring__center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring__num{font-size:28px;font-weight:800;line-height:1}
+.ring__label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;opacity:.6}
+
+/* Data bar */
+.bar{margin-bottom:20px}
+.bar__head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.bar__name{font-size:14px;font-weight:600}
+.bar__val{font-size:20px;font-weight:800}
+.bar__track{height:12px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar__fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--orange),var(--orange-light));transition:width 1.2s var(--ease)}
+.panel--light .bar__track,.panel--white .bar__track{background:var(--light-gray)}
+
+/* Color strips */
+.strips{display:flex;flex-direction:column;gap:3px}
+.strips div{height:6px;width:100%;transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease)}
+.revealed .strips div{transform:scaleX(1)}
+.revealed .strips div:nth-child(2){transition-delay:80ms}
+.revealed .strips div:nth-child(3){transition-delay:160ms}
+.revealed .strips div:nth-child(4){transition-delay:240ms}
+.revealed .strips div:nth-child(5){transition-delay:320ms}
+
+/* Buttons — pill shaped, athletic */
+.btn{display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:14px 32px;border-radius:100px;border:none;background:var(--orange);color:var(--white);text-decoration:none;cursor:pointer;transition:all .3s var(--ease)}
+.btn:hover{background:var(--orange-dark);color:var(--white);transform:translateY(-1px);box-shadow:0 4px 16px rgba(252,76,2,.3)}
+.btn--outline{background:transparent;border:2px solid var(--white);color:var(--white)}
+.btn--outline:hover{background:var(--white);color:var(--navy);transform:translateY(-1px);box-shadow:none}
+.btn--dark-outline{border:2px solid var(--text-dark);color:var(--text-dark);background:transparent}
+.btn--dark-outline:hover{background:var(--text-dark);color:var(--white)}
+.btn--ghost{background:transparent;color:var(--orange);padding:8px 0;border-radius:0;font-weight:600;text-transform:none;letter-spacing:0}
+.btn--ghost:hover{color:var(--orange-dark);transform:none;box-shadow:none}
+.btn--sm{padding:10px 20px;font-size:13px}
+
+/* Feature card */
+.feat-card{padding:32px;border-radius:24px;background:rgba(255,255,255,.06);transition:all .3s var(--ease)}
+.feat-card:hover{background:rgba(255,255,255,.1);transform:translateY(-4px)}
+.panel--light .feat-card,.panel--white .feat-card{background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.panel--light .feat-card:hover,.panel--white .feat-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.1)}
+
+/* Quote */
+.quote{position:relative;padding:48px;border-radius:24px;background:rgba(255,255,255,.06)}
+.quote__mark{font-size:72px;font-weight:900;line-height:1;color:var(--orange);margin-bottom:16px}
+.quote__text{font-size:clamp(18px,2.5vw,26px);font-weight:500;line-height:1.4;margin-bottom:24px}
+.quote__cite{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-style:normal;opacity:.6}
+
+/* Code */
+.code{background:rgba(0,0,0,.4);padding:32px;border-radius:16px;font-family:var(--mono);font-size:13px;line-height:1.7;overflow-x:auto;white-space:pre;color:rgba(255,255,255,.85)}
+
+/* Check row */
+.check{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:15px}
+.check-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.check-icon.done{background:var(--orange);color:var(--white)}
+.check-icon.pending{background:rgba(255,255,255,.1);color:var(--text-muted)}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(29,29,59,.92);backdrop-filter:blur(16px)}
+.nav__inner{display:flex;align-items:center;justify-content:space-between}
+.nav__logo{font-size:22px;font-weight:900;color:var(--white);text-decoration:none;letter-spacing:-.01em}
+.nav__links{display:flex;gap:28px}
+.nav__link{font-size:14px;font-weight:600;color:rgba(255,255,255,.75);text-decoration:none;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.nav__link:hover{color:var(--white)}
+@media(max-width:768px){.nav__links{display:none}}
+
+/* Footer */
+.footer-grid{display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:32px}
+.footer-heading{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:16px}
+.footer-link{display:block;font-size:14px;color:rgba(255,255,255,.65);text-decoration:none;padding:4px 0}
+.footer-link:hover{color:var(--white)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:baseline;padding-top:24px;margin-top:48px;border-top:1px solid rgba(255,255,255,.1)}
+.footer-bottom span{font-size:12px;color:rgba(255,255,255,.35)}
+.footer-bottom a{font-size:12px;color:rgba(255,255,255,.35);margin-left:24px}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.revealed{opacity:1;transform:translateY(0)}
+.reveal-stagger>*{opacity:0;transform:translateY(30px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal-stagger.revealed>:nth-child(1){opacity:1;transform:translateY(0);transition-delay:0ms}
+.reveal-stagger.revealed>:nth-child(2){opacity:1;transform:translateY(0);transition-delay:100ms}
+.reveal-stagger.revealed>:nth-child(3){opacity:1;transform:translateY(0);transition-delay:200ms}
+.reveal-stagger.revealed>:nth-child(4){opacity:1;transform:translateY(0);transition-delay:300ms}
+.reveal-stagger.revealed>:nth-child(5){opacity:1;transform:translateY(0);transition-delay:400ms}
+
+@media(prefers-reduced-motion:reduce){
+  .reveal,.reveal-stagger>*{opacity:1;transform:none;transition:none}
+  .strips div{transform:scaleX(1);transition:none}
+  .bar__fill{transition:none}
+  .ring__fill{transition:none}
+}
+
+@media(max-width:640px){
+  .panel{padding:64px 0}
+  .stat-hero{font-size:56px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav"><div class="c"><div class="nav__inner">
+  <a href="#" class="nav__logo">enigma</a>
+  <div class="nav__links">
+    <a href="#" class="nav__link">Solutions</a>
+    <a href="#" class="nav__link">Products</a>
+    <a href="#" class="nav__link">Developers</a>
+    <a href="#" class="nav__link">Resources</a>
+    <a href="#" class="nav__link">Pricing</a>
+  </div>
+  <a href="#" class="btn btn--sm">Get Started</a>
+</div></div></nav>
+
+
+<!-- COLOR STRIPS — the race-bib energy -->
+<div style="padding-top:64px">
+<div class="strips reveal" style="margin-bottom:0">
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--olive)"></div>
+  <div style="background:var(--teal)"></div>
+  <div style="background:var(--gold)"></div>
+  <div style="background:var(--coral)"></div>
+</div>
+</div>
+
+
+<!-- HERO — the big number -->
+<section class="panel panel--navy dots glow" style="padding:140px 0 120px">
+  <div class="c" style="text-align:center">
+    <p class="label label--light reveal" style="margin-bottom:24px">TRUSTED BUSINESS DATA PLATFORM</p>
+    <div class="stat-hero reveal" data-count-to="24000000" data-count-suffix="+">24M+</div>
+    <p class="h2 reveal" style="margin-top:20px;color:var(--white)">U.S. businesses resolved</p>
+    <p class="body-lg muted reveal" style="margin-top:24px;max-width:580px;margin-left:auto;margin-right:auto">
+      Enigma provides foundational data on businesses, built on unparalleled entity resolution. Win markets, verify customers faster, and power AI with ground truth intelligence.
+    </p>
+    <div style="margin-top:40px;display:flex;gap:16px;justify-content:center" class="reveal">
+      <a href="#" class="btn">Get Started</a>
+      <a href="#" class="btn btn--outline">Request Demo</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- STAT GRID — key metrics at a glance -->
+<section class="panel panel--light">
+  <div class="c">
+    <p class="label label--dark reveal" style="text-align:center;margin-bottom:48px">ENIGMA BY THE NUMBERS</p>
+    <div class="grid-4 reveal-stagger reveal">
+      <div class="stat-card">
+        <span class="stat-card__num" data-count-to="750" data-count-suffix="M+">750M+</span>
+        <span class="stat-card__label">Anonymized Cards</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num" data-count-to="30" data-count-suffix="B+">30B+</span>
+        <span class="stat-card__label">Transactions Tracked</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num">$4.5T+</span>
+        <span class="stat-card__label">Annual Volume</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num" data-count-to="50" data-count-suffix="+">50+</span>
+        <span class="stat-card__label">Data Sources</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- STRIPS -->
+<div class="strips reveal">
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--teal)"></div>
+  <div style="background:var(--gold)"></div>
+</div>
+
+
+<!-- PROGRAMMATIC INTELLIGENCE — navy panel -->
+<section class="panel panel--navy dots">
+  <div class="c">
+    <div class="grid-2" style="align-items:center">
+      <div class="reveal">
+        <p class="label label--light" style="margin-bottom:12px">DATA-AS-A-SERVICE</p>
+        <h2 class="display" style="margin-bottom:16px">Programmatic Intelligence</h2>
+        <p class="body-lg muted" style="margin-bottom:8px">For every growth engine.</p>
+        <p class="sm muted" style="margin-bottom:32px;max-width:420px">
+          Enigma is designed to be the foundational data layer. Use the flexible GraphQL API to stream intelligence directly into your CRM or applications.
+        </p>
+        <a href="#" class="btn">Start Building</a>
+      </div>
+      <div class="code reveal">query MatchBusiness {
+  search(searchInput: {
+    name: "Tacombi"
+    address: {
+      city: "New York"
+      state: "NY"
+    }
+    entityType: BRAND
+  }) {
+    ... on Brand {
+      enigmaId
+      names(first: 3)
+      totalLocations
+    }
+  }
+}</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- GTM SOLUTIONS — orange panel moment -->
+<section class="panel panel--orange">
+  <div class="c" style="text-align:center">
+    <p class="label reveal" style="color:rgba(255,255,255,.7);margin-bottom:16px">GTM SOLUTIONS</p>
+    <h2 class="display reveal" style="margin-bottom:12px">Pinpoint Your Next Best Customers</h2>
+    <p class="body-lg reveal" style="max-width:600px;margin:0 auto 48px;color:rgba(255,255,255,.85)">
+      Stop wasting time on inaccurate data. Use real revenue and growth signals to build precise lists of ideal accounts.
+    </p>
+
+    <div class="grid-3 reveal-stagger reveal">
+      <div class="feat-card" style="background:rgba(255,255,255,.12)">
+        <h3 class="h3" style="margin-bottom:8px">Lead Generation</h3>
+        <p class="sm" style="color:rgba(255,255,255,.8)">Build prospect databases based on real revenues, growth signals, payment platforms, and contact info.</p>
+      </div>
+      <div class="feat-card" style="background:rgba(255,255,255,.12)">
+        <h3 class="h3" style="margin-bottom:8px">ICP Definition</h3>
+        <p class="sm" style="color:rgba(255,255,255,.8)">Augment your CRM with dynamic, underwriting-quality intel about business identity and financial health.</p>
+      </div>
+      <div class="feat-card" style="background:rgba(255,255,255,.12)">
+        <h3 class="h3" style="margin-bottom:8px">Lead Scoring</h3>
+        <p class="sm" style="color:rgba(255,255,255,.8)">Proprietary models built on ground-truth transaction data for confident, real-time scoring.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TESTIMONIAL — navy -->
+<section class="panel panel--navy">
+  <div class="c c--narrow reveal">
+    <div class="quote">
+      <div class="quote__mark">"</div>
+      <p class="quote__text">Enigma's data helps our team identify the top prospects that match our ideal customer profile.</p>
+      <cite class="quote__cite">ROB HEWITT — COMMERCIAL DIRECTOR, PHOREST</cite>
+    </div>
+  </div>
+</section>
+
+
+<!-- PAYMENTS — light panel with rings -->
+<section class="panel panel--light">
+  <div class="c">
+    <p class="label label--dark reveal" style="margin-bottom:12px">PAYMENTS & BNPL</p>
+    <h2 class="h1 reveal" style="margin-bottom:48px">Ground Truth for Payments Leaders</h2>
+
+    <div class="grid-3 reveal" style="margin-bottom:64px">
+      <div style="text-align:center">
+        <div class="ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring__track" cx="50" cy="50" r="44" style="stroke:rgba(0,0,0,.08)"/>
+            <circle class="ring__fill" cx="50" cy="50" r="44" style="stroke-dasharray:276.46;stroke-dashoffset:8.29"/>
+          </svg>
+          <div class="ring__center">
+            <span class="ring__num" style="color:var(--text-dark)">97%</span>
+            <span class="ring__label" style="color:var(--text-muted-dk)">Match</span>
+          </div>
+        </div>
+        <p class="sm muted-dk" style="margin-top:12px">Merchant match rate</p>
+      </div>
+      <div style="text-align:center">
+        <div class="ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring__track" cx="50" cy="50" r="44" style="stroke:rgba(0,0,0,.08)"/>
+            <circle class="ring__fill" cx="50" cy="50" r="44" style="stroke-dasharray:276.46;stroke-dashoffset:69.1;stroke:var(--olive)"/>
+          </svg>
+          <div class="ring__center">
+            <span class="ring__num" style="color:var(--text-dark)">3×</span>
+            <span class="ring__label" style="color:var(--text-muted-dk)">Lift</span>
+          </div>
+        </div>
+        <p class="sm muted-dk" style="margin-top:12px">Conversion increase</p>
+      </div>
+      <div style="text-align:center">
+        <div class="ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring__track" cx="50" cy="50" r="44" style="stroke:rgba(0,0,0,.08)"/>
+            <circle class="ring__fill" cx="50" cy="50" r="44" style="stroke-dasharray:276.46;stroke-dashoffset:27.65;stroke:var(--teal)"/>
+          </svg>
+          <div class="ring__center">
+            <span class="ring__num" style="color:var(--text-dark)">90%</span>
+            <span class="ring__label" style="color:var(--text-muted-dk)">Cover</span>
+          </div>
+        </div>
+        <p class="sm muted-dk" style="margin-top:12px">U.S. business coverage</p>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div class="feat-card">
+        <h3 class="h3" style="margin-bottom:8px">Merchant Share-of-Wallet</h3>
+        <p class="sm muted-dk">See beyond your own rails. Get the full picture of merchant payment volume to identify high-growth merchants and capture volume from competitors.</p>
+      </div>
+      <div class="feat-card">
+        <h3 class="h3" style="margin-bottom:8px">Card Panel Data</h3>
+        <p class="sm muted-dk">Derived from 750M+ anonymized credit and debit cards representing 30B+ transactions and $4.5T+ annually.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CONVERSION COMPARISON — navy with bars -->
+<section class="panel panel--navy">
+  <div class="c c--narrow">
+    <p class="label label--light reveal" style="margin-bottom:12px">CONVERSION IMPACT</p>
+    <h2 class="h1 reveal" style="margin-bottom:48px">The Enigma Difference</h2>
+
+    <div class="reveal">
+      <div class="bar">
+        <div class="bar__head">
+          <span class="bar__name muted">Without Enigma</span>
+          <span class="bar__val">1.8%</span>
+        </div>
+        <div class="bar__track"><div class="bar__fill" style="width:36%;background:var(--mid-gray)"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar__head">
+          <span class="bar__name" style="color:var(--orange)">With Enigma</span>
+          <span class="bar__val" style="color:var(--orange)">4.2%</span>
+        </div>
+        <div class="bar__track"><div class="bar__fill" style="width:84%"></div></div>
+      </div>
+    </div>
+
+    <div class="grid-3 reveal" style="margin-top:48px">
+      <div class="stat-card">
+        <span class="stat-card__num" style="font-size:32px">10K</span>
+        <span class="stat-card__label">Applications</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num" style="font-size:32px;color:var(--orange)">420</span>
+        <span class="stat-card__label">Approved (Enigma)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num" style="font-size:32px">12+</span>
+        <span class="stat-card__label">Data Sources</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- STRIPS -->
+<div class="strips reveal">
+  <div style="background:var(--gold)"></div>
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--olive)"></div>
+</div>
+
+
+<!-- KYB — olive panel -->
+<section class="panel panel--olive">
+  <div class="c">
+    <div class="grid-2" style="align-items:start">
+      <div class="reveal">
+        <p class="label" style="color:rgba(255,255,255,.6);margin-bottom:12px">KYB &amp; ONBOARDING</p>
+        <h2 class="display" style="margin-bottom:16px">Streamline Business Verification</h2>
+        <p class="body-lg" style="max-width:440px;margin-bottom:24px;color:rgba(255,255,255,.8)">
+          Onboard more business customers and save costs. Verify businesses using trusted government sources for comprehensive KYB requirements.
+        </p>
+        <a href="#" class="btn" style="background:var(--white);color:var(--olive)">Learn More</a>
+      </div>
+      <div class="reveal" style="background:rgba(0,0,0,.2);border-radius:24px;padding:32px">
+        <p class="label" style="color:rgba(255,255,255,.5);margin-bottom:16px">VERIFICATION FLOW</p>
+        <div class="check"><span class="check-icon done">&#10003;</span> Business identity verified</div>
+        <div class="check"><span class="check-icon done">&#10003;</span> EIN / Secretary of State match</div>
+        <div class="check"><span class="check-icon done">&#10003;</span> Beneficial ownership confirmed</div>
+        <div class="check"><span class="check-icon done">&#10003;</span> Operational status active</div>
+        <div class="check"><span class="check-icon pending">&#8230;</span> <span class="muted">Sanctions screening pending</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SCREENING — light -->
+<section class="panel panel--light">
+  <div class="c c--narrow">
+    <p class="label label--dark reveal" style="margin-bottom:12px">COMPLIANCE</p>
+    <h2 class="h1 reveal" style="margin-bottom:16px">Customer &amp; Transaction Screening</h2>
+    <p class="body-lg muted-dk reveal" style="max-width:600px;margin-bottom:48px">
+      Meet your sanctions screening requirements confidently and cost-effectively. Screening at onboarding and on a continuing basis for persons and entities.
+    </p>
+    <div class="grid-3 reveal-stagger reveal">
+      <div class="stat-card">
+        <span class="stat-card__num" style="font-size:24px;font-weight:800">REAL-TIME</span>
+        <span class="stat-card__label">Screening Updates</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num" style="font-size:24px;font-weight:800">OFAC</span>
+        <span class="stat-card__label">Sanctions Coverage</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__num" style="font-size:24px;font-weight:800">50ms</span>
+        <span class="stat-card__label">Avg Response</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- IDENTITY GRAPH — dark hero moment -->
+<section class="panel panel--dark dots glow" style="padding:120px 0">
+  <div class="c" style="text-align:center">
+    <p class="label label--light reveal" style="margin-bottom:16px">THE ENIGMA IDENTITY GRAPH</p>
+    <div class="stat reveal" style="margin-bottom:16px;color:var(--orange)" data-count-to="24000000">24M+</div>
+    <h2 class="display reveal" style="margin-bottom:16px">A Single Source of Truth</h2>
+    <p class="body-lg muted reveal" style="max-width:600px;margin:0 auto 64px">
+      Before you can trust any data point, you must trust the business it's attached to. The Identity Graph connects every brand, DBA, location, and legal entity to one unified profile.
+    </p>
+
+    <div class="grid-3 reveal-stagger reveal">
+      <div class="feat-card">
+        <h3 class="h3" style="margin-bottom:8px">Comprehensive Linking</h3>
+        <p class="sm muted">Beyond DBAs — brands to verified corporate registrations, online and offline presence.</p>
+      </div>
+      <div class="feat-card">
+        <h3 class="h3" style="margin-bottom:8px">Unified Profile</h3>
+        <p class="sm muted">Cross-referencing signals to eliminate ghost businesses. One reliable profile per entity.</p>
+      </div>
+      <div class="feat-card">
+        <h3 class="h3" style="margin-bottom:8px">Always Current</h3>
+        <p class="sm muted">Continuous ingestion from 50+ sources. Filings, registrations, and transactions. Never stale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- EXPLORE DATA — bar chart section -->
+<section class="panel panel--white">
+  <div class="c c--narrow">
+    <p class="label label--dark reveal" style="margin-bottom:12px">EXPLORE ENIGMA DATA</p>
+    <h2 class="h1 reveal" style="margin-bottom:48px">Coverage by Industry</h2>
+
+    <div class="reveal">
+      <div class="bar">
+        <div class="bar__head"><span class="bar__name">Small Business</span><span class="bar__val">24M+</span></div>
+        <div class="bar__track" style="background:var(--light-gray)"><div class="bar__fill" style="width:95%"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar__head"><span class="bar__name">Restaurants</span><span class="bar__val">780K+</span></div>
+        <div class="bar__track" style="background:var(--light-gray)"><div class="bar__fill" style="width:68%;background:var(--olive)"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar__head"><span class="bar__name">Healthcare</span><span class="bar__val">520K+</span></div>
+        <div class="bar__track" style="background:var(--light-gray)"><div class="bar__fill" style="width:55%;background:var(--teal)"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar__head"><span class="bar__name">Retail</span><span class="bar__val">1.2M+</span></div>
+        <div class="bar__track" style="background:var(--light-gray)"><div class="bar__fill" style="width:72%;background:var(--gold)"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar__head"><span class="bar__name">Financial Services</span><span class="bar__val">340K+</span></div>
+        <div class="bar__track" style="background:var(--light-gray)"><div class="bar__fill" style="width:42%;background:var(--coral)"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- STRIPS -->
+<div class="strips reveal">
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--olive)"></div>
+  <div style="background:var(--teal)"></div>
+  <div style="background:var(--gold)"></div>
+  <div style="background:var(--coral)"></div>
+</div>
+
+
+<!-- CTA — orange hero -->
+<section class="panel panel--orange" style="text-align:center">
+  <div class="c">
+    <p class="label reveal" style="color:rgba(255,255,255,.7);margin-bottom:16px">START TODAY</p>
+    <h2 class="display reveal" style="margin-bottom:16px">Get Started with Enigma</h2>
+    <p class="body-lg reveal" style="max-width:500px;margin:0 auto 40px;color:rgba(255,255,255,.85)">
+      Access ground-truth business data for growth, risk, and compliance.
+    </p>
+    <div style="display:flex;gap:16px;justify-content:center" class="reveal">
+      <a href="#" class="btn" style="background:var(--white);color:var(--orange)">Request a Demo</a>
+      <a href="#" class="btn btn--outline">Get Data Now</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="panel panel--dark" style="padding:80px 0 48px">
+  <div class="c">
+    <div class="footer-grid">
+      <div>
+        <p style="font-size:22px;font-weight:900;margin-bottom:8px">enigma</p>
+        <p class="sm" style="color:rgba(255,255,255,.45);max-width:260px">The trusted source for U.S. business data. Entity resolution, enrichment, and verification at scale.</p>
+      </div>
+      <div>
+        <div class="footer-heading">DATA & SOLUTIONS</div>
+        <a href="#" class="footer-link">GTM Solutions</a>
+        <a href="#" class="footer-link">Payments Solutions</a>
+        <a href="#" class="footer-link">Onboarding & KYB</a>
+        <a href="#" class="footer-link">Payment Risk</a>
+        <a href="#" class="footer-link">Screening</a>
+      </div>
+      <div>
+        <div class="footer-heading">RESOURCES</div>
+        <a href="#" class="footer-link">Blog</a>
+        <a href="#" class="footer-link">Case Studies</a>
+        <a href="#" class="footer-link">Experiments</a>
+        <a href="#" class="footer-link">Knowledge</a>
+        <a href="#" class="footer-link">Press</a>
+      </div>
+      <div>
+        <div class="footer-heading">COMPANY</div>
+        <a href="#" class="footer-link">About Us</a>
+        <a href="#" class="footer-link">Pricing</a>
+        <a href="#" class="footer-link">Partners</a>
+        <a href="#" class="footer-link">Careers</a>
+        <a href="#" class="footer-link">Developers</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; Enigma Technologies, Inc. 2026</span>
+      <div>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      // Trigger counters inside
+      entry.target.querySelectorAll('[data-count-to]').forEach(animateCounter);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => observer.observe(el));
+
+// Also observe standalone counters
+document.querySelectorAll('[data-count-to]').forEach(el => {
+  if (!el.closest('.reveal') && !el.closest('.reveal-stagger')) {
+    const wrap = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { animateCounter(entry.target); wrap.unobserve(entry.target); }
+      });
+    }, { threshold: 0.3 });
+    wrap.observe(el);
+  }
+});
+
+// Counter animation
+function animateCounter(el) {
+  if (el.dataset.counted) return;
+  el.dataset.counted = '1';
+  const target = parseInt(el.dataset.countTo);
+  const suffix = el.dataset.countSuffix || '';
+  const original = el.textContent;
+  const duration = 2000;
+  const start = performance.now();
+
+  function update(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const current = Math.round(target * eased);
+
+    if (target >= 1000000) el.textContent = (current / 1000000).toFixed(0) + 'M' + suffix;
+    else if (target >= 1000) el.textContent = Math.round(current / 1000) + (target >= 10000 ? 'K' : '') + suffix;
+    else el.textContent = current + suffix;
+
+    if (p < 1) requestAnimationFrame(update);
+    else el.textContent = original; // Restore formatted original
+  }
+
+  // Respect reduced motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  requestAnimationFrame(update);
+}
+
+// Animate bars on reveal
+document.querySelectorAll('.bar__fill').forEach(bar => {
+  const target = bar.style.width;
+  bar.style.width = '0';
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setTimeout(() => { bar.style.width = target; }, 200);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(bar);
+});
+</script>
+
+</body>
+</html>

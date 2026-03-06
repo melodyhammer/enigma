@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trusted Business Data | Enigma — Design System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --surface-primary: #0a0a0a;
+  --surface-elevated: #1a1a1a;
+  --surface-canvas: #E0DEE6;
+  --surface-input: #000000;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-on-light: #0a0a0a;
+  --border-default: #333333;
+  --border-light: #555555;
+  --border-canvas: #0a0a0a;
+  --color-signal: #A80012;
+  --color-indicator: #F88785;
+  --color-status: #08C89F;
+  --color-alert: #FD6A3D;
+  --color-process: #4EBCFF;
+  --color-golden: #fbb705;
+  --font-mono: "Fira Code", "SF Mono", "Monaco", "Cascadia Code", monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--surface-canvas);
+  color: var(--text-on-light);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* GRID BG */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--text-on-light) 1px, transparent 1px),
+    linear-gradient(90deg, var(--text-on-light) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+/* NAV */
+nav {
+  position: fixed; top: 12px; left: 12px; right: 12px; z-index: 100;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  padding: 0 24px;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { font-size: 16px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.08em; text-transform: lowercase; }
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a {
+  color: var(--text-secondary); font-size: 11px; text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta {
+  display: flex; gap: 8px;
+}
+.btn-outline {
+  padding: 6px 16px; border: 1px solid var(--border-light); background: transparent;
+  color: var(--text-primary); font: 500 11px var(--font-mono); cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.04em; transition: all 0.15s;
+}
+.btn-outline:hover { border-color: var(--text-primary); }
+.btn-filled {
+  padding: 6px 16px; border: 1px solid var(--color-process); background: var(--color-process);
+  color: var(--surface-primary); font: 600 11px var(--font-mono); cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.04em; transition: all 0.15s;
+}
+.btn-filled:hover { opacity: 0.85; }
+
+/* PANEL */
+.panel {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  padding: 24px;
+  position: relative;
+}
+.panel-label {
+  position: absolute; top: 8px; left: 12px;
+  font-size: 10px; font-weight: 500; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.panel-indicator {
+  position: absolute; top: 8px; right: 12px;
+  font-size: 12px; color: var(--text-secondary);
+}
+
+/* SECTIONS */
+section { padding: 80px 0; position: relative; z-index: 1; }
+.section-divider { border: none; border-top: 1px solid rgba(10,10,10,0.1); margin: 0; }
+
+/* HERO */
+.hero {
+  padding-top: 120px; padding-bottom: 60px; text-align: center;
+}
+.hero-badge {
+  display: inline-block; padding: 4px 12px;
+  border: 1px solid var(--border-canvas);
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-on-light); margin-bottom: 32px;
+}
+.hero-badge code { color: var(--color-process); }
+.hero h1 {
+  font-size: clamp(36px, 6vw, 64px); font-weight: 700;
+  line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.02em;
+}
+.highlight {
+  background: var(--color-golden);
+  padding: 0.05em 0.3em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.hero p {
+  max-width: 640px; margin: 0 auto 32px;
+  font-size: 14px; line-height: 1.6; color: #6b6b6b; font-weight: 400;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface-primary); color: var(--text-primary);
+  padding: 10px 20px; font: 600 12px var(--font-mono);
+  border: 1px solid var(--border-default); cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.04em; text-decoration: none;
+  transition: all 0.15s;
+}
+.hero-cta:hover { border-color: var(--text-primary); }
+
+/* LOGO STRIP */
+.logo-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid rgba(10,10,10,0.1);
+}
+.logo-cell {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100px; padding: 20px;
+  border-right: 1px solid rgba(10,10,10,0.1);
+  border-bottom: 1px solid rgba(10,10,10,0.1);
+  font-size: 14px; font-weight: 600; color: #6b6b6b;
+  letter-spacing: 0.02em;
+}
+.logo-cell:nth-child(4n) { border-right: none; }
+.logo-cell:nth-child(n+5) { border-bottom: none; }
+
+/* SUBHEADER */
+.subheader { text-align: center; padding: 60px 0 24px; }
+.subheader-badge {
+  display: inline-block; padding: 4px 12px;
+  background: var(--color-golden); color: var(--surface-primary);
+  font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.subheader h2 {
+  font-size: clamp(22px, 3vw, 32px); font-weight: 600;
+  margin: 20px 0 12px; line-height: 1.2;
+}
+.subheader p {
+  max-width: 560px; margin: 0 auto;
+  font-size: 13px; color: #6b6b6b; line-height: 1.6;
+}
+.subheader-link {
+  display: inline-block; margin-top: 12px;
+  font-size: 11px; color: var(--color-process);
+  text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none;
+}
+.subheader-link:hover { text-decoration: underline; }
+
+/* FEATURE BLOCK */
+.feature-grid {
+  display: grid; grid-template-columns: 1fr 2fr; gap: 12px;
+  align-items: stretch;
+}
+.feature-grid.reversed { grid-template-columns: 2fr 1fr; }
+.feature-grid.reversed .feature-content { order: 2; }
+.feature-grid.reversed .feature-visual { order: 1; }
+
+.feature-content {
+  padding: 32px; display: flex; flex-direction: column; justify-content: center;
+}
+.feature-eyebrow {
+  font-size: 10px; color: #6b6b6b; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 12px;
+}
+.feature-content h3 {
+  font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 16px;
+}
+.feature-content p {
+  font-size: 12px; color: #6b6b6b; line-height: 1.6; margin-bottom: 20px;
+}
+.feature-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: var(--text-on-light);
+  text-decoration: none; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.feature-cta:hover { color: var(--color-process); }
+.feature-cta::after { content: '\2192'; }
+
+.feature-visual {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  min-height: 340px; display: flex; align-items: center; justify-content: center;
+  padding: 24px; position: relative; overflow: hidden;
+}
+
+/* CODE BLOCK */
+.code-block {
+  font-size: 12px; line-height: 1.7; color: var(--text-primary); width: 100%;
+}
+.code-block .ln { color: var(--color-golden); opacity: 0.5; margin-right: 12px; user-select: none; }
+.code-block .kw { color: var(--color-alert); }
+.code-block .str { color: var(--color-status); }
+.code-block .id { color: var(--color-process); }
+.code-block .fn { color: var(--text-primary); }
+
+/* OVERLAY CARD (on code) */
+.overlay-card {
+  position: absolute; bottom: 16px; right: 16px; width: 240px;
+  background: var(--surface-canvas); border: 1px solid var(--border-canvas);
+  padding: 16px;
+}
+.overlay-card-title {
+  font-size: 9px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #6b6b6b; margin-bottom: 8px;
+}
+.pill-group { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.pill {
+  font-size: 9px; padding: 3px 8px;
+  background: rgba(10,10,10,0.06); border: 1px solid rgba(10,10,10,0.1);
+  color: var(--text-on-light); font-family: var(--font-mono);
+}
+.pill.green { background: rgba(8,200,159,0.15); border-color: rgba(8,200,159,0.3); }
+
+/* CARDS GRID */
+.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+.card-dark {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  padding: 28px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.card-dark blockquote {
+  font-size: 16px; font-weight: 500; line-height: 1.4;
+  color: var(--color-golden); margin-bottom: 24px;
+  text-indent: -0.5em;
+}
+.card-dark .attribution { font-size: 11px; color: var(--text-secondary); }
+.card-dark .attribution strong { color: var(--text-primary); font-weight: 600; }
+.card-dark .card-logo {
+  margin-top: 16px; font-size: 10px; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;
+}
+
+.card-light {
+  background: var(--surface-canvas);
+  border: 1px solid var(--border-canvas);
+  padding: 28px; display: flex; flex-direction: column;
+}
+.card-icon {
+  width: 32px; height: 32px; border: 1px solid var(--border-canvas);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 8px; font-size: 14px;
+}
+.card-label {
+  font-size: 9px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #6b6b6b; margin-bottom: 12px;
+}
+.card-light h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+.card-light p { font-size: 12px; color: #6b6b6b; line-height: 1.6; flex: 1; }
+.card-light .feature-cta { margin-top: 16px; }
+
+/* DARK SECTION */
+.section-dark {
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+}
+.section-dark .feature-content h3 { color: var(--text-primary); }
+.section-dark .feature-content p { color: var(--text-secondary); }
+.section-dark .feature-eyebrow { color: var(--text-secondary); }
+.section-dark .feature-cta { color: var(--text-primary); }
+.section-dark .feature-visual {
+  background: var(--surface-elevated);
+  border-color: var(--border-light);
+}
+
+/* VISUAL PLACEHOLDER */
+.visual-placeholder {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+}
+.visual-placeholder .dots {
+  display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+}
+.visual-placeholder .dot {
+  width: 8px; height: 8px; border-radius: 1px;
+}
+.visual-placeholder .label {
+  font-size: 10px; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* METRIC BAR */
+.metric-bar {
+  display: flex; gap: 24px; justify-content: center;
+  flex-wrap: wrap; margin: 20px 0;
+}
+.metric {
+  text-align: center;
+}
+.metric-value {
+  font-size: 28px; font-weight: 700; line-height: 1;
+}
+.metric-label {
+  font-size: 9px; color: #6b6b6b; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-top: 4px;
+}
+
+/* CASE STUDY */
+.case-study-grid {
+  display: grid; grid-template-columns: 1fr 2fr; gap: 12px;
+}
+.case-study-visual {
+  background: var(--surface-primary); border: 1px solid var(--border-default);
+  padding: 24px; display: flex; align-items: center; justify-content: center;
+}
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; }
+.bar {
+  width: 28px; background: var(--text-primary); transition: height 0.3s;
+}
+.bar.accent { background: var(--color-golden); }
+.bar-label {
+  font-size: 8px; color: var(--text-secondary); text-align: center;
+  margin-top: 6px; text-transform: uppercase;
+}
+
+/* IDENTITY GRAPH */
+.graph-section { text-align: center; }
+.graph-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  text-align: left; border-top: 1px solid rgba(10,10,10,0.1);
+}
+.graph-col { padding: 32px 24px; }
+.graph-col:first-child { border-right: 1px solid rgba(10,10,10,0.1); }
+.graph-col h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.graph-col p { font-size: 12px; color: #6b6b6b; line-height: 1.6; margin-bottom: 12px; }
+
+/* CTA BANNER */
+.cta-banner {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  padding: 64px 32px; text-align: center; position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: 400px; height: 400px;
+  border: 1px dashed var(--border-default);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.3;
+}
+.cta-banner::after {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: 600px; height: 600px;
+  border: 1px dotted var(--border-light);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.15;
+}
+.cta-banner .eyebrow {
+  font-size: 10px; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 16px; position: relative; z-index: 1;
+}
+.cta-banner h2 {
+  font-size: 28px; font-weight: 700; color: var(--color-golden);
+  margin-bottom: 12px; position: relative; z-index: 1;
+}
+.cta-banner p {
+  font-size: 13px; color: var(--text-secondary);
+  margin-bottom: 24px; position: relative; z-index: 1;
+}
+.cta-banner .cta-group {
+  display: flex; gap: 12px; justify-content: center; position: relative; z-index: 1;
+}
+
+/* FOOTER */
+footer {
+  background: var(--surface-primary);
+  border-top: 1px solid var(--border-default);
+  color: var(--text-primary);
+  padding: 48px 0 24px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1.25fr 0.75fr 0.75fr 0.75fr;
+  gap: 32px; margin-bottom: 32px;
+}
+.footer-logo {
+  font-size: 20px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+.footer-col-title {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.footer-col a {
+  display: block; font-size: 12px; color: var(--text-secondary);
+  text-decoration: none; margin-bottom: 8px; transition: color 0.15s;
+}
+.footer-col a:hover { color: var(--text-primary); }
+.footer-bottom {
+  border-top: 1px solid var(--border-default);
+  padding-top: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-legal { display: flex; gap: 16px; }
+.footer-legal a {
+  font-size: 10px; color: var(--text-secondary); text-decoration: none;
+  opacity: 0.5;
+}
+.footer-legal a:hover { opacity: 1; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a {
+  font-size: 10px; color: var(--text-secondary); text-decoration: none; opacity: 0.5;
+}
+
+/* METRIC CALLOUT DOTS */
+.dot-row { display: flex; gap: 4px; margin: 8px 0; }
+.dot-sm { width: 6px; height: 6px; border-radius: 1px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .logo-strip { grid-template-columns: repeat(2, 1fr); }
+  .feature-grid, .feature-grid.reversed { grid-template-columns: 1fr; }
+  .feature-grid.reversed .feature-content { order: 1; }
+  .feature-grid.reversed .feature-visual { order: 2; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .case-study-grid { grid-template-columns: 1fr; }
+  .graph-cols { grid-template-columns: 1fr; }
+  .graph-col:first-child { border-right: none; border-bottom: 1px solid rgba(10,10,10,0.1); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  nav .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">enigma</span>
+  <div class="nav-links">
+    <a href="#">Data</a>
+    <a href="#">Solutions</a>
+    <a href="#">Developers</a>
+    <a href="#">Resources</a>
+    <a href="#">Partners</a>
+    <a href="#">Pricing</a>
+  </div>
+  <div class="nav-cta">
+    <button class="btn-outline">Contact Us</button>
+    <button class="btn-filled">Sign In</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><code>Enigma + Your AI</code> &mdash; Try the Enigma AI Connector MCP server</div>
+  <h1><span class="highlight">Trusted Business Data</span></h1>
+  <p>Enigma provides foundational data on businesses, built on unparalleled entity resolution. Win markets, verify business customers faster, and power AI with ground truth intelligence.</p>
+  <a href="#" class="hero-cta">Get Started &rarr;</a>
+</section>
+
+<!-- LOGO STRIP -->
+<section style="padding: 0 0 48px;">
+  <div class="logo-strip">
+    <div class="logo-cell">Capital One</div>
+    <div class="logo-cell">Chase</div>
+    <div class="logo-cell">Shopify</div>
+    <div class="logo-cell">Ramp</div>
+    <div class="logo-cell">DoorDash</div>
+    <div class="logo-cell">Alloy</div>
+    <div class="logo-cell">Capital on Tap</div>
+    <div class="logo-cell">Bill</div>
+  </div>
+</section>
+
+<!-- DATA-AS-A-SERVICE -->
+<section>
+  <div class="subheader">
+    <span class="subheader-badge">Data-as-a-Service</span>
+    <h2>Programmatic Intelligence for Every Growth Engine</h2>
+    <p>Embed Enigma's business data into any business workflow or inference engine to onboard faster, target smarter, and manage risk with confidence.</p>
+  </div>
+</section>
+
+<!-- INTEGRATE -->
+<section style="padding-top: 0;">
+  <div class="feature-grid">
+    <div class="feature-content">
+      <span class="feature-eyebrow">Integrate</span>
+      <h3>Intelligence for your systems, not ours</h3>
+      <p>Great data is useless if it's locked in a silo. Enigma is designed to be the foundational data layer for your growth engine. Use our flexible GraphQL API to stream intelligence directly into your CRM or custom applications.</p>
+      <a href="#" class="feature-cta">Start Building with Enigma</a>
+    </div>
+    <div class="feature-visual">
+      <div class="code-block">
+<pre><span class="ln"> 1</span><span class="kw">query</span> <span class="fn">MatchBusiness</span> {
+<span class="ln"> 2</span>  <span class="id">search</span>(<span class="id">searchInput</span>: {<span class="id">name</span>: <span class="str">"Tacombi"</span>,
+<span class="ln"> 3</span>    <span class="id">address</span>: {<span class="id">city</span>: <span class="str">"New York"</span>,
+<span class="ln"> 4</span>      <span class="id">state</span>: <span class="str">"NY"</span>},
+<span class="ln"> 5</span>    <span class="id">entityType</span>: <span class="kw">BRAND</span>}) {
+<span class="ln"> 6</span>      ... on <span class="id">Brand</span> {
+<span class="ln"> 7</span>        <span class="fn">enigmaId</span>
+<span class="ln"> 8</span>        <span class="fn">names</span>(<span class="id">first</span>: <span class="str">5</span>)
+<span class="ln"> 9</span>        <span class="fn">totalLocations</span>
+<span class="ln">10</span>        <span class="fn">nyLocations</span>: <span class="id">locations</span>(
+<span class="ln">11</span>          {<span class="id">filter</span>: {<span class="kw">AND</span>: [
+<span class="ln">12</span>            {<span class="str">"operatingStatus"</span>:
+<span class="ln">13</span>              <span class="str">"OPEN"</span>}]}})
+<span class="ln">14</span>    }
+<span class="ln">15</span>  }</pre>
+      </div>
+      <div class="overlay-card">
+        <div class="overlay-card-title">Select Entity Type</div>
+        <div class="pill-group">
+          <span class="pill">+ Brands</span>
+          <span class="pill">+ Locations</span>
+          <span class="pill">+ Legal Entities</span>
+        </div>
+        <div class="overlay-card-title">Search for a Business</div>
+        <div class="pill-group">
+          <span class="pill green">+ Business Name</span>
+          <span class="pill green">+ Address</span>
+          <span class="pill green">+ City</span>
+          <span class="pill green">+ State</span>
+          <span class="pill">+ Website</span>
+        </div>
+        <div class="overlay-card-title">Operating Status</div>
+        <div class="pill-group">
+          <span class="pill green">+ Open</span>
+          <span class="pill green">+ Closed</span>
+          <span class="pill green">+ Unknown</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GTM SOLUTIONS -->
+<section>
+  <div class="subheader">
+    <span class="subheader-badge">Data powering ABM Strategies</span>
+    <h2>GTM Solutions</h2>
+    <a href="#" class="subheader-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<!-- GTM FEATURE -->
+<section style="padding-top: 0;">
+  <div class="feature-grid">
+    <div class="feature-content">
+      <span class="feature-eyebrow">GTM Leaders</span>
+      <h3>Pinpoint Your Next Best Customers</h3>
+      <p>Stop wasting time on inaccurate data. Use Enigma's real revenue and growth signals to build precise lists of your ideal accounts. Then, access contact information to connect directly with the decision-makers ready to buy.</p>
+      <a href="#" class="feature-cta">Generate a Lead List today</a>
+    </div>
+    <div class="feature-visual">
+      <div class="visual-placeholder">
+        <div class="label">Define your customer profile</div>
+        <div class="dots">
+          <span class="dot-sm" style="background:var(--color-signal)"></span>
+          <span class="dot-sm" style="background:var(--color-indicator)"></span>
+          <span class="dot-sm" style="background:var(--color-status)"></span>
+          <span class="dot-sm" style="background:var(--color-alert)"></span>
+          <span class="dot-sm" style="background:var(--color-process)"></span>
+          <span class="dot-sm" style="background:var(--color-golden)"></span>
+          <span class="dot-sm" style="background:var(--text-primary)"></span>
+          <span class="dot-sm" style="background:var(--border-light)"></span>
+        </div>
+        <div style="width:80%;margin-top:20px;">
+          <div style="height:2px;background:var(--border-default);margin:12px 0;position:relative;">
+            <div style="position:absolute;left:0;top:0;height:2px;width:65%;background:var(--color-status);"></div>
+          </div>
+          <div style="height:2px;background:var(--border-default);margin:12px 0;position:relative;">
+            <div style="position:absolute;left:0;top:0;height:2px;width:42%;background:var(--color-process);"></div>
+          </div>
+          <div style="height:2px;background:var(--border-default);margin:12px 0;position:relative;">
+            <div style="position:absolute;left:0;top:0;height:2px;width:78%;background:var(--color-golden);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GTM CARDS -->
+<section style="padding-top: 0;">
+  <div class="cards-grid">
+    <div class="card-dark">
+      <blockquote>"Enigma's data helps our team identify the top prospects that match our ideal customer profile."</blockquote>
+      <div>
+        <div class="attribution"><strong>Rob Hewitt</strong><br>Commercial Director, Phorest</div>
+        <div class="card-logo">Phorest</div>
+      </div>
+    </div>
+    <div class="card-light">
+      <div class="card-icon">&darr;</div>
+      <div class="card-label">Lead Generation</div>
+      <h3>Discover more leads.</h3>
+      <p>Build your own prospect database based on custom criteria including real revenues, growth, payment platforms used, industry, location, contact information and more.</p>
+    </div>
+    <div class="card-light">
+      <div class="card-icon">+</div>
+      <div class="card-label">ICP &amp; Segment Definition</div>
+      <h3>Better define your ideal customer</h3>
+      <p>Augment your CRM with dynamic, underwriting-quality intel about business identity and financial health. Fill in the gaps of incomplete and inaccurate data.</p>
+      <a href="#" class="feature-cta" style="margin-top:16px;">Supercharge GTM Teams</a>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENTS -->
+<section>
+  <div class="subheader">
+    <span class="subheader-badge">Unlock True Merchant GPV</span>
+    <h2>Ground Truth for Payments Leaders</h2>
+    <a href="#" class="subheader-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<!-- PAYMENTS CARDS -->
+<section style="padding-top: 0;">
+  <div class="cards-grid">
+    <div class="panel" style="padding-top:32px;">
+      <span class="panel-label">Merchant Signals</span>
+      <span class="panel-indicator">&oslash;</span>
+      <div class="visual-placeholder" style="min-height:200px;">
+        <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;">
+          <span class="dot-sm" style="background:var(--color-status);width:24px;height:24px;"></span>
+          <span class="dot-sm" style="background:var(--color-process);width:18px;height:18px;"></span>
+          <span class="dot-sm" style="background:var(--color-golden);width:28px;height:28px;"></span>
+          <span class="dot-sm" style="background:var(--color-alert);width:14px;height:14px;"></span>
+          <span class="dot-sm" style="background:var(--color-signal);width:20px;height:20px;"></span>
+        </div>
+        <div class="dot-row" style="margin-top:12px;">
+          <span class="dot-sm" style="background:var(--color-signal)"></span>
+          <span class="dot-sm" style="background:var(--color-indicator)"></span>
+          <span class="dot-sm" style="background:var(--color-status)"></span>
+          <span class="dot-sm" style="background:var(--color-alert)"></span>
+          <span class="dot-sm" style="background:var(--color-process)"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card-light">
+      <div class="card-label">Payments &amp; BNPL</div>
+      <h3>Maximize merchant share-of-wallet</h3>
+      <p>See beyond your own rails. Get the full picture of merchant payment volume to identify high-growth merchants and capture volume from competitors.</p>
+    </div>
+    <div class="card-light">
+      <div class="card-label">Merchant Transaction Signals</div>
+      <h3>Access the largest card panel about merchants</h3>
+      <p>Derived from more than 750 million anonymized credit and debit cards representing over 30 billion transactions and $4.5+ trillion dollars annually.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDY -->
+<section>
+  <div class="case-study-grid">
+    <div class="feature-content">
+      <span class="feature-eyebrow">Case Study</span>
+      <h3>Banks increased up to 3x more conversions in new merchant services accounts</h3>
+      <p style="font-size:11px;font-style:italic;color:#6b6b6b;margin-bottom:12px;">How FMCG used Enigma Data:</p>
+      <ul style="font-size:11px;color:#6b6b6b;line-height:1.8;list-style:none;padding:0;">
+        <li>&bull; Identify businesses already processing cards</li>
+        <li>&bull; Understand amount of transactions</li>
+        <li>&bull; Differentiate e-commerce vs. in-person volume</li>
+      </ul>
+      <a href="#" class="feature-cta" style="margin-top:20px;">See How</a>
+    </div>
+    <div class="case-study-visual">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;">Conversion Rates</div>
+        <div class="bar-chart">
+          <div style="text-align:center;">
+            <div class="bar" style="height:50px;"></div>
+            <div class="bar-label">Before</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="bar" style="height:60px;"></div>
+            <div class="bar-label">Q1</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="bar accent" style="height:100px;"></div>
+            <div class="bar-label">Q2</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="bar accent" style="height:140px;"></div>
+            <div class="bar-label">Q3</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="bar accent" style="height:150px;"></div>
+            <div class="bar-label">Q4</div>
+          </div>
+        </div>
+        <div style="font-size:36px;font-weight:700;color:var(--color-golden);margin-top:8px;">3x</div>
+        <div style="font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;">More Conversions</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KYB -->
+<section>
+  <div class="subheader">
+    <span class="subheader-badge">Streamline Business Verification</span>
+    <h2>KYB &amp; Onboarding</h2>
+    <a href="#" class="subheader-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<section style="padding-top: 0;">
+  <div class="feature-grid">
+    <div class="feature-content">
+      <span class="feature-eyebrow">Risk &amp; Compliance Leaders</span>
+      <h3>Cut operational overhead</h3>
+      <p>Onboard more business customers, and save costs. Verify businesses using trusted government sources to meet comprehensive Know Your Business (KYB) requirements.</p>
+      <a href="#" class="feature-cta">Learn More</a>
+    </div>
+    <div class="feature-visual">
+      <div class="visual-placeholder">
+        <div class="label">Business Verification Flow</div>
+        <div style="width:80%;margin-top:16px;">
+          <div style="background:var(--surface-elevated);border:1px solid var(--border-default);padding:10px 14px;margin-bottom:8px;font-size:11px;color:var(--text-primary);">
+            <span style="color:var(--color-status);">&check;</span> Business Identity Verified
+          </div>
+          <div style="background:var(--surface-elevated);border:1px solid var(--border-default);padding:10px 14px;margin-bottom:8px;font-size:11px;color:var(--text-primary);">
+            <span style="color:var(--color-status);">&check;</span> Corporate Registration Match
+          </div>
+          <div style="background:var(--surface-elevated);border:1px solid var(--border-default);padding:10px 14px;margin-bottom:8px;font-size:11px;color:var(--text-primary);">
+            <span style="color:var(--color-status);">&check;</span> Operating Status: Active
+          </div>
+          <div style="background:var(--surface-elevated);border:1px solid var(--border-default);padding:10px 14px;font-size:11px;color:var(--text-primary);">
+            <span style="color:var(--color-golden);">&bull;</span> Enhanced Due Diligence
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ONBOARD DARK -->
+<section class="section-dark" style="margin: 0 -24px; padding: 80px 24px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="feature-grid reversed">
+      <div class="feature-content">
+        <h3>Onboard more customers and automate your KYB process</h3>
+        <p>Enigma combines hundreds of publicly available data sources, including corporate registration records nationwide, to provide instant verification of U.S. businesses.</p>
+        <a href="#" class="feature-cta">Onboarding &amp; KYB</a>
+      </div>
+      <div class="feature-visual">
+        <div class="visual-placeholder">
+          <div style="width:80%;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;">
+              <span>Entity</span><span>Status</span>
+            </div>
+            <div style="border-bottom:1px solid var(--border-default);padding:8px 0;font-size:11px;color:var(--text-primary);display:flex;justify-content:space-between;">
+              <span>T.J. Pets LLC</span>
+              <span style="color:var(--color-status);">Verified</span>
+            </div>
+            <div style="border-bottom:1px solid var(--border-default);padding:8px 0;font-size:11px;color:var(--text-primary);display:flex;justify-content:space-between;">
+              <span>Pet and Pet SupplyCare Stores</span>
+              <span style="color:var(--color-status);">Verified</span>
+            </div>
+            <div style="border-bottom:1px solid var(--border-default);padding:8px 0;font-size:11px;color:var(--text-primary);display:flex;justify-content:space-between;">
+              <span>5 locations</span>
+              <span style="color:var(--color-process);">Matched</span>
+            </div>
+            <div style="padding:8px 0;font-size:11px;color:var(--text-primary);display:flex;justify-content:space-between;">
+              <span>185 Church Street, NY 10038</span>
+              <span style="color:var(--color-golden);">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENING -->
+<section>
+  <div class="subheader">
+    <span class="subheader-badge">Screen at Scale</span>
+    <h2>Customer &amp; Transaction Screening</h2>
+    <a href="#" class="subheader-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<section style="padding-top: 0;">
+  <div class="feature-grid reversed">
+    <div class="feature-content">
+      <h3>Meet your sanctions screening requirements confidently and cost effectively</h3>
+      <p>Customer screening at the time of onboarding and on a continuing basis for both persons and business entities, with options to fine tune each to your organization's risk-appetite.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="visual-placeholder">
+        <div class="label">Screening Results</div>
+        <div style="width:70%;margin-top:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span class="dot-sm" style="background:var(--color-status);width:8px;height:8px;"></span>
+            <span style="font-size:11px;color:var(--text-primary);">Pass: Clear</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span class="dot-sm" style="background:var(--color-golden);width:8px;height:8px;"></span>
+            <span style="font-size:11px;color:var(--text-primary);">Review: Potential Match</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="dot-sm" style="background:var(--color-signal);width:8px;height:8px;"></span>
+            <span style="font-size:11px;color:var(--text-primary);">Alert: Confirmed Match</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IDENTITY GRAPH -->
+<section>
+  <div class="subheader">
+    <span class="subheader-badge">GRAPH-MODEL-1</span>
+    <h2>The Enigma Identity Graph: A Single Source of Truth for Every US Business</h2>
+    <p>Before you can trust any data point, you must trust the business it's attached to. Our Identity Graph solves the chaotic problem of business identity by connecting every brand, DBA, location, and legal entity to its single unified profile.</p>
+  </div>
+  <div class="graph-cols" style="margin-top:24px;">
+    <div class="graph-col">
+      <h3>Comprehensive linking</h3>
+      <p>We go beyond DBAs, linking brands to their verified corporate registrations, and their presence (online and offline) so you know exactly who you're doing business with.</p>
+      <h3 style="margin-top:24px;padding-top:24px;border-top:1px solid rgba(10,10,10,0.1);">A unified profile</h3>
+      <p>We confirm a business is active and real by cross-referencing websites and other operational signals, eliminating 'ghost' businesses from your data.</p>
+      <a href="#" class="feature-cta" style="margin-top:16px;">Enigma's Approach to Data Quality</a>
+    </div>
+    <div class="graph-col">
+      <div class="panel" style="min-height:240px;margin-bottom:12px;">
+        <span class="panel-label">Identity Linking</span>
+        <span class="panel-indicator">&oslash;</span>
+        <div class="visual-placeholder" style="padding-top:24px;">
+          <div style="display:flex;gap:16px;align-items:center;">
+            <div style="width:40px;height:40px;border:1px solid var(--color-process);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--color-process);">Brand</div>
+            <div style="width:30px;border-top:1px dashed var(--border-light);"></div>
+            <div style="width:40px;height:40px;border:1px solid var(--color-status);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--color-status);">Entity</div>
+            <div style="width:30px;border-top:1px dashed var(--border-light);"></div>
+            <div style="width:40px;height:40px;border:1px solid var(--color-golden);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--color-golden);">Loc</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="min-height:160px;">
+        <span class="panel-label">Unified Profile</span>
+        <span class="panel-indicator">&oslash;</span>
+        <div class="visual-placeholder" style="padding-top:24px;">
+          <div style="width:80%;">
+            <div style="height:2px;background:var(--border-default);margin:8px 0;position:relative;"><div style="position:absolute;left:0;top:0;height:2px;width:90%;background:var(--color-status);"></div></div>
+            <div style="height:2px;background:var(--border-default);margin:8px 0;position:relative;"><div style="position:absolute;left:0;top:0;height:2px;width:70%;background:var(--color-process);"></div></div>
+            <div style="height:2px;background:var(--border-default);margin:8px 0;position:relative;"><div style="position:absolute;left:0;top:0;height:2px;width:55%;background:var(--color-golden);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section style="padding-bottom: 48px;">
+  <div class="cta-banner">
+    <div class="eyebrow">Start today</div>
+    <h2>Explore Enigma Data</h2>
+    <p>Access Enigma Data instantly or talk to our business data experts.</p>
+    <div class="cta-group">
+      <button class="btn-outline">Request a Demo</button>
+      <button class="btn-filled" style="background:var(--color-golden);border-color:var(--color-golden);color:var(--surface-primary);">Get Data Now</button>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">enigma</div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Data &amp; Solutions</div>
+        <a href="#">Data</a>
+        <a href="#">GTM Solutions</a>
+        <a href="#">Payments Solutions</a>
+        <a href="#">Onboarding &amp; KYB</a>
+        <a href="#">Payment Risk &amp; Underwriting</a>
+        <a href="#">Customer &amp; Transaction Screening</a>
+        <a href="#">Industries</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Resources</div>
+        <a href="#">Blog</a>
+        <a href="#">Case Studies</a>
+        <a href="#">Experiments</a>
+        <a href="#">Knowledge</a>
+        <a href="#">Business Directory</a>
+        <a href="#">Press</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="#">About Us</a>
+        <a href="#">Pricing</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Partners</a>
+        <a href="#">Careers</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Developers</div>
+        <a href="#">Docs</a>
+        <a href="#">API Reference</a>
+        <a href="#">API Status</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security</a>
+        <a href="#">Support</a>
+      </div>
+      <div class="footer-social">
+        <a href="#">LinkedIn</a>
+        <a href="#">X</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

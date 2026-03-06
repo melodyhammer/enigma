@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year in Data 2025 | Enigma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --orange:#FC4C02;--orange-lt:#FF6B2B;--orange-dk:#E04400;
+  --navy:#141432;--navy-lt:#1E1E48;--navy-md:#252558;
+  --charcoal:#111125;--dark:#0A0A1A;
+  --olive:#3D5A3A;--olive-lt:#4F7A49;
+  --teal:#1A7A7A;--teal-lt:#22A0A0;
+  --coral:#FF6B6B;--gold:#FFB800;--purple:#6B4EFF;
+  --cream:#F7F5F0;--off-white:#FAFAFA;--white:#FFF;
+  --gray-100:#F0F0F0;--gray-200:#E0E0E0;--gray-400:#999;--gray-600:#666;
+  --font:"Inter",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono","Menlo","Courier New",monospace;
+  --ease:cubic-bezier(.25,.1,.25,1);
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--font);font-weight:400;font-size:16px;line-height:1.6;color:#fff;background:var(--dark);overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:var(--orange);text-decoration:none;transition:color .2s}
+a:hover{color:var(--orange-lt)}
+
+.w{max-width:1200px;margin:0 auto;padding:0 48px}
+.w--sm{max-width:900px}
+.w--xs{max-width:680px}
+@media(max-width:768px){.w{padding:0 24px}}
+
+/* ===== STRAVA YIS COMMUNITY PAGE LAYOUT ===== */
+
+/* — NAV: minimal, dark, fixed — */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,26,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-logo{font-size:18px;font-weight:900;color:#fff;letter-spacing:-.02em}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-link{font-size:13px;font-weight:600;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.05em;transition:color .2s}
+.nav-link:hover{color:#fff}
+.nav-cta{font-size:13px;font-weight:700;color:var(--dark);background:var(--orange);padding:8px 20px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;transition:all .2s}
+.nav-cta:hover{background:var(--orange-lt);color:var(--dark)}
+@media(max-width:768px){.nav{padding:0 24px}.nav-links{display:none}}
+
+/* — HERO: full viewport, massive title, circle motif — */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:120px 48px 80px;background:var(--dark);overflow:hidden}
+.hero-circle{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.06);pointer-events:none}
+.hero-circle-1{width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.hero-circle-2{width:420px;height:420px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(252,76,2,.1)}
+.hero-circle-3{width:240px;height:240px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(252,76,2,.15)}
+.hero-tagline{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--orange);margin-bottom:32px;position:relative;z-index:1}
+.hero-title{font-size:clamp(40px,8vw,100px);font-weight:900;line-height:.92;letter-spacing:-.04em;margin-bottom:20px;position:relative;z-index:1}
+.hero-sub{font-size:clamp(16px,2vw,22px);font-weight:400;color:rgba(255,255,255,.55);max-width:560px;line-height:1.5;position:relative;z-index:1}
+.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hero-scroll::after{content:'';width:1px;height:32px;background:linear-gradient(rgba(255,255,255,.3),transparent)}
+
+/* — COLOR STRIPS — */
+.strips{display:flex;height:8px}
+.strips>div{flex:1}
+
+/* — STAT SECTION: large number hero — */
+.stat-section{padding:120px 0;text-align:center;position:relative;overflow:hidden}
+.stat-section .dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+.stat-big{font-size:clamp(64px,14vw,180px);font-weight:900;line-height:.85;letter-spacing:-.04em}
+.stat-unit{font-size:.4em;font-weight:700;opacity:.6;letter-spacing:-.01em}
+.stat-desc{font-size:clamp(16px,2vw,24px);font-weight:500;margin-top:16px;color:rgba(255,255,255,.6)}
+.stat-sub{font-size:14px;font-weight:400;color:rgba(255,255,255,.35);margin-top:8px;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* — GRID STAT CARDS: 2×2 or 4-across — */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.stat-cell{padding:48px 24px;text-align:center;background:rgba(255,255,255,.03);transition:background .3s}
+.stat-cell:hover{background:rgba(255,255,255,.06)}
+.stat-cell__num{font-size:clamp(32px,4.5vw,56px);font-weight:800;line-height:1;letter-spacing:-.02em;display:block}
+.stat-cell__label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-top:12px;display:block}
+@media(max-width:768px){.stat-grid{grid-template-columns:1fr 1fr}}
+
+/* — NARRATIVE SECTION: text + context — */
+.narrative{padding:96px 0}
+.narrative-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--orange);margin-bottom:16px}
+.narrative-title{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;margin-bottom:20px}
+.narrative-body{font-size:17px;font-weight:400;color:rgba(255,255,255,.6);max-width:600px;line-height:1.7}
+
+/* — CIRCLE STAT: ring + number — */
+.circle-row{display:flex;justify-content:center;gap:64px;flex-wrap:wrap;padding:48px 0}
+.circle-item{text-align:center}
+.circle-ring{width:160px;height:160px;position:relative;margin:0 auto 16px}
+.circle-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.circle-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:5}
+.circle-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1.5s var(--ease)}
+.circle-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.circle-num{font-size:32px;font-weight:800;line-height:1}
+.circle-sub{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-top:4px}
+.circle-label{font-size:13px;font-weight:500;color:rgba(255,255,255,.5)}
+@media(max-width:640px){.circle-row{gap:32px}.circle-ring{width:120px;height:120px}.circle-num{font-size:24px}}
+
+/* — HORIZONTAL BAR CHART — */
+.bar-chart{max-width:700px}
+.bar-row{margin-bottom:24px}
+.bar-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.bar-name{font-size:15px;font-weight:600}
+.bar-val{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.bar-track{height:14px;border-radius:7px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar-fill{height:100%;border-radius:7px;transition:width 1.4s var(--ease)}
+
+/* — FEATURE CARDS: rounded, frosted — */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{padding:36px 28px;border-radius:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);transition:all .3s var(--ease)}
+.card:hover{background:rgba(255,255,255,.07);transform:translateY(-4px);border-color:rgba(255,255,255,.1)}
+.card-icon{font-size:28px;margin-bottom:16px}
+.card-title{font-size:18px;font-weight:700;margin-bottom:8px}
+.card-body{font-size:14px;color:rgba(255,255,255,.5);line-height:1.6}
+@media(max-width:768px){.cards{grid-template-columns:1fr}}
+
+/* — CODE BLOCK — */
+.code-block{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.06);padding:32px;border-radius:16px;font-family:var(--mono);font-size:13px;line-height:1.8;color:rgba(255,255,255,.75);white-space:pre;overflow-x:auto}
+.code-kw{color:var(--orange)}.code-str{color:var(--teal-lt)}.code-cm{color:rgba(255,255,255,.25)}
+
+/* — QUOTE — */
+.quote-block{padding:64px;border-radius:32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden}
+.quote-mark{font-size:120px;font-weight:900;line-height:1;color:var(--orange);opacity:.15;position:absolute;top:16px;left:32px}
+.quote-text{font-size:clamp(18px,2.5vw,26px);font-weight:500;line-height:1.45;position:relative;z-index:1;max-width:640px}
+.quote-cite{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-top:24px;position:relative;z-index:1}
+
+/* — CHECK LIST — */
+.checks{max-width:480px}
+.check-item{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:15px;font-weight:500}
+.check-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.check-dot.ok{background:var(--orange);color:#fff}
+.check-dot.wait{background:rgba(255,255,255,.08);color:rgba(255,255,255,.3)}
+
+/* — BUTTONS — */
+.btn{display:inline-flex;align-items:center;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:16px 36px;border-radius:100px;border:none;cursor:pointer;transition:all .3s var(--ease);text-decoration:none}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-lt);color:#fff;transform:translateY(-2px);box-shadow:0 6px 24px rgba(252,76,2,.35)}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.3);color:#fff}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.06);color:#fff}
+.btn-white{background:#fff;color:var(--dark)}
+.btn-white:hover{background:var(--gray-100);color:var(--dark);transform:translateY(-2px)}
+
+/* — FOOTER — */
+.footer{padding:80px 0 48px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-grid{display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:40px}
+.footer-brand{font-size:20px;font-weight:900;margin-bottom:10px}
+.footer-desc{font-size:14px;color:rgba(255,255,255,.35);max-width:280px;line-height:1.5}
+.footer-heading{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-bottom:16px}
+.footer-link{display:block;font-size:14px;color:rgba(255,255,255,.55);padding:4px 0;text-decoration:none;transition:color .15s}
+.footer-link:hover{color:#fff}
+.footer-bottom{display:flex;justify-content:space-between;align-items:baseline;margin-top:56px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-bottom span,.footer-bottom a{font-size:12px;color:rgba(255,255,255,.25)}
+.footer-bottom a{margin-left:24px}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}}
+
+/* — SCROLL REVEAL — */
+.rv{opacity:0;transform:translateY(50px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.on{opacity:1;transform:translateY(0)}
+.rv-s>*{opacity:0;transform:translateY(35px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv-s.on>:nth-child(1){opacity:1;transform:translateY(0);transition-delay:0ms}
+.rv-s.on>:nth-child(2){opacity:1;transform:translateY(0);transition-delay:120ms}
+.rv-s.on>:nth-child(3){opacity:1;transform:translateY(0);transition-delay:240ms}
+.rv-s.on>:nth-child(4){opacity:1;transform:translateY(0);transition-delay:360ms}
+.rv-s.on>:nth-child(5){opacity:1;transform:translateY(0);transition-delay:480ms}
+
+@media(prefers-reduced-motion:reduce){
+  .rv,.rv-s>*{opacity:1;transform:none;transition:none}
+  .bar-fill,.circle-fill{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <a href="#" class="nav-logo">enigma</a>
+  <div class="nav-links">
+    <a href="#" class="nav-link">Solutions</a>
+    <a href="#" class="nav-link">Products</a>
+    <a href="#" class="nav-link">Developers</a>
+    <a href="#" class="nav-link">Pricing</a>
+    <a href="#" class="nav-cta">Get Started</a>
+  </div>
+</nav>
+
+<!-- ===== HERO: "Millions of Athletes. One Worldwide Team." adapted ===== -->
+<section class="hero">
+  <div class="hero-circle hero-circle-1"></div>
+  <div class="hero-circle hero-circle-2"></div>
+  <div class="hero-circle hero-circle-3"></div>
+  <p class="hero-tagline rv">Year in Data 2025</p>
+  <h1 class="hero-title rv">Millions of<br>Businesses.<br>One Trusted<br>Graph.</h1>
+  <p class="hero-sub rv">Enigma resolved, enriched, and verified more U.S. businesses than ever before. Here's what we found.</p>
+  <div class="hero-scroll">Scroll<br>to explore</div>
+</section>
+
+<!-- ===== COLOR STRIPS ===== -->
+<div class="strips">
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--olive)"></div>
+  <div style="background:var(--teal)"></div>
+  <div style="background:var(--gold)"></div>
+  <div style="background:var(--coral)"></div>
+</div>
+
+<!-- ===== HERO STAT: 24M+ (like Strava's "100M+ athletes") ===== -->
+<section class="stat-section rv" style="background:var(--navy);padding:140px 0">
+  <div class="dots"></div>
+  <div class="w">
+    <div class="stat-big" style="color:var(--orange)" data-count="24">24<span class="stat-unit">M+</span></div>
+    <p class="stat-desc">U.S. businesses resolved into canonical identity profiles</p>
+    <p class="stat-sub">Every brand, DBA, location, and legal entity — connected to one unified graph</p>
+  </div>
+</section>
+
+<!-- ===== 4-UP STAT GRID (like Strava's platform stats row) ===== -->
+<div class="stat-grid rv-s rv">
+  <div class="stat-cell">
+    <span class="stat-cell__num" style="color:var(--orange)">750M+</span>
+    <span class="stat-cell__label">Card Transactions Analyzed</span>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-cell__num" style="color:var(--teal-lt)">50+</span>
+    <span class="stat-cell__label">Data Sources Integrated</span>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-cell__num" style="color:var(--gold)">$4.5T+</span>
+    <span class="stat-cell__label">Transaction Volume Tracked</span>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-cell__num" style="color:var(--olive-lt)">97%</span>
+    <span class="stat-cell__label">Merchant Match Rate</span>
+  </div>
+</div>
+
+<!-- ===== STRIPS ===== -->
+<div class="strips">
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--teal)"></div>
+</div>
+
+<!-- ===== NARRATIVE: PROGRAMMATIC INTELLIGENCE (like "Community inspires..." section) ===== -->
+<section style="background:var(--charcoal);padding:120px 0">
+  <div class="w">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+      <div class="rv">
+        <p class="narrative-label">Programmatic Intelligence</p>
+        <h2 class="narrative-title">Intelligence for<br>Your Systems</h2>
+        <p class="narrative-body" style="margin-bottom:32px">Great data is useless locked in a silo. Enigma streams business intelligence directly into your CRM, data warehouse, or AI inference engine via a flexible GraphQL API.</p>
+        <a href="#" class="btn btn-primary">Start Building</a>
+      </div>
+      <div class="code-block rv"><span class="code-cm">// Enigma GraphQL API</span>
+<span class="code-kw">query</span> MatchBusiness {
+  search(searchInput: {
+    name: <span class="code-str">"Tacombi"</span>
+    address: {
+      city: <span class="code-str">"New York"</span>
+      state: <span class="code-str">"NY"</span>
+    }
+    entityType: <span class="code-kw">BRAND</span>
+  }) {
+    ... on Brand {
+      enigmaId
+      names(first: 3)
+      totalLocations
+    }
+  }
+}</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ORANGE PANEL: GTM hero stat (like Strava's highlight moment) ===== -->
+<section class="stat-section rv" style="background:linear-gradient(135deg,var(--orange),var(--orange-lt));padding:120px 0">
+  <div class="w">
+    <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.7);margin-bottom:24px">GTM Solutions</p>
+    <div class="stat-big">3×</div>
+    <p class="stat-desc" style="color:rgba(255,255,255,.85)">more conversions with Enigma-enriched targeting</p>
+    <p class="stat-sub" style="color:rgba(255,255,255,.5)">Banks using Enigma data increased new merchant services account conversions up to 3× compared to traditional data sources</p>
+  </div>
+</section>
+
+<!-- ===== NARRATIVE + CARDS: GTM features (like Strava's sport trend sections) ===== -->
+<section style="background:var(--navy);padding:120px 0">
+  <div class="w">
+    <div class="rv" style="text-align:center;margin-bottom:64px">
+      <p class="narrative-label">Pinpoint Your Next Best Customers</p>
+      <h2 class="narrative-title" style="max-width:640px;margin:0 auto">Stop Wasting Time on<br>Inaccurate Data</h2>
+    </div>
+
+    <div class="cards rv-s rv">
+      <div class="card">
+        <div class="card-icon">&#9678;</div>
+        <h3 class="card-title">Lead Generation</h3>
+        <p class="card-body">Build prospect databases based on real revenues, growth signals, payment platforms, industry, location, and contact information.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#9673;</div>
+        <h3 class="card-title">ICP Definition</h3>
+        <p class="card-body">Augment your CRM with dynamic, underwriting-quality intel about business identity and financial health.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#10687;</div>
+        <h3 class="card-title">Lead Scoring</h3>
+        <p class="card-body">Proprietary models built on ground-truth transaction data for confident, real-time scoring at scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUOTE (like Strava's CEO quote section) ===== -->
+<section style="background:var(--charcoal);padding:96px 0">
+  <div class="w w--sm rv">
+    <div class="quote-block">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">Enigma's data helps our team identify the top prospects that match our ideal customer profile.</p>
+      <p class="quote-cite">Rob Hewitt — Commercial Director, Phorest</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STRIPS ===== -->
+<div class="strips">
+  <div style="background:var(--gold)"></div>
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--olive)"></div>
+</div>
+
+<!-- ===== CIRCLE STATS: Payments (like Strava's circle-motif data section) ===== -->
+<section style="background:var(--dark);padding:120px 0">
+  <div class="w">
+    <div class="rv" style="text-align:center;margin-bottom:48px">
+      <p class="narrative-label">Payments & BNPL</p>
+      <h2 class="narrative-title">Ground Truth for<br>Payments Leaders</h2>
+    </div>
+
+    <div class="circle-row rv-s rv">
+      <div class="circle-item">
+        <div class="circle-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-track" cx="50" cy="50" r="44"/>
+            <circle class="circle-fill" cx="50" cy="50" r="44" stroke="var(--orange)" style="stroke-dasharray:276.46;stroke-dashoffset:8.29"/>
+          </svg>
+          <div class="circle-center">
+            <span class="circle-num">97%</span>
+            <span class="circle-sub">Match</span>
+          </div>
+        </div>
+        <p class="circle-label">Merchant match rate</p>
+      </div>
+      <div class="circle-item">
+        <div class="circle-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-track" cx="50" cy="50" r="44"/>
+            <circle class="circle-fill" cx="50" cy="50" r="44" stroke="var(--olive-lt)" style="stroke-dasharray:276.46;stroke-dashoffset:69.1"/>
+          </svg>
+          <div class="circle-center">
+            <span class="circle-num">3×</span>
+            <span class="circle-sub">Lift</span>
+          </div>
+        </div>
+        <p class="circle-label">Conversion increase</p>
+      </div>
+      <div class="circle-item">
+        <div class="circle-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-track" cx="50" cy="50" r="44"/>
+            <circle class="circle-fill" cx="50" cy="50" r="44" stroke="var(--teal-lt)" style="stroke-dasharray:276.46;stroke-dashoffset:27.65"/>
+          </svg>
+          <div class="circle-center">
+            <span class="circle-num">90%</span>
+            <span class="circle-sub">Cover</span>
+          </div>
+        </div>
+        <p class="circle-label">U.S. business coverage</p>
+      </div>
+      <div class="circle-item">
+        <div class="circle-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-track" cx="50" cy="50" r="44"/>
+            <circle class="circle-fill" cx="50" cy="50" r="44" stroke="var(--gold)" style="stroke-dasharray:276.46;stroke-dashoffset:138.23"/>
+          </svg>
+          <div class="circle-center">
+            <span class="circle-num">30B+</span>
+            <span class="circle-sub">Txns</span>
+          </div>
+        </div>
+        <p class="circle-label">Transactions tracked</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BAR CHART: Conversion comparison (like Strava's trend data sections) ===== -->
+<section style="background:var(--navy);padding:120px 0">
+  <div class="w w--sm">
+    <div class="rv" style="margin-bottom:48px">
+      <p class="narrative-label">Conversion Impact</p>
+      <h2 class="narrative-title">The Enigma Difference</h2>
+    </div>
+    <div class="bar-chart rv">
+      <div class="bar-row">
+        <div class="bar-header">
+          <span class="bar-name" style="color:rgba(255,255,255,.45)">Without Enigma</span>
+          <span class="bar-val" style="color:rgba(255,255,255,.45)">1.8%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:36%;background:var(--gray-400)"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-header">
+          <span class="bar-name" style="color:var(--orange)">With Enigma</span>
+          <span class="bar-val" style="color:var(--orange)">4.2%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:84%;background:linear-gradient(90deg,var(--orange),var(--orange-lt))"></div></div>
+      </div>
+    </div>
+    <div class="stat-grid rv-s rv" style="margin-top:48px">
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:28px">10K</span>
+        <span class="stat-cell__label">Applications</span>
+      </div>
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:28px;color:var(--orange)">420</span>
+        <span class="stat-cell__label">Approved</span>
+      </div>
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:28px">12+</span>
+        <span class="stat-cell__label">Data Sources</span>
+      </div>
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:28px;color:var(--teal-lt)">2.3×</span>
+        <span class="stat-cell__label">Faster Decisions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STRIPS ===== -->
+<div class="strips">
+  <div style="background:var(--olive)"></div>
+  <div style="background:var(--teal)"></div>
+  <div style="background:var(--gold)"></div>
+</div>
+
+<!-- ===== OLIVE PANEL: KYB (like Strava's trail sports section) ===== -->
+<section style="background:linear-gradient(135deg,var(--olive),var(--olive-lt));padding:120px 0">
+  <div class="w">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start">
+      <div class="rv">
+        <p class="narrative-label" style="color:rgba(255,255,255,.7)">KYB & Onboarding</p>
+        <h2 class="narrative-title">Streamline Business<br>Verification</h2>
+        <p class="narrative-body" style="margin-bottom:32px;color:rgba(255,255,255,.7)">Onboard more business customers and save costs. Verify using trusted government sources for comprehensive KYB requirements — instant, automated, reliable.</p>
+        <a href="#" class="btn btn-white">Learn More</a>
+      </div>
+      <div class="rv" style="background:rgba(0,0,0,.2);border-radius:24px;padding:36px">
+        <p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:20px">Verification Flow</p>
+        <div class="checks">
+          <div class="check-item"><span class="check-dot ok">&#10003;</span> Business identity verified</div>
+          <div class="check-item"><span class="check-dot ok">&#10003;</span> EIN / Secretary of State match</div>
+          <div class="check-item"><span class="check-dot ok">&#10003;</span> Beneficial ownership confirmed</div>
+          <div class="check-item"><span class="check-dot ok">&#10003;</span> Operational status active</div>
+          <div class="check-item"><span class="check-dot wait">&#8230;</span> <span style="color:rgba(255,255,255,.35)">Sanctions screening pending</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SCREENING STATS (like Strava's e-bike section) ===== -->
+<section style="background:var(--charcoal);padding:96px 0">
+  <div class="w" style="text-align:center">
+    <p class="narrative-label rv">Compliance & Screening</p>
+    <h2 class="narrative-title rv" style="margin:0 auto 48px;max-width:560px">Customer & Transaction<br>Screening at Scale</h2>
+    <div class="stat-grid rv-s rv" style="max-width:720px;margin:0 auto">
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:20px;font-weight:800">REAL-TIME</span>
+        <span class="stat-cell__label">Updates</span>
+      </div>
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:20px;font-weight:800">OFAC</span>
+        <span class="stat-cell__label">Coverage</span>
+      </div>
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:20px;font-weight:800;color:var(--teal-lt)">50ms</span>
+        <span class="stat-cell__label">Avg Response</span>
+      </div>
+      <div class="stat-cell" style="border-radius:16px">
+        <span class="stat-cell__num" style="font-size:20px;font-weight:800;color:var(--gold)">24/7</span>
+        <span class="stat-cell__label">Monitoring</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== IDENTITY GRAPH: massive dark section (like Strava's climax moment) ===== -->
+<section class="stat-section rv" style="background:var(--dark);padding:140px 0;position:relative">
+  <div class="dots"></div>
+  <!-- Concentric circles background -->
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;pointer-events:none">
+    <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(252,76,2,.04)"></div>
+    <div style="position:absolute;inset:60px;border-radius:50%;border:1px solid rgba(252,76,2,.06)"></div>
+    <div style="position:absolute;inset:120px;border-radius:50%;border:1px solid rgba(252,76,2,.08)"></div>
+    <div style="position:absolute;inset:180px;border-radius:50%;border:1px solid rgba(252,76,2,.1)"></div>
+    <div style="position:absolute;inset:240px;border-radius:50%;border:1px solid rgba(252,76,2,.12)"></div>
+  </div>
+  <div class="w" style="position:relative;z-index:1">
+    <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--orange);margin-bottom:24px">The Enigma Identity Graph</p>
+    <h2 style="font-size:clamp(32px,5vw,60px);font-weight:900;line-height:1.05;margin-bottom:16px">A Single Source of<br>Truth for Every<br>U.S. Business</h2>
+    <p class="stat-sub" style="max-width:540px;margin:0 auto 64px;font-size:16px;color:rgba(255,255,255,.5)">Before you can trust any data point, you must trust the business it's attached to. Our graph connects every brand, DBA, location, and legal entity to one unified profile.</p>
+
+    <div class="cards rv-s rv" style="margin-top:48px">
+      <div class="card">
+        <div class="card-icon" style="color:var(--orange)">&#11044;</div>
+        <h3 class="card-title">Comprehensive Linking</h3>
+        <p class="card-body">Beyond DBAs — linking brands to verified corporate registrations and their online and offline presence.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--teal-lt)">&#11044;</div>
+        <h3 class="card-title">Unified Profile</h3>
+        <p class="card-body">Cross-referencing websites and operational signals to eliminate ghost businesses. One reliable profile per entity.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--gold)">&#11044;</div>
+        <h3 class="card-title">Always Current</h3>
+        <p class="card-body">Continuous ingestion from 50+ sources. Corporate filings, registrations, and transactions. Never stale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INDUSTRY COVERAGE BARS (like Strava's sport type charts) ===== -->
+<section style="background:var(--navy);padding:120px 0">
+  <div class="w w--sm">
+    <div class="rv" style="margin-bottom:48px">
+      <p class="narrative-label">Explore Enigma Data</p>
+      <h2 class="narrative-title">Coverage by Industry</h2>
+    </div>
+    <div class="bar-chart rv">
+      <div class="bar-row">
+        <div class="bar-header"><span class="bar-name">Small Business</span><span class="bar-val">24M+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:96%;background:linear-gradient(90deg,var(--orange),var(--orange-lt))"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-header"><span class="bar-name">Retail</span><span class="bar-val">1.2M+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--gold)"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-header"><span class="bar-name">Restaurants</span><span class="bar-val">780K+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--olive-lt)"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-header"><span class="bar-name">Healthcare</span><span class="bar-val">520K+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--teal-lt)"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-header"><span class="bar-name">Financial Services</span><span class="bar-val">340K+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:34%;background:var(--coral)"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COLOR STRIPS ===== -->
+<div class="strips">
+  <div style="background:var(--orange)"></div>
+  <div style="background:var(--olive)"></div>
+  <div style="background:var(--teal)"></div>
+  <div style="background:var(--gold)"></div>
+  <div style="background:var(--coral)"></div>
+</div>
+
+<!-- ===== CTA: Orange hero (like Strava's resolution/join section) ===== -->
+<section class="stat-section rv" style="background:linear-gradient(135deg,var(--orange),var(--orange-lt));padding:120px 0">
+  <div class="w">
+    <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.7);margin-bottom:24px">Start Today</p>
+    <h2 style="font-size:clamp(32px,5vw,60px);font-weight:900;line-height:1.05;margin-bottom:16px">Get Started<br>with Enigma</h2>
+    <p class="stat-desc" style="color:rgba(255,255,255,.8);margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto">Access ground-truth business data for growth, risk, and compliance.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="#" class="btn btn-white">Request a Demo</a>
+      <a href="#" class="btn btn-outline">Get Data Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="w">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-brand">enigma</p>
+        <p class="footer-desc">The trusted source for U.S. business data. Entity resolution, enrichment, and verification at scale.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Data & Solutions</div>
+        <a href="#" class="footer-link">GTM Solutions</a>
+        <a href="#" class="footer-link">Payments Solutions</a>
+        <a href="#" class="footer-link">Onboarding & KYB</a>
+        <a href="#" class="footer-link">Payment Risk</a>
+        <a href="#" class="footer-link">Screening</a>
+      </div>
+      <div>
+        <div class="footer-heading">Resources</div>
+        <a href="#" class="footer-link">Blog</a>
+        <a href="#" class="footer-link">Case Studies</a>
+        <a href="#" class="footer-link">Experiments</a>
+        <a href="#" class="footer-link">Knowledge</a>
+        <a href="#" class="footer-link">Press</a>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <a href="#" class="footer-link">About Us</a>
+        <a href="#" class="footer-link">Pricing</a>
+        <a href="#" class="footer-link">Partners</a>
+        <a href="#" class="footer-link">Careers</a>
+        <a href="#" class="footer-link">Developers</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; Enigma Technologies, Inc. 2026</span>
+      <div>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.rv, .rv-s').forEach(el => obs.observe(el));
+
+// Animate bar fills
+document.querySelectorAll('.bar-fill').forEach(bar => {
+  const w = bar.style.width; bar.style.width = '0';
+  const o = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { setTimeout(() => bar.style.width = w, 300); o.unobserve(e.target); }});
+  }, { threshold: 0.3 });
+  o.observe(bar);
+});
+
+// Stat counter animation
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseInt(el.dataset.count);
+  const o = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || el.dataset.counted) return;
+      el.dataset.counted = '1';
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const orig = el.innerHTML;
+      const dur = 2200, start = performance.now();
+      (function tick(now) {
+        const p = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.childNodes[0].textContent = Math.round(target * eased);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.innerHTML = orig;
+      })(start);
+      o.unobserve(el);
+    });
+  }, { threshold: 0.3 });
+  o.observe(el);
+});
+</script>
+
+</body>
+</html>

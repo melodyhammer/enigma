@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>enigma — trusted business data</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --te-bg:#F5F5F5;--te-bg-white:#F9FAF9;--te-bg-dark:#0F0E12;--te-bg-mid:#E5E5E5;
+  --te-text:#0F0E12;--te-text-s:#6B6B6B;--te-text-t:#999;--te-text-inv:#F5F5F5;--te-text-inv-m:#999;
+  --te-border:#D5D5D5;--te-border-l:#E8E8E8;--te-border-d:#333;
+  --te-sale:#CC0000;
+  --te-font:"Helvetica Neue","Arial",-apple-system,sans-serif;
+  --c:100vw;
+  --xs:calc(var(--c)*0.00918);--sm:calc(var(--c)*0.01327);--base:calc(var(--c)*0.01837);
+  --lg:calc(var(--c)*0.02755);--xl:calc(var(--c)*0.03673);--xxl:calc(var(--c)*0.05);
+  --disp:calc(var(--c)*0.07);
+  --w-thin:200;--w-light:300;
+  --max:980px;--margin:4.59%;--gutter:10px;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--te-font);font-weight:var(--w-light);font-size:var(--base);line-height:1.2;color:var(--te-text);background:var(--te-bg)}
+a{color:var(--te-text);text-decoration:none;transition:opacity 200ms ease}
+a:hover{opacity:.6}
+img{max-width:100%;display:block}
+
+.c{max-width:var(--max);margin:0 auto;padding:0 var(--margin)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter)}
+.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+
+.thin{font-weight:var(--w-thin)}.light{font-weight:var(--w-light)}
+.s-text{color:var(--te-text-s)}.t-text{color:var(--te-text-t)}
+.disp{font-size:var(--disp);font-weight:var(--w-thin);line-height:1.02;letter-spacing:-.01em}
+.xxl{font-size:var(--xxl);font-weight:var(--w-thin);line-height:1.05}
+.xl-text{font-size:var(--xl);font-weight:var(--w-light);line-height:1.1}
+.lg-text{font-size:var(--lg);font-weight:var(--w-light);line-height:1.1}
+.base-text{font-size:var(--base);font-weight:var(--w-light);line-height:1.2}
+.sm-text{font-size:var(--sm);font-weight:var(--w-light);line-height:1.22}
+.xs-text{font-size:var(--xs);font-weight:var(--w-light);line-height:1.35}
+
+hr{border:none;border-top:1px solid var(--te-border);margin:40px 0}
+hr.flush{margin:0}hr.section{margin:60px 0}hr.light{border-top-color:var(--te-border-l)}
+
+/* nav */
+.nav{padding:20px 0}
+.nav__inner{display:flex;align-items:baseline;justify-content:space-between}
+.nav__logo{font-size:var(--sm);font-weight:var(--w-light);letter-spacing:.02em}
+.nav__links{display:flex;gap:40px}
+.nav__link{font-size:var(--sm);font-weight:var(--w-light)}
+
+/* spec table */
+.spec-t{width:100%;border-collapse:collapse}
+.spec-t td{font-size:var(--sm);font-weight:var(--w-light);padding:10px 0;border-bottom:1px solid var(--te-border-l);vertical-align:top}
+.spec-t .lbl{color:var(--te-text-s);width:40%;padding-right:20px}
+.spec-t--dark td{border-bottom-color:var(--te-border-d);color:var(--te-text-inv)}
+.spec-t--dark .lbl{color:var(--te-text-inv-m)}
+
+/* feature list */
+.feat{padding:15px 0;border-bottom:1px solid var(--te-border)}
+.feat:first-child{border-top:1px solid var(--te-border)}
+
+/* metric */
+.metric__v{font-size:var(--xxl);font-weight:var(--w-thin);line-height:1;display:block;letter-spacing:-.02em}
+.metric__l{font-size:var(--xs);font-weight:var(--w-light);color:var(--te-text-s);margin-top:6px;display:block}
+
+/* dark */
+.dark{background:var(--te-bg-dark);color:var(--te-text-inv)}
+.dark a{color:var(--te-text-inv)}
+.dark .s-text{color:var(--te-text-inv-m)}
+.dark .t-text{color:var(--te-text-inv-m)}
+.dark hr{border-top-color:var(--te-border-d)}
+
+/* quote */
+.quote{padding:40px 0}
+.quote__text{font-size:var(--lg);font-weight:var(--w-thin);line-height:1.15;max-width:640px;margin-bottom:16px}
+.quote__cite{font-size:var(--sm);font-weight:var(--w-light);color:var(--te-text-s);font-style:normal}
+
+/* cta */
+.cta{font-size:var(--sm);font-weight:var(--w-light);text-decoration:underline}
+
+/* logos */
+.logos{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:40px;padding:30px 0}
+.logos span{font-size:var(--sm);font-weight:var(--w-light);color:var(--te-text-t)}
+
+/* code */
+.code-panel{background:var(--te-bg-dark);color:var(--te-text-inv);padding:30px;font-family:"SF Mono","Menlo","Courier New",monospace;font-size:var(--xs);line-height:1.7;overflow-x:auto}
+
+/* check */
+.chk{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--te-border-l);font-size:var(--sm);font-weight:var(--w-light)}
+.chk__mark{width:12px;height:12px;border:1px solid var(--te-border);display:inline-flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0}
+.chk__mark--done{background:var(--te-text);color:var(--te-bg);border-color:var(--te-text)}
+
+/* bar chart */
+.bars{display:flex;align-items:flex-end;gap:2px;height:100px;padding-bottom:0}
+.bars div{flex:1;background:var(--te-text);transition:height 300ms ease}
+
+/* footer */
+.footer{padding:40px 0}
+.footer__inner{display:flex;justify-content:space-between;align-items:baseline;padding-top:15px}
+.footer__links{display:flex;gap:30px}
+.footer__links a{font-size:var(--xs);font-weight:var(--w-light);color:var(--te-text-inv-m)}
+.footer__grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:40px}
+.footer__heading{font-size:var(--xs);font-weight:var(--w-light);color:var(--te-text-inv-m);margin-bottom:10px;text-transform:lowercase}
+.footer__link{display:block;font-size:var(--sm);font-weight:var(--w-light);color:var(--te-text-inv);padding:2px 0}
+
+/* node grid */
+.nodes{display:grid;grid-template-columns:repeat(20,1fr);gap:1px;background:var(--te-border-d);border:1px solid var(--te-border-d)}
+.nodes span{background:var(--te-bg-dark);font-size:7px;color:var(--te-text-inv-m);text-align:center;padding:6px 0;font-family:monospace}
+.nodes span.on{color:var(--te-text-inv);background:#1a1a1a}
+
+/* responsive */
+@media(max-width:980px){
+  :root{--xs:calc(var(--c)*0.0138);--sm:calc(var(--c)*0.0199);--base:calc(var(--c)*0.0276);--lg:calc(var(--c)*0.0413);--xl:calc(var(--c)*0.0551)}
+  .col-4,.col-6{grid-column:span 12}
+  .footer__grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .c{padding:0 20px}
+  .nav__links{gap:20px}
+  .logos{gap:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- nav -->
+<nav class="nav"><div class="c"><div class="nav__inner">
+  <a href="#" class="nav__logo">enigma</a>
+  <div class="nav__links">
+    <a href="#" class="nav__link">solutions</a>
+    <a href="#" class="nav__link">products</a>
+    <a href="#" class="nav__link">resources</a>
+    <a href="#" class="nav__link">pricing</a>
+    <a href="#" class="nav__link">sign up</a>
+  </div>
+</div></div></nav>
+
+<!-- hero -->
+<section style="padding:60px 0 40px"><div class="c">
+  <h1 class="disp">trusted business data.</h1>
+  <p class="base-text s-text" style="max-width:560px;margin-top:16px">
+    enigma provides foundational data on businesses, built on unparalleled entity identity, real-time signals, and synthesized intelligence.
+  </p>
+  <div style="margin-top:24px;display:flex;gap:24px">
+    <a href="#" class="cta">get started</a>
+    <a href="#" class="cta">learn more</a>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- logos -->
+<section style="padding:20px 0"><div class="c">
+  <div class="logos">
+    <span>capital one</span><span>chase</span><span>shopify</span><span>ramp</span>
+    <span>crossbeam</span><span>alloy</span><span>capitalstrategy</span><span>bill</span>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- programmatic intelligence -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:8px">programmatic intelligence for every growth engine.</h2>
+  <p class="sm-text s-text" style="max-width:560px;margin-bottom:32px">connect to every data signal that matters. match, enrich, and score business entities in real time.</p>
+
+  <div class="grid">
+    <div class="col-6" style="padding:24px 24px 24px 0">
+      <p class="sm-text" style="margin-bottom:6px;font-weight:var(--w-thin)">intelligence for your systems</p>
+      <p class="xs-text s-text" style="max-width:360px;margin-bottom:12px">enigma is a system-to-system product. real-time API access with sub-second response times for matching, enrichment, and scoring at scale.</p>
+      <a href="#" class="cta">start building with enigma</a>
+    </div>
+    <div class="col-6">
+      <div class="code-panel">
+        <div style="color:var(--te-text-inv-m);margin-bottom:8px">// api reference</div>
+query matchBusiness {
+  match(
+    name: "Acme Corp"
+    city: "New York"
+    state: "NY"
+  ) {
+    enigmaId
+    revenue
+    employeeCount
+    riskScore
+  }
+}
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- gtm solutions -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:24px">gtm solutions.</h2>
+
+  <div class="grid" style="margin-bottom:32px">
+    <div class="col-4">
+      <p class="sm-text" style="margin-bottom:4px">pinpoint your next best customer.</p>
+      <p class="xs-text s-text">use enigma's total addressable market data to identify your ideal customer profile with precision.</p>
+    </div>
+    <div class="col-4">
+      <p class="sm-text" style="margin-bottom:4px">define your customer profile.</p>
+      <p class="xs-text s-text">build high-fidelity segments using firmographic, transaction, and behavioral signals.</p>
+    </div>
+    <div class="col-4">
+      <p class="sm-text" style="margin-bottom:4px">refine your ideal match.</p>
+      <p class="xs-text s-text">continuously improve your CRM with real-time enrichment. keep data fresh and targeting sharp.</p>
+    </div>
+  </div>
+
+  <div class="feat"><span class="sm-text">discover more leads. build your complete addressable market with comprehensive entity coverage.</span></div>
+  <div class="feat"><span class="sm-text">enrich your pipeline. fill CRM gaps with firmographic, financial, and behavioral data.</span></div>
+  <div class="feat"><span class="sm-text">score with confidence. prioritize using proprietary models built on ground-truth transaction data.</span></div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- testimonial -->
+<section style="padding:40px 0"><div class="c">
+  <blockquote class="quote">
+    <p class="quote__text">"enigma's data helps our team identify the leads that precisely match our ideal customer profile."</p>
+    <cite class="quote__cite">— rob hamlin, head of data, chase partner</cite>
+  </blockquote>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- ground truth for payments -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:24px">ground truth for payments leaders.</h2>
+
+  <div class="grid" style="border-top:1px solid var(--te-border);border-bottom:1px solid var(--te-border);padding:24px 0">
+    <div class="col-3"><span class="metric__v">346M</span><span class="metric__l">card transactions</span></div>
+    <div class="col-3"><span class="metric__v">97%</span><span class="metric__l">merchant match rate</span></div>
+    <div class="col-3"><span class="metric__v">24M+</span><span class="metric__l">us businesses tracked</span></div>
+    <div class="col-3"><span class="metric__v">27%</span><span class="metric__l">conversion lift</span></div>
+  </div>
+
+  <div class="grid" style="margin-top:32px">
+    <div class="col-6">
+      <p class="sm-text" style="margin-bottom:4px">maximize merchant share of wallet.</p>
+      <p class="xs-text s-text">enigma's merchant intelligence signals let you identify real-time wallet share opportunity across your portfolio.</p>
+    </div>
+    <div class="col-6">
+      <p class="sm-text" style="margin-bottom:4px">access the largest card panel about merchants.</p>
+      <p class="xs-text s-text">the most complete set of card transaction data and merchant analytics, covering billions of annual transactions.</p>
+    </div>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- conversion rates -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:24px">conversion rates.</h2>
+
+  <div class="grid">
+    <div class="col-6" style="padding-right:24px">
+      <p class="xs-text t-text" style="margin-bottom:8px">without enigma</p>
+      <span class="metric__v" style="margin-bottom:8px;display:block">1.8%</span>
+      <p class="xs-text s-text" style="margin-bottom:16px">industry baseline using traditional data sources.</p>
+      <table class="spec-t">
+        <tr><td class="lbl">applications</td><td>10,000</td></tr>
+        <tr><td class="lbl">approved</td><td>180</td></tr>
+        <tr><td class="lbl">data sources</td><td>3</td></tr>
+      </table>
+    </div>
+    <div class="col-6" style="border-left:1px solid var(--te-text);padding-left:24px">
+      <p class="xs-text t-text" style="margin-bottom:8px">with enigma</p>
+      <span class="metric__v" style="margin-bottom:8px;display:block">4.2%</span>
+      <p class="xs-text s-text" style="margin-bottom:16px">enigma-enriched decisioning with real-time signals.</p>
+      <table class="spec-t">
+        <tr><td class="lbl">applications</td><td>10,000</td></tr>
+        <tr><td class="lbl">approved</td><td>420</td></tr>
+        <tr><td class="lbl">data sources</td><td>12+</td></tr>
+      </table>
+    </div>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- kyb & onboarding -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:24px">kyb &amp; onboarding.</h2>
+
+  <div class="grid">
+    <div class="col-6" style="padding-right:24px">
+      <p class="sm-text" style="margin-bottom:4px">cut operational overhead.</p>
+      <p class="xs-text s-text" style="margin-bottom:12px">validate entity identity, confirm registration, and verify beneficial ownership in a single API call.</p>
+      <a href="#" class="cta">learn more</a>
+    </div>
+    <div class="col-6" style="background:var(--te-bg-mid);padding:24px">
+      <p class="xs-text t-text" style="margin-bottom:12px">verification flow</p>
+      <div class="chk"><span class="chk__mark chk__mark--done">&#10003;</span> business identity verified</div>
+      <div class="chk"><span class="chk__mark chk__mark--done">&#10003;</span> EIN / secretary of state match</div>
+      <div class="chk"><span class="chk__mark chk__mark--done">&#10003;</span> beneficial ownership confirmed</div>
+      <div class="chk"><span class="chk__mark"></span> <span class="t-text">sanctions screening pending</span></div>
+      <hr class="light" style="margin:12px 0">
+      <table class="spec-t" style="font-size:var(--xs)">
+        <tr><td class="lbl">entity</td><td>T.J. Maxx LLC</td></tr>
+        <tr><td class="lbl">EIN</td><td>04-27*****</td></tr>
+      </table>
+    </div>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- customer & transaction screening -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:8px">customer &amp; transaction screening.</h2>
+  <p class="sm-text s-text" style="max-width:520px;margin-bottom:24px">meet your sanctions screening needs cost-effectively with always-current entity intelligence.</p>
+
+  <div class="grid" style="border-top:1px solid var(--te-border);border-bottom:1px solid var(--te-border);padding:24px 0">
+    <div class="col-4"><span class="metric__v" style="font-size:var(--xl)">real-time</span><span class="metric__l">screening updates</span></div>
+    <div class="col-4"><span class="metric__v" style="font-size:var(--xl)">OFAC</span><span class="metric__l">sanctions coverage</span></div>
+    <div class="col-4"><span class="metric__v" style="font-size:var(--xl)">50ms</span><span class="metric__l">avg response time</span></div>
+  </div>
+</div></section>
+
+<div class="c"><hr class="section"></div>
+
+<!-- identity graph -->
+<section class="dark" style="padding:48px 0"><div class="c">
+  <div style="text-align:center;margin-bottom:32px">
+    <h2 class="xl-text" style="margin-bottom:8px">the enigma identity graph.</h2>
+    <p class="sm-text" style="color:var(--te-text-inv-m)">a single source of truth for every us business.</p>
+  </div>
+
+  <p class="sm-text" style="color:var(--te-text-inv-m);max-width:560px;margin:0 auto 32px;text-align:center">billions of data records across filings, transactions, and registrations, resolved into a single canonical identity for every business.</p>
+
+  <!-- node graph -->
+  <div class="nodes" style="max-width:600px;margin:0 auto 24px">
+    <span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span>
+    <span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span>
+    <span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span>
+    <span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span><span>.</span><span class="on">&#9632;</span><span>.</span><span>.</span>
+  </div>
+  <p class="xs-text" style="text-align:center;color:var(--te-text-inv-m)">entity resolution topology — 24M+ nodes</p>
+
+  <hr style="margin:32px 0;border-top-color:var(--te-border-d)">
+
+  <div class="grid">
+    <div class="col-4">
+      <p class="sm-text" style="margin-bottom:4px">comprehensive linking.</p>
+      <p class="xs-text" style="color:var(--te-text-inv-m)">we link across 50+ data sources to build a unified entity record.</p>
+    </div>
+    <div class="col-4">
+      <p class="sm-text" style="margin-bottom:4px">a unified profile.</p>
+      <p class="xs-text" style="color:var(--te-text-inv-m)">every entity resolves to one canonical enigma ID with full firmographic data.</p>
+    </div>
+    <div class="col-4">
+      <p class="sm-text" style="margin-bottom:4px">always current.</p>
+      <p class="xs-text" style="color:var(--te-text-inv-m)">continuous ingestion ensures your data reflects reality, not stale snapshots.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- explore data -->
+<section style="padding:40px 0"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:24px">explore enigma data.</h2>
+
+  <table class="spec-t" style="margin-bottom:32px">
+    <tr><td class="lbl">small business</td><td>revenue under $10M — all NAICS codes</td></tr>
+    <tr><td class="lbl">restaurants</td><td>780,000+ entities — NAICS 722511</td></tr>
+    <tr><td class="lbl">healthcare</td><td>providers &amp; practices — NAICS 621xxx</td></tr>
+    <tr><td class="lbl">retail</td><td>physical &amp; e-commerce — NAICS 44-45</td></tr>
+  </table>
+
+  <!-- chart -->
+  <div style="background:var(--te-bg-mid);padding:24px">
+    <p class="xs-text t-text" style="margin-bottom:12px">data growth — entities indexed (2020–2025)</p>
+    <div class="bars" style="margin-bottom:8px">
+      <div style="height:28%"></div><div style="height:34%"></div><div style="height:38%"></div>
+      <div style="height:44%"></div><div style="height:48%"></div><div style="height:53%"></div>
+      <div style="height:58%"></div><div style="height:62%"></div><div style="height:67%"></div>
+      <div style="height:73%"></div><div style="height:80%"></div><div style="height:88%"></div>
+      <div style="height:95%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between">
+      <span class="xs-text t-text">2020</span><span class="xs-text t-text">2021</span>
+      <span class="xs-text t-text">2022</span><span class="xs-text t-text">2023</span>
+      <span class="xs-text t-text">2024</span><span class="xs-text t-text">2025</span>
+    </div>
+  </div>
+</div></section>
+
+<div class="c"><hr></div>
+
+<!-- cta -->
+<section style="padding:40px 0;text-align:center"><div class="c">
+  <h2 class="xl-text" style="margin-bottom:8px">get started with enigma.</h2>
+  <p class="sm-text s-text" style="max-width:480px;margin:0 auto 24px">see how ground-truth business data can power your growth, risk, and compliance workflows.</p>
+  <div style="display:flex;gap:24px;justify-content:center">
+    <a href="#" class="cta">request demo</a>
+    <a href="#" class="cta">documentation</a>
+  </div>
+</div></section>
+
+<div class="c"><hr class="flush"></div>
+
+<!-- footer -->
+<div class="dark"><div class="c"><div class="footer">
+  <div class="footer__grid">
+    <div>
+      <p class="sm-text" style="margin-bottom:8px">enigma</p>
+      <p class="xs-text" style="color:var(--te-text-inv-m);max-width:240px">the source of truth for business data. foundational intelligence for growth, risk, and compliance.</p>
+    </div>
+    <div>
+      <div class="footer__heading">products</div>
+      <a href="#" class="footer__link">data solutions</a>
+      <a href="#" class="footer__link">api platform</a>
+      <a href="#" class="footer__link">identity graph</a>
+      <a href="#" class="footer__link">enrichment</a>
+    </div>
+    <div>
+      <div class="footer__heading">solutions</div>
+      <a href="#" class="footer__link">gtm intelligence</a>
+      <a href="#" class="footer__link">payments</a>
+      <a href="#" class="footer__link">kyb &amp; onboarding</a>
+      <a href="#" class="footer__link">screening</a>
+    </div>
+    <div>
+      <div class="footer__heading">company</div>
+      <a href="#" class="footer__link">about</a>
+      <a href="#" class="footer__link">careers</a>
+      <a href="#" class="footer__link">blog</a>
+      <a href="#" class="footer__link">contact</a>
+    </div>
+  </div>
+  <div class="footer__inner">
+    <span class="xs-text" style="color:var(--te-text-inv-m)">&copy; enigma technologies 2026. all rights reserved.</span>
+    <div class="footer__links">
+      <a href="#">privacy</a><a href="#">terms</a><a href="#">security</a>
+    </div>
+  </div>
+</div></div></div>
+
+</body>
+</html>

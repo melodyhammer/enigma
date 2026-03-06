@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trusted Business Data | Enigma — Entity Agent Tools Style</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+:root{
+  --bg:#f5f3f0;
+  --fg:#0a0a0a;
+  --muted:#737373;
+  --border:#ddd9d3;
+  --card:#ffffff;
+  --accent:#10b981;
+  --accent-dim:rgba(16,185,129,0.08);
+  --golden:#fbb705;
+  --coral:#fd6a3d;
+  --teal:#00cb9f;
+  --blue:#4ebcff;
+  --red:#a80012;
+  --mono:"Fira Code","Berkeley Mono","SF Mono",monospace;
+  --sans:"Inter",-apple-system,sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:13px;line-height:1.5;position:relative;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--fg) 1px,transparent 1px),linear-gradient(90deg,var(--fg) 1px,transparent 1px);background-size:60px 60px;opacity:0.025;pointer-events:none;z-index:0;}
+.container{max-width:1200px;margin:0 auto;padding:0 32px;position:relative;z-index:1;}
+
+/* NAV DOTS */
+.nav-dots{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:100;display:none;}
+@media(min-width:1025px){
+.nav-dots{display:flex;gap:6px;top:28px;transform:translateX(-50%);background:rgba(245,243,240,0.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:100px;padding:6px 10px;}
+}
+.nav-dot{width:6px;height:6px;border-radius:50%;border:1px solid var(--muted);background:transparent;cursor:pointer;transition:all .15s;}
+.nav-dot:hover{border-color:var(--fg);}
+.nav-dot.active{background:var(--accent);border-color:var(--accent);transform:scale(1.3);box-shadow:0 0 6px var(--accent);}
+
+/* FIXED ELEMENTS */
+.fixed-logo{position:fixed;top:28px;left:28px;z-index:90;font:700 16px var(--mono);color:var(--fg);letter-spacing:0.08em;text-transform:lowercase;}
+.fixed-counter{position:fixed;bottom:28px;right:28px;z-index:90;font:600 11px var(--mono);color:var(--muted);}
+.fixed-nav{position:fixed;top:28px;right:28px;z-index:90;display:flex;gap:16px;}
+.fixed-nav a{font:500 10px var(--sans);color:var(--muted);text-decoration:none;text-transform:uppercase;letter-spacing:0.06em;transition:color .15s;}
+.fixed-nav a:hover{color:var(--fg);}
+.cta-sm{padding:5px 14px;border:1px solid var(--border);font:600 10px var(--mono);color:var(--fg);text-decoration:none;transition:all .15s;}
+.cta-sm:hover{border-color:var(--accent);color:var(--accent);}
+.cta-sm.filled{background:var(--fg);color:var(--bg);border-color:var(--fg);}
+
+/* SECTIONS */
+section{min-height:100vh;scroll-snap-align:start;padding:80px 0;position:relative;display:flex;align-items:center;}
+section .section-inner{width:100%;}
+.section-num{position:absolute;top:32px;left:32px;font:700 clamp(48px,12vw,140px) var(--mono);opacity:0.04;line-height:1;pointer-events:none;z-index:-1;}
+
+/* HERO (dark) */
+.hero{background:var(--fg);color:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 32px;position:relative;overflow:hidden;}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;}
+.hero-content{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid rgba(255,255,255,0.12);margin-bottom:28px;font-size:11px;}
+.hero-badge code{color:var(--accent);}
+.hero-badge span{color:rgba(255,255,255,0.5);font-family:var(--sans);}
+.hero h1{font-size:clamp(40px,8vw,80px);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;line-height:1.05;margin-bottom:20px;}
+.hero>p{max-width:600px;margin:0 auto 28px;font:400 14px/1.7 var(--sans);color:rgba(255,255,255,0.6);}
+.hero-cta{display:inline-flex;padding:12px 28px;background:var(--bg);color:var(--fg);font:600 12px var(--mono);text-decoration:none;transition:opacity .15s;}
+.hero-cta:hover{opacity:0.85;}
+.scroll-hint{position:absolute;bottom:28px;font:400 9px var(--mono);color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;animation:sb 2s ease-in-out infinite;}
+@keyframes sb{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* COMPARISON */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.comp-card{background:var(--card);border:1px solid var(--border);padding:28px;}
+.comp-card.highlight{border-color:var(--accent);border-top:3px solid var(--accent);background:linear-gradient(180deg,var(--accent-dim),var(--card) 60px);}
+.comp-card h3{font:600 14px var(--mono);text-transform:uppercase;margin-bottom:16px;}
+.comp-metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font:400 11px var(--mono);}
+.comp-metric .label{color:var(--muted);}
+.comp-metric .val{font-weight:600;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);}
+.stat-card{background:var(--bg);padding:24px;text-align:center;}
+.stat-num{font:700 clamp(20px,3vw,32px) var(--mono);line-height:1;}
+.stat-lbl{font:400 10px var(--sans);color:var(--muted);margin-top:6px;}
+
+/* FEATURE */
+.feat{display:grid;grid-template-columns:1fr 2fr;gap:12px;}
+.feat.rev{grid-template-columns:2fr 1fr;}
+.feat.rev .f-txt{order:2;}.feat.rev .f-viz{order:1;}
+.f-txt{padding:28px;display:flex;flex-direction:column;justify-content:center;}
+.f-eye{font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.f-txt h3{font:700 16px/1.3 var(--mono);margin-bottom:12px;}
+.f-txt p{font:400 12px/1.6 var(--sans);color:var(--muted);margin-bottom:14px;}
+.f-link{font:600 10px var(--mono);color:var(--fg);text-decoration:none;text-transform:uppercase;letter-spacing:0.04em;transition:color .15s;}
+.f-link:hover{color:var(--accent);}
+.f-link::after{content:' \2192';}
+.f-viz{background:var(--fg);border:1px solid var(--border);min-height:340px;padding:24px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+
+/* TERMINAL */
+.terminal{width:100%;font:400 11px/1.8 var(--mono);color:#fff;}
+.t-dots{display:flex;gap:5px;margin-bottom:10px;}
+.t-dots span{width:7px;height:7px;border-radius:50%;}
+.t-dots span:nth-child(1){background:#ff5f57;}.t-dots span:nth-child(2){background:#ffbd2e;}.t-dots span:nth-child(3){background:#28c840;}
+.t-ln{color:rgba(255,255,255,0.25);margin-right:8px;user-select:none;}
+.t-kw{color:var(--coral);}.t-str{color:var(--teal);}.t-id{color:var(--blue);}
+
+/* OVERLAY */
+.ov{position:absolute;bottom:10px;right:10px;width:210px;background:var(--bg);border:1px solid var(--border);padding:12px;color:var(--fg);}
+.ov-t{font:600 7px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;}
+.pills{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;}
+.pill{font:400 8px var(--mono);padding:2px 6px;border:1px solid var(--border);color:var(--muted);}
+.pill.g{border-color:rgba(16,185,129,0.4);color:var(--accent);}
+
+/* BIZ CARDS */
+.biz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.biz-card{background:var(--card);border:1px solid var(--border);overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.biz-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
+.biz-header{padding:16px;min-height:60px;position:relative;background:var(--fg);color:var(--bg);}
+.biz-header h4{font:600 12px var(--mono);}.biz-header p{font:400 9px var(--sans);color:rgba(255,255,255,0.5);margin-top:2px;}
+.biz-mono{position:absolute;top:10px;right:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font:600 11px var(--mono);color:rgba(255,255,255,0.3);}
+.biz-body{padding:12px 16px;}
+.biz-row{display:grid;grid-template-columns:50px 1fr 20px 1fr;gap:4px;padding:5px 0;border-bottom:1px solid var(--border);font:400 10px var(--mono);align-items:center;}
+.biz-row:last-child{border:none;}
+.biz-row .rlbl{color:var(--muted);font-size:8px;text-transform:uppercase;}
+.biz-row .rval{font-weight:500;}
+.biz-row .rvs{color:var(--muted);text-align:center;font-size:8px;}
+.biz-row .rweb{color:var(--muted);font-size:10px;}
+.speed-badge{display:inline-block;background:var(--accent);color:#fff;padding:1px 5px;font:700 8px var(--mono);border-radius:1px;}
+
+/* DARK SECTION */
+.dark-sec{background:var(--fg);color:var(--bg);}
+.dark-sec .f-txt h3{color:var(--bg);}.dark-sec .f-txt p{color:rgba(255,255,255,0.5);}
+.dark-sec .f-eye{color:rgba(255,255,255,0.35);}
+.dark-sec .f-link{color:var(--bg);}
+.dark-sec .f-viz{background:#111;border-color:rgba(255,255,255,0.08);}
+
+/* ARCH STACK */
+.stack{display:flex;flex-direction:column;gap:2px;max-width:600px;margin:24px auto 0;}
+.stack-layer{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;font:500 11px var(--mono);color:#fff;border-radius:2px;}
+.stack-layer .s-lbl{font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+.stack-layer .s-detail{font-size:9px;opacity:0.7;}
+.stack-layer .s-comp{font-size:9px;opacity:0.5;text-transform:uppercase;}
+
+/* IDENTITY */
+.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--border);margin-top:20px;}
+.id-col{padding:28px 0;}
+.id-col h3{font:700 14px/1.3 var(--mono);margin-bottom:10px;}
+.id-col p{font:400 11px/1.6 var(--sans);color:var(--muted);margin-bottom:10px;}
+
+/* CTA */
+.cta-banner{background:var(--fg);border:1px solid var(--border);padding:64px 32px;text-align:center;position:relative;overflow:hidden;border-radius:2px;}
+.cta-banner .eye{font:400 9px var(--mono);color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;}
+.cta-banner h2{font:700 24px var(--mono);color:var(--golden);margin-bottom:10px;}
+.cta-banner>p{font:400 12px var(--sans);color:rgba(255,255,255,0.5);margin-bottom:22px;}
+.cta-btns{display:flex;gap:10px;justify-content:center;}
+.cta-ghost{padding:8px 20px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font:500 11px var(--mono);cursor:pointer;}
+.cta-gold{padding:8px 20px;border:1px solid var(--golden);background:var(--golden);color:var(--fg);font:600 11px var(--mono);cursor:pointer;}
+
+/* FOOTER */
+footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 24px;}
+.ft-grid{display:grid;grid-template-columns:1.5fr 1.25fr .75fr .75fr .75fr;gap:24px;margin-bottom:28px;}
+.ft-logo{font:700 18px var(--mono);color:var(--fg);letter-spacing:0.08em;text-transform:lowercase;}
+.ft-title{font:600 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:14px;}
+.ft-col a{display:block;font:400 11px var(--sans);color:var(--muted);text-decoration:none;margin-bottom:6px;transition:color .15s;}
+.ft-col a:hover{color:var(--fg);}
+.ft-bottom{border-top:1px solid var(--border);padding-top:14px;display:flex;justify-content:space-between;}
+.ft-legal,.ft-social{display:flex;gap:12px;}
+.ft-legal a,.ft-social a{font:400 9px var(--mono);color:var(--muted);opacity:0.4;text-decoration:none;}
+
+/* ANIMATE */
+.anim{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1);}
+.anim.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:768px){
+  section{min-height:auto;scroll-snap-align:none;}
+  .comp-grid,.feat,.feat.rev,.biz-grid,.id-grid{grid-template-columns:1fr;}
+  .feat.rev .f-txt{order:1;}.feat.rev .f-viz{order:2;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .ft-grid{grid-template-columns:1fr 1fr;}
+  .fixed-nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- FIXED UI -->
+<div class="fixed-logo">enigma</div>
+<div class="fixed-counter"><span id="counter">01</span> / 10</div>
+<div class="fixed-nav">
+  <a href="#">Data</a><a href="#">Solutions</a><a href="#">Developers</a><a href="#">Resources</a>
+  <a href="#" class="cta-sm">Contact Us</a><a href="#" class="cta-sm filled">Sign In</a>
+</div>
+<div class="nav-dots" id="navDots"></div>
+
+<!-- 01 HERO -->
+<section class="hero" id="s1">
+  <canvas id="glitch"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge"><code>Enigma + Your AI</code><span>Try the Enigma AI Connector MCP server</span></div>
+    <h1>Trusted<br>Business Data</h1>
+    <p>Authoritative business data APIs for AI agents. The foundation layer for faster, more accurate entity enrichment.</p>
+    <a href="#" class="hero-cta">Get Started &rarr;</a>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</section>
+
+<div class="container">
+
+<!-- 02 CONTEXT -->
+<section id="s2"><div class="section-inner anim">
+  <div class="section-num">02</div>
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">02</div>
+    <h2 style="font:600 clamp(20px,3vw,28px) var(--mono);">Two approaches to entity research</h2>
+  </div>
+  <div class="comp-grid">
+    <div class="comp-card">
+      <h3>Web Research</h3>
+      <div class="comp-metric"><span class="label">Response time</span><span class="val">30s – 5min typical</span></div>
+      <div class="comp-metric"><span class="label">Revenue data</span><span class="val">Scraped estimates</span></div>
+      <div class="comp-metric"><span class="label">Verification</span><span class="val">Unreliable</span></div>
+      <div class="comp-metric"><span class="label">Coverage</span><span class="val">SEO-dependent</span></div>
+    </div>
+    <div class="comp-card highlight">
+      <h3>Knowledge Graph</h3>
+      <div class="comp-metric"><span class="label">Response time</span><span class="val" style="color:var(--accent);">~0.4s API call</span></div>
+      <div class="comp-metric"><span class="label">Revenue data</span><span class="val" style="color:var(--accent);">Card transactions</span></div>
+      <div class="comp-metric"><span class="label">Verification</span><span class="val" style="color:var(--accent);">Gov registrations</span></div>
+      <div class="comp-metric"><span class="label">Coverage</span><span class="val" style="color:var(--accent);">112M entities</span></div>
+    </div>
+  </div>
+  <p style="text-align:center;font:400 11px var(--sans);color:var(--muted);margin-top:16px;max-width:560px;margin-left:auto;margin-right:auto;">Key differentiator: Revenue data from card transactions, not web estimates. Legal entity verification against government registrations, not scraped databases.</p>
+</div></section>
+
+<!-- 03 DATA FOUNDATION -->
+<section id="s3"><div class="section-inner anim">
+  <div class="section-num">03</div>
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">03</div>
+    <h2 style="font:600 clamp(20px,3vw,28px) var(--mono);">The Data Foundation</h2>
+    <p style="font:400 12px var(--sans);color:var(--muted);max-width:520px;margin:10px auto 0;">Perpetually updating source of truth for US businesses.</p>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num">112M</div><div class="stat-lbl">Legal Entities</div></div>
+    <div class="stat-card"><div class="stat-num">33M</div><div class="stat-lbl">Brands</div></div>
+    <div class="stat-card"><div class="stat-num">27M</div><div class="stat-lbl">Locations</div></div>
+    <div class="stat-card"><div class="stat-num">80M</div><div class="stat-lbl">Persons</div></div>
+    <div class="stat-card"><div class="stat-num">2B+</div><div class="stat-lbl">Gov Records</div></div>
+  </div>
+</div></section>
+
+<!-- 04 ENTITY EXPANSION -->
+<section id="s4"><div class="section-inner anim">
+  <div class="section-num">04</div>
+  <div class="feat">
+    <div class="f-txt">
+      <span class="f-eye">Integrate</span>
+      <h3>Intelligence for your systems, not ours</h3>
+      <p>Use our flexible GraphQL API to stream intelligence directly into your CRM or custom applications.</p>
+      <a href="#" class="f-link">Start Building with Enigma</a>
+    </div>
+    <div class="f-viz">
+      <div class="terminal">
+        <div class="t-dots"><span></span><span></span><span></span></div>
+<pre><span class="t-ln"> 1</span><span class="t-kw">query</span> MatchBusiness {
+<span class="t-ln"> 2</span>  <span class="t-id">search</span>(searchInput: {
+<span class="t-ln"> 3</span>    name: <span class="t-str">"Tacombi"</span>,
+<span class="t-ln"> 4</span>    address: {city: <span class="t-str">"New York"</span>,
+<span class="t-ln"> 5</span>      state: <span class="t-str">"NY"</span>},
+<span class="t-ln"> 6</span>    entityType: <span class="t-kw">BRAND</span>}) {
+<span class="t-ln"> 7</span>      ... on <span class="t-id">Brand</span> {
+<span class="t-ln"> 8</span>        enigmaId
+<span class="t-ln"> 9</span>        names(first: <span class="t-str">5</span>)
+<span class="t-ln">10</span>        totalLocations
+<span class="t-ln">11</span>  }
+<span class="t-ln">12</span>}</pre>
+      </div>
+      <div class="ov">
+        <div class="ov-t">Entity Type</div>
+        <div class="pills"><span class="pill">+ Brands</span><span class="pill">+ Locations</span><span class="pill">+ Legal</span></div>
+        <div class="ov-t">Search</div>
+        <div class="pills"><span class="pill g">+ Name</span><span class="pill g">+ Address</span><span class="pill g">+ City</span><span class="pill">+ Website</span></div>
+        <div class="ov-t">Status</div>
+        <div class="pills"><span class="pill g">+ Open</span><span class="pill g">+ Closed</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 05 TEST EXAMPLES -->
+<section id="s5"><div class="section-inner anim">
+  <div class="section-num">05</div>
+  <div style="text-align:center;margin-bottom:28px;">
+    <span style="display:inline-block;padding:3px 10px;background:var(--golden);color:var(--fg);font:700 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;">Data powering ABM</span>
+    <h2 style="font:600 clamp(20px,3vw,28px) var(--mono);margin-top:14px;">GTM Solutions</h2>
+  </div>
+  <div class="biz-grid">
+    <div class="biz-card">
+      <div class="biz-header"><h4>Consignment Brooklyn</h4><p>BUTTER CONSIGNMENT LLC</p><div class="biz-mono">CB</div></div>
+      <div class="biz-body">
+        <div class="biz-row"><span class="rlbl">Brand</span><span class="rval">CONSIGNMENT BROOKLYN</span><span class="rvs">vs</span><span class="rweb">Consignment Brooklyn</span></div>
+        <div class="biz-row"><span class="rlbl">Revenue</span><span class="rval">$872,738</span><span class="rvs">vs</span><span class="rweb">$251,531</span></div>
+        <div class="biz-row"><span class="rlbl">Speed</span><span class="rval">0.44s</span><span class="rvs">vs</span><span class="rweb">32.1s <span class="speed-badge">73&times;</span></span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header"><h4>Odd Sister</h4><p>45 MERCER RESTAURANT LLC</p><div class="biz-mono">OS</div></div>
+      <div class="biz-body">
+        <div class="biz-row"><span class="rlbl">Brand</span><span class="rval">ODD SISTER</span><span class="rvs">vs</span><span class="rweb">Galli</span></div>
+        <div class="biz-row"><span class="rlbl">Revenue</span><span class="rval">$2,490,785</span><span class="rvs">vs</span><span class="rweb">Not found</span></div>
+        <div class="biz-row"><span class="rlbl">Speed</span><span class="rval">0.33s</span><span class="rvs">vs</span><span class="rweb">87.3s <span class="speed-badge">265&times;</span></span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header"><h4>Maelove Skincare</h4><p>Maelove</p><div class="biz-mono">ML</div></div>
+      <div class="biz-body">
+        <div class="biz-row"><span class="rlbl">Brand</span><span class="rval">MAELOVE</span><span class="rvs">vs</span><span class="rweb">Maelove Skincare</span></div>
+        <div class="biz-row"><span class="rlbl">Revenue</span><span class="rval">$11,506,123</span><span class="rvs">vs</span><span class="rweb">Not found</span></div>
+        <div class="biz-row"><span class="rlbl">Speed</span><span class="rval">0.63s</span><span class="rvs">vs</span><span class="rweb">30.4s <span class="speed-badge">48&times;</span></span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header"><h4>The Garage</h4><p>Cincinnati Auto</p><div class="biz-mono">TG</div></div>
+      <div class="biz-body">
+        <div class="biz-row"><span class="rlbl">Revenue</span><span class="rval">$1,340,476</span><span class="rvs">vs</span><span class="rweb">N/A</span></div>
+        <div class="biz-row"><span class="rlbl">Speed</span><span class="rval">0.38s</span><span class="rvs">vs</span><span class="rweb">33.9s <span class="speed-badge">89&times;</span></span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header"><h4>Laki Active</h4><p>Utah Activewear</p><div class="biz-mono">LA</div></div>
+      <div class="biz-body">
+        <div class="biz-row"><span class="rlbl">Revenue</span><span class="rval">$244,226</span><span class="rvs">vs</span><span class="rweb">&lt;$5M</span></div>
+        <div class="biz-row"><span class="rlbl">Speed</span><span class="rval">1.54s</span><span class="rvs">vs</span><span class="rweb">41.2s <span class="speed-badge">27&times;</span></span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header"><h4>N. Market Restaurant</h4><p>Dairy Queen Franchise</p><div class="biz-mono">NM</div></div>
+      <div class="biz-body">
+        <div class="biz-row"><span class="rlbl">Brand</span><span class="rval">DAIRY QUEEN</span><span class="rvs">vs</span><span class="rweb">Not found</span></div>
+        <div class="biz-row"><span class="rlbl">Speed</span><span class="rval">0.59s</span><span class="rvs">vs</span><span class="rweb">218.8s <span class="speed-badge">371&times;</span></span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 06 TEST RESULTS -->
+<section id="s6"><div class="section-inner anim">
+  <div class="section-num">06</div>
+  <div style="text-align:center;margin-bottom:24px;">
+    <h2 style="font:600 clamp(20px,3vw,28px) var(--mono);">Test Results &middot; 100 Businesses</h2>
+  </div>
+  <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
+    <div style="text-align:center;"><div style="font:700 32px var(--mono);color:var(--accent);">75&times;</div><div style="font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;">Faster Avg</div></div>
+    <div style="text-align:center;"><div style="font:700 32px var(--mono);">80.2%</div><div style="font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;">Fill Rate</div></div>
+    <div style="text-align:center;"><div style="font:700 32px var(--mono);color:var(--red);">35%</div><div style="font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;">Web Errors</div></div>
+    <div style="text-align:center;"><div style="font:700 32px var(--mono);color:var(--accent);">0.66s</div><div style="font:400 9px var(--mono);color:var(--muted);text-transform:uppercase;">Enigma Median</div></div>
+  </div>
+</div></section>
+
+<!-- 07 ARCHITECTURE -->
+<section id="s7"><div class="section-inner anim">
+  <div class="section-num">07</div>
+  <div style="text-align:center;margin-bottom:8px;">
+    <h2 style="font:600 clamp(20px,3vw,28px) var(--mono);">Architecture</h2>
+    <p style="font:400 11px var(--sans);color:var(--muted);margin-top:6px;">Knowledge graphs at the foundation change what's possible above.</p>
+  </div>
+  <div class="stack">
+    <div class="stack-layer" style="background:linear-gradient(135deg,#E8704A,#a855f7);"><span class="s-lbl">Inference</span><span class="s-detail">Reasoning &middot; Synthesis &middot; Answers</span><span class="s-comp">LLM</span></div>
+    <div class="stack-layer" style="background:linear-gradient(135deg,#6366f1,#3b82f6);"><span class="s-lbl">Orchestration</span><span class="s-detail">Tool routing &middot; Search &middot; Crawl</span><span class="s-comp">Agent</span></div>
+    <div class="stack-layer" style="background:linear-gradient(135deg,var(--accent),#059669);"><span class="s-lbl">Entity Resolution</span><span class="s-detail">Graph traversal &middot; Linking</span><span class="s-comp">Enigma</span></div>
+    <div class="stack-layer" style="background:var(--fg);border:1px solid rgba(255,255,255,0.1);"><span class="s-lbl">Knowledge Graph</span><span class="s-detail">112M &middot; 33M &middot; 27M &middot; 2B+</span><span class="s-comp">Foundation</span></div>
+  </div>
+  <p style="text-align:center;font:500 11px var(--mono);color:var(--muted);margin-top:20px;max-width:480px;margin-left:auto;margin-right:auto;"><strong style="color:var(--fg);">The Inversion:</strong> Most agents start with inference and hope web search fills gaps. This stack resolves entities first, then infers on verified data.</p>
+</div></section>
+
+<!-- 08 KYB -->
+<section id="s8"><div class="section-inner anim">
+  <div class="section-num">08</div>
+  <div style="text-align:center;margin-bottom:28px;">
+    <span style="display:inline-block;padding:3px 10px;background:var(--accent);color:#fff;font:700 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;">Streamline Verification</span>
+    <h2 style="font:600 clamp(20px,3vw,28px) var(--mono);margin-top:14px;">KYB &amp; Onboarding</h2>
+  </div>
+  <div class="feat">
+    <div class="f-txt">
+      <span class="f-eye">Risk &amp; Compliance</span>
+      <h3>Cut operational overhead</h3>
+      <p>Verify businesses using trusted government sources to meet comprehensive KYB requirements.</p>
+      <a href="#" class="f-link">Learn More</a>
+    </div>
+    <div class="f-viz">
+      <div style="width:80%;color:#fff;">
+        <div style="border:1px solid rgba(255,255,255,0.1);padding:10px 14px;margin-bottom:4px;font:400 11px var(--mono);display:flex;justify-content:space-between;"><span>Business Identity</span><span style="color:var(--accent);">&check; Verified</span></div>
+        <div style="border:1px solid rgba(255,255,255,0.1);padding:10px 14px;margin-bottom:4px;font:400 11px var(--mono);display:flex;justify-content:space-between;"><span>Corporate Registration</span><span style="color:var(--accent);">&check; Match</span></div>
+        <div style="border:1px solid rgba(255,255,255,0.1);padding:10px 14px;margin-bottom:4px;font:400 11px var(--mono);display:flex;justify-content:space-between;"><span>Operating Status</span><span style="color:var(--accent);">&check; Active</span></div>
+        <div style="border:1px solid rgba(255,255,255,0.1);padding:10px 14px;font:400 11px var(--mono);display:flex;justify-content:space-between;"><span>Due Diligence</span><span style="color:var(--golden);">&bull; Pending</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 09 IDENTITY -->
+<section id="s9"><div class="section-inner anim">
+  <div class="section-num">09</div>
+  <div style="text-align:center;margin-bottom:8px;">
+    <span style="display:inline-block;padding:3px 10px;background:var(--fg);color:var(--bg);font:700 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;">GRAPH-MODEL-1</span>
+    <h2 style="font:600 clamp(18px,2.5vw,24px) var(--mono);margin-top:14px;">The Enigma Identity Graph</h2>
+    <p style="font:400 11px var(--sans);color:var(--muted);max-width:520px;margin:8px auto 0;">Our Identity Graph connects every brand, DBA, location, and legal entity to its single unified profile.</p>
+  </div>
+  <div class="id-grid">
+    <div class="id-col">
+      <h3>Comprehensive linking</h3>
+      <p>We go beyond DBAs, linking brands to their verified corporate registrations.</p>
+      <h3 style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">A unified profile</h3>
+      <p>We confirm a business is active and real by cross-referencing websites and operational signals.</p>
+      <a href="#" class="f-link" style="margin-top:10px;">Data Quality Approach</a>
+    </div>
+    <div class="id-col" style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;">
+      <div style="padding:6px 12px;border:1px solid var(--accent);color:var(--accent);font:500 10px var(--mono);">Brand</div>
+      <div style="width:24px;border-top:1px dashed var(--border);"></div>
+      <div style="padding:6px 12px;border:1px solid var(--teal);color:var(--teal);font:500 10px var(--mono);">Entity</div>
+      <div style="width:24px;border-top:1px dashed var(--border);"></div>
+      <div style="padding:6px 12px;border:1px solid var(--golden);color:var(--golden);font:500 10px var(--mono);">Location</div>
+      <div style="width:100%;"></div>
+      <div style="padding:6px 12px;border:1px solid var(--coral);color:var(--coral);font:500 10px var(--mono);">Officer</div>
+      <div style="width:24px;border-top:1px dashed var(--border);"></div>
+      <div style="padding:6px 12px;border:1px solid var(--muted);color:var(--muted);font:500 10px var(--mono);">Registration</div>
+      <div style="width:24px;border-top:1px dashed var(--border);"></div>
+      <div style="padding:6px 12px;border:1px solid var(--blue);color:var(--blue);font:500 10px var(--mono);">Gov Record</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 10 CTA -->
+<section id="s10" style="min-height:auto;padding-bottom:48px;"><div class="section-inner anim">
+  <div class="cta-banner">
+    <div class="eye">Start today</div>
+    <h2>Explore Enigma Data</h2>
+    <p>Access Enigma Data instantly or talk to our business data experts.</p>
+    <div class="cta-btns"><button class="cta-ghost">Request a Demo</button><button class="cta-gold">Get Data Now</button></div>
+  </div>
+</div></section>
+
+</div>
+
+<footer>
+<div class="container">
+  <div class="ft-grid">
+    <div><div class="ft-logo">enigma</div></div>
+    <div class="ft-col"><div class="ft-title">Data &amp; Solutions</div><a href="#">Data</a><a href="#">GTM Solutions</a><a href="#">Payments Solutions</a><a href="#">Onboarding &amp; KYB</a><a href="#">Payment Risk</a><a href="#">Screening</a></div>
+    <div class="ft-col"><div class="ft-title">Resources</div><a href="#">Blog</a><a href="#">Case Studies</a><a href="#">Experiments</a><a href="#">Knowledge</a><a href="#">Press</a></div>
+    <div class="ft-col"><div class="ft-title">Company</div><a href="#">About Us</a><a href="#">Pricing</a><a href="#">Contact Us</a><a href="#">Partners</a><a href="#">Careers</a></div>
+    <div class="ft-col"><div class="ft-title">Developers</div><a href="#">Docs</a><a href="#">API Reference</a><a href="#">API Status</a></div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">Support</a></div>
+    <div class="ft-social"><a href="#">LinkedIn</a><a href="#">X</a></div>
+  </div>
+</div>
+</footer>
+
+<script>
+// Nav dots
+const sections=document.querySelectorAll('section[id]');
+const dotsC=document.getElementById('navDots');
+sections.forEach((_,i)=>{const d=document.createElement('div');d.className='nav-dot'+(i===0?' active':'');d.onclick=()=>sections[i].scrollIntoView({behavior:'smooth'});dotsC.appendChild(d);});
+const dots=dotsC.querySelectorAll('.nav-dot');
+const counterEl=document.getElementById('counter');
+
+// Observer
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const i=[...sections].indexOf(e.target);
+      dots.forEach((d,j)=>d.classList.toggle('active',j===i));
+      counterEl.textContent=String(i+1).padStart(2,'0');
+    }
+    // animate
+    const anim=e.target.querySelector('.anim');
+    if(anim&&e.isIntersecting)anim.classList.add('visible');
+  });
+},{threshold:0.15});
+sections.forEach(s=>obs.observe(s));
+
+// Hero glitch canvas (simple p5-style noise)
+const c=document.getElementById('glitch');
+const ctx=c.getContext('2d');
+c.width=window.innerWidth;c.height=window.innerHeight;
+function drawGlitch(){
+  ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,c.width,c.height);
+  ctx.strokeStyle='rgba(245,243,240,0.04)';ctx.lineWidth=0.5;
+  for(let y=0;y<c.height;y+=4){
+    ctx.beginPath();
+    for(let x=0;x<c.width;x+=2){
+      const v=Math.sin(x*0.01+y*0.008+performance.now()*0.0003)*20+Math.random()*2;
+      if(x===0)ctx.moveTo(x,y+v);else ctx.lineTo(x,y+v);
+    }
+    ctx.stroke();
+  }
+  // blocks
+  for(let i=0;i<8;i++){
+    const bx=Math.random()*c.width;const by=Math.random()*c.height;
+    const bw=20+Math.random()*60;const bh=2+Math.random()*8;
+    ctx.fillStyle=`rgba(245,243,240,${0.01+Math.random()*0.03})`;
+    ctx.fillRect(bx,by,bw,bh);
+  }
+  requestAnimationFrame(drawGlitch);
+}
+drawGlitch();
+</script>
+</body>
+</html>

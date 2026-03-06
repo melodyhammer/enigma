@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trusted Business Data | Enigma — Dramatic Dataviz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --dv-bg: #1a1a1a;
+  --dv-bg-pure: #111111;
+  --dv-line: #ffffff;
+  --dv-line-dim: rgba(255,255,255,0.4);
+  --dv-line-mid: rgba(255,255,255,0.65);
+  --dv-line-bright: rgba(255,255,255,1.0);
+  --dv-glow: rgba(255,255,255,0.15);
+  --dv-text: #ffffff;
+  --dv-text-dim: rgba(255,255,255,0.6);
+  --dv-axis: rgba(255,255,255,0.3);
+  --dv-golden: #fbb705;
+  --dv-teal: #00cb9f;
+  --dv-coral: #fd6a3d;
+  --dv-blue: #4ebcff;
+  --dv-red: #a80012;
+  --font: "Fira Code","SF Mono","Courier New",monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dv-bg);color:var(--dv-text);font-family:var(--font);font-size:12px;line-height:1.4;overflow-x:hidden;}
+
+.container{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(17,17,17,0.9);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);}
+.nav-logo{font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:lowercase;color:var(--dv-text);}
+.nav-links{display:flex;gap:20px;}
+.nav-links a{color:var(--dv-text-dim);font-size:10px;text-decoration:none;text-transform:uppercase;letter-spacing:0.08em;transition:color .15s;}
+.nav-links a:hover{color:var(--dv-text);}
+.nav-cta{display:flex;gap:8px;}
+.btn-o{padding:5px 14px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:var(--dv-text-dim);font:500 10px var(--font);cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;transition:all .15s;}
+.btn-o:hover{border-color:var(--dv-text);color:var(--dv-text);}
+.btn-f{padding:5px 14px;border:1px solid var(--dv-golden);background:var(--dv-golden);color:#111;font:600 10px var(--font);cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;}
+
+/* HERO with ridge canvas */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 32px 80px;overflow:hidden;}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+.hero-content{position:relative;z-index:1;}
+.hero-badge{display:inline-block;padding:4px 12px;border:1px solid rgba(255,255,255,0.15);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--dv-text-dim);margin-bottom:28px;}
+.hero-badge code{color:var(--dv-blue);}
+.hero h1{font-size:clamp(36px,7vw,72px);font-weight:700;line-height:1.05;letter-spacing:-0.03em;margin-bottom:20px;}
+.hero h1 .hl{color:var(--dv-golden);}
+.hero p{max-width:580px;margin:0 auto 28px;font-size:13px;line-height:1.6;color:var(--dv-text-dim);}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:var(--dv-text);font:600 11px var(--font);text-decoration:none;text-transform:uppercase;letter-spacing:0.06em;transition:all .15s;}
+.hero-cta:hover{border-color:var(--dv-text);}
+
+/* SECTION */
+section{padding:80px 0;border-top:1px solid rgba(255,255,255,0.06);}
+.section-number{font-size:clamp(48px,12vw,140px);font-weight:700;opacity:0.03;position:absolute;top:24px;left:24px;line-height:1;pointer-events:none;}
+
+/* LOGO STRIP */
+.logo-strip{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,0.06);}
+.logo-cell{display:flex;align-items:center;justify-content:center;min-height:80px;padding:16px;border-right:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px;font-weight:500;color:var(--dv-text-dim);letter-spacing:0.04em;}
+.logo-cell:nth-child(4n){border-right:none;}
+.logo-cell:nth-child(n+5){border-bottom:none;}
+
+/* SUBHEADER */
+.subheader{text-align:center;padding:48px 0 20px;position:relative;}
+.subheader-badge{display:inline-block;padding:3px 10px;background:var(--dv-golden);color:#111;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;}
+.subheader h2{font-size:clamp(20px,3vw,30px);font-weight:600;margin:16px 0 10px;line-height:1.2;letter-spacing:-0.01em;}
+.subheader p{max-width:520px;margin:0 auto;font-size:12px;color:var(--dv-text-dim);line-height:1.6;}
+.sub-link{display:inline-block;margin-top:10px;font-size:10px;color:var(--dv-blue);text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;}
+.sub-link:hover{text-decoration:underline;}
+
+/* FEATURE */
+.feat{display:grid;grid-template-columns:1fr 2fr;gap:2px;align-items:stretch;}
+.feat.rev{grid-template-columns:2fr 1fr;}
+.feat.rev .feat-text{order:2;}.feat.rev .feat-viz{order:1;}
+.feat-text{padding:32px;display:flex;flex-direction:column;justify-content:center;}
+.feat-eye{font-size:9px;color:var(--dv-text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.feat-text h3{font-size:16px;font-weight:700;line-height:1.3;margin-bottom:14px;}
+.feat-text p{font-size:11px;color:var(--dv-text-dim);line-height:1.6;margin-bottom:16px;}
+.feat-link{font-size:10px;font-weight:600;color:var(--dv-text);text-decoration:none;text-transform:uppercase;letter-spacing:0.06em;}
+.feat-link::after{content:' \2192';}
+.feat-link:hover{color:var(--dv-golden);}
+.feat-viz{background:var(--dv-bg-pure);border:1px solid rgba(255,255,255,0.06);min-height:320px;position:relative;overflow:hidden;}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.card-d{background:var(--dv-bg-pure);border:1px solid rgba(255,255,255,0.06);padding:28px;display:flex;flex-direction:column;justify-content:space-between;}
+.card-d blockquote{font-size:15px;font-weight:500;line-height:1.4;color:var(--dv-golden);margin-bottom:20px;text-indent:-0.5em;}
+.card-d .attr{font-size:10px;color:var(--dv-text-dim);}.card-d .attr strong{color:var(--dv-text);font-weight:600;}
+.card-d .clogo{font-size:9px;color:var(--dv-text-dim);opacity:0.4;text-transform:uppercase;letter-spacing:0.1em;margin-top:12px;}
+.card-l{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:28px;display:flex;flex-direction:column;}
+.card-l .clbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--dv-text-dim);margin-bottom:10px;}
+.card-l h3{font-size:14px;font-weight:700;margin-bottom:10px;line-height:1.3;}
+.card-l p{font-size:11px;color:var(--dv-text-dim);line-height:1.6;flex:1;}
+
+/* CASE STUDY */
+.case{display:grid;grid-template-columns:1fr 2fr;gap:2px;}
+
+/* CTA BANNER */
+.cta-banner{background:var(--dv-bg-pure);border:1px solid rgba(255,255,255,0.06);padding:72px 32px;text-align:center;position:relative;overflow:hidden;}
+.cta-banner .eye{font-size:9px;color:var(--dv-text-dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:14px;position:relative;z-index:1;}
+.cta-banner h2{font-size:26px;font-weight:700;color:var(--dv-golden);margin-bottom:10px;position:relative;z-index:1;}
+.cta-banner>p{font-size:12px;color:var(--dv-text-dim);margin-bottom:24px;position:relative;z-index:1;}
+.cta-btns{display:flex;gap:10px;justify-content:center;position:relative;z-index:1;}
+
+/* IDENTITY */
+.id-cols{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-top:1px solid rgba(255,255,255,0.06);}
+.id-col{padding:32px 24px;}
+.id-col h3{font-size:14px;font-weight:700;margin-bottom:10px;}
+.id-col p{font-size:11px;color:var(--dv-text-dim);line-height:1.6;margin-bottom:10px;}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,0.06);padding:48px 0 24px;color:var(--dv-text-dim);}
+.ft-grid{display:grid;grid-template-columns:1.5fr 1.25fr .75fr .75fr .75fr;gap:24px;margin-bottom:28px;}
+.ft-logo{font-size:18px;font-weight:700;color:var(--dv-text);letter-spacing:0.08em;text-transform:lowercase;}
+.ft-title{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--dv-text-dim);margin-bottom:14px;}
+.ft-col a{display:block;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;margin-bottom:6px;transition:color .15s;}
+.ft-col a:hover{color:var(--dv-text);}
+.ft-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;display:flex;justify-content:space-between;}
+.ft-legal{display:flex;gap:14px;}
+.ft-legal a,.ft-social a{font-size:9px;color:rgba(255,255,255,0.25);text-decoration:none;}
+.ft-social{display:flex;gap:10px;}
+
+/* RIDGE CANVAS INLINE STYLES */
+canvas.ridge{display:block;}
+
+@media(max-width:768px){
+  .logo-strip{grid-template-columns:repeat(2,1fr);}
+  .feat,.feat.rev,.case{grid-template-columns:1fr;}
+  .feat.rev .feat-text{order:1;}.feat.rev .feat-viz{order:2;}
+  .cards{grid-template-columns:1fr;}
+  .id-cols{grid-template-columns:1fr;}
+  .ft-grid{grid-template-columns:1fr 1fr;}
+  nav .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">enigma</span>
+  <div class="nav-links">
+    <a href="#">Data</a><a href="#">Solutions</a><a href="#">Developers</a><a href="#">Resources</a><a href="#">Partners</a><a href="#">Pricing</a>
+  </div>
+  <div class="nav-cta"><button class="btn-o">Contact Us</button><button class="btn-f">Sign In</button></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroCanvas" class="ridge"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge"><code>Enigma + Your AI</code> &mdash; Try the Enigma AI Connector MCP server</div>
+    <h1><span class="hl">Trusted Business Data</span></h1>
+    <p>Enigma provides foundational data on businesses, built on unparalleled entity resolution. Win markets, verify business customers faster, and power AI with ground truth intelligence.</p>
+    <a href="#" class="hero-cta">Get Started &rarr;</a>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- LOGOS -->
+<section style="padding:0 0 48px;border:none;">
+  <div class="logo-strip">
+    <div class="logo-cell">Capital One</div><div class="logo-cell">Chase</div><div class="logo-cell">Shopify</div><div class="logo-cell">Ramp</div>
+    <div class="logo-cell">DoorDash</div><div class="logo-cell">Alloy</div><div class="logo-cell">Capital on Tap</div><div class="logo-cell">Bill</div>
+  </div>
+</section>
+
+<!-- DATA-AS-A-SERVICE -->
+<section style="position:relative;">
+  <div class="section-number">02</div>
+  <div class="subheader">
+    <span class="subheader-badge">Data-as-a-Service</span>
+    <h2>Programmatic Intelligence for Every Growth Engine</h2>
+    <p>Embed Enigma's business data into any business workflow or inference engine to onboard faster, target smarter, and manage risk with confidence.</p>
+  </div>
+</section>
+
+<!-- INTEGRATE -->
+<section style="padding-top:0;position:relative;">
+  <div class="section-number">03</div>
+  <div class="feat">
+    <div class="feat-text">
+      <span class="feat-eye">Integrate</span>
+      <h3>Intelligence for your systems, not ours</h3>
+      <p>Great data is useless if it's locked in a silo. Enigma is designed to be the foundational data layer for your growth engine. Use our flexible GraphQL API to stream intelligence directly into your CRM or custom applications.</p>
+      <a href="#" class="feat-link">Start Building with Enigma</a>
+    </div>
+    <div class="feat-viz">
+      <canvas id="codeRidge" width="700" height="320"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- GTM -->
+<section style="position:relative;">
+  <div class="section-number">04</div>
+  <div class="subheader">
+    <span class="subheader-badge">Data powering ABM Strategies</span>
+    <h2>GTM Solutions</h2>
+    <a href="#" class="sub-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="feat">
+    <div class="feat-text">
+      <span class="feat-eye">GTM Leaders</span>
+      <h3>Pinpoint Your Next Best Customers</h3>
+      <p>Stop wasting time on inaccurate data. Use Enigma's real revenue and growth signals to build precise lists of your ideal accounts.</p>
+      <a href="#" class="feat-link">Generate a Lead List today</a>
+    </div>
+    <div class="feat-viz">
+      <canvas id="gtmRidge" width="700" height="320"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- GTM CARDS -->
+<section style="padding-top:0;">
+  <div class="cards">
+    <div class="card-d">
+      <blockquote>&ldquo;Enigma&rsquo;s data helps our team identify the top prospects that match our ideal customer profile.&rdquo;</blockquote>
+      <div><div class="attr"><strong>Rob Hewitt</strong><br>Commercial Director, Phorest</div><div class="clogo">Phorest</div></div>
+    </div>
+    <div class="card-l">
+      <div class="clbl">Lead Generation</div>
+      <h3>Discover more leads.</h3>
+      <p>Build your own prospect database based on custom criteria including real revenues, growth, payment platforms used, industry, location, contact information and more.</p>
+    </div>
+    <div class="card-l">
+      <div class="clbl">ICP &amp; Segment Definition</div>
+      <h3>Better define your ideal customer</h3>
+      <p>Augment your CRM with dynamic, underwriting-quality intel about business identity and financial health.</p>
+      <a href="#" class="feat-link" style="margin-top:14px;font-size:10px;">Supercharge GTM Teams</a>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENTS -->
+<section style="position:relative;">
+  <div class="section-number">05</div>
+  <div class="subheader">
+    <span class="subheader-badge">Unlock True Merchant GPV</span>
+    <h2>Ground Truth for Payments Leaders</h2>
+    <a href="#" class="sub-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="cards">
+    <div class="card-d" style="padding:0;overflow:hidden;">
+      <canvas id="payRidge" width="380" height="300"></canvas>
+    </div>
+    <div class="card-l">
+      <div class="clbl">Payments &amp; BNPL</div>
+      <h3>Maximize merchant share-of-wallet</h3>
+      <p>See beyond your own rails. Get the full picture of merchant payment volume to identify high-growth merchants and capture volume from competitors.</p>
+    </div>
+    <div class="card-l">
+      <div class="clbl">Merchant Transaction Signals</div>
+      <h3>Access the largest card panel about merchants</h3>
+      <p>Derived from more than 750 million anonymized credit and debit cards representing over 30 billion transactions and $4.5+ trillion dollars annually.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDY -->
+<section style="position:relative;">
+  <div class="section-number">06</div>
+  <div class="case">
+    <div class="feat-text">
+      <span class="feat-eye">Case Study</span>
+      <h3>Banks increased up to 3x more conversions</h3>
+      <p style="font-style:italic;font-size:10px;">How FMCG used Enigma Data:</p>
+      <ul style="font-size:10px;color:var(--dv-text-dim);line-height:2;list-style:none;padding:0;margin-bottom:16px;">
+        <li>&bull; Identify businesses already processing cards</li>
+        <li>&bull; Understand amount of transactions</li>
+        <li>&bull; Differentiate e-commerce vs. in-person volume</li>
+      </ul>
+      <a href="#" class="feat-link">See How</a>
+    </div>
+    <div class="feat-viz">
+      <canvas id="caseRidge" width="700" height="320"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- KYB -->
+<section style="position:relative;">
+  <div class="section-number">07</div>
+  <div class="subheader">
+    <span class="subheader-badge">Streamline Business Verification</span>
+    <h2>KYB &amp; Onboarding</h2>
+    <a href="#" class="sub-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="feat">
+    <div class="feat-text">
+      <span class="feat-eye">Risk &amp; Compliance Leaders</span>
+      <h3>Cut operational overhead</h3>
+      <p>Onboard more business customers, and save costs. Verify businesses using trusted government sources to meet comprehensive Know Your Business (KYB) requirements.</p>
+      <a href="#" class="feat-link">Learn More</a>
+    </div>
+    <div class="feat-viz">
+      <canvas id="kybRidge" width="700" height="320"></canvas>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="feat rev">
+    <div class="feat-text">
+      <h3>Onboard more customers and automate your KYB process</h3>
+      <p>Enigma combines hundreds of publicly available data sources, including corporate registration records nationwide, to provide instant verification of U.S. businesses.</p>
+      <a href="#" class="feat-link">Onboarding &amp; KYB</a>
+    </div>
+    <div class="feat-viz">
+      <canvas id="onbRidge" width="700" height="320"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENING -->
+<section style="position:relative;">
+  <div class="section-number">08</div>
+  <div class="subheader">
+    <span class="subheader-badge">Screen at Scale</span>
+    <h2>Customer &amp; Transaction Screening</h2>
+    <a href="#" class="sub-link">Learn More &rarr;</a>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="feat rev">
+    <div class="feat-text">
+      <h3>Meet your sanctions screening requirements confidently</h3>
+      <p>Customer screening at the time of onboarding and on a continuing basis for both persons and business entities, with options to fine tune each to your organization's risk-appetite.</p>
+    </div>
+    <div class="feat-viz">
+      <canvas id="screenRidge" width="700" height="320"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- IDENTITY GRAPH -->
+<section style="position:relative;">
+  <div class="section-number">09</div>
+  <div class="subheader">
+    <span class="subheader-badge">GRAPH-MODEL-1</span>
+    <h2>The Enigma Identity Graph</h2>
+    <p>Before you can trust any data point, you must trust the business it's attached to. Our Identity Graph connects every brand, DBA, location, and legal entity to its single unified profile.</p>
+  </div>
+  <div class="id-cols" style="margin-top:20px;">
+    <div class="id-col">
+      <h3>Comprehensive linking</h3>
+      <p>We go beyond DBAs, linking brands to their verified corporate registrations, and their presence so you know exactly who you're doing business with.</p>
+      <h3 style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);">A unified profile</h3>
+      <p>We confirm a business is active and real by cross-referencing websites and other operational signals, eliminating 'ghost' businesses from your data.</p>
+      <a href="#" class="feat-link" style="margin-top:12px;">Enigma's Approach to Data Quality</a>
+    </div>
+    <div class="id-col" style="padding:0;overflow:hidden;">
+      <canvas id="graphRidge" width="580" height="440"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding-bottom:48px;">
+  <div class="cta-banner">
+    <canvas id="ctaRidge" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.3;"></canvas>
+    <div class="eye">Start today</div>
+    <h2>Explore Enigma Data</h2>
+    <p>Access Enigma Data instantly or talk to our business data experts.</p>
+    <div class="cta-btns">
+      <button class="btn-o">Request a Demo</button>
+      <button class="btn-f">Get Data Now</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+<div class="container">
+  <div class="ft-grid">
+    <div><div class="ft-logo">enigma</div></div>
+    <div class="ft-col"><div class="ft-title">Data &amp; Solutions</div><a href="#">Data</a><a href="#">GTM Solutions</a><a href="#">Payments Solutions</a><a href="#">Onboarding &amp; KYB</a><a href="#">Payment Risk</a><a href="#">Screening</a><a href="#">Industries</a></div>
+    <div class="ft-col"><div class="ft-title">Resources</div><a href="#">Blog</a><a href="#">Case Studies</a><a href="#">Experiments</a><a href="#">Knowledge</a><a href="#">Press</a></div>
+    <div class="ft-col"><div class="ft-title">Company</div><a href="#">About Us</a><a href="#">Pricing</a><a href="#">Contact Us</a><a href="#">Partners</a><a href="#">Careers</a></div>
+    <div class="ft-col"><div class="ft-title">Developers</div><a href="#">Docs</a><a href="#">API Reference</a><a href="#">API Status</a></div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">Support</a></div>
+    <div class="ft-social"><a href="#">LinkedIn</a><a href="#">X</a></div>
+  </div>
+</div>
+</footer>
+
+<script>
+// === RIDGE PLOT RENDERER ===
+function drawRidge(canvas, opts = {}) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.parentElement?.offsetWidth || canvas.width;
+  const H = canvas.height = canvas.parentElement?.offsetHeight || canvas.height;
+  const {
+    lines = 50,
+    spacing = 3,
+    baseY = H * 0.78,
+    spikes = [],
+    hatch = true,
+    debris = true,
+    annotations = []
+  } = opts;
+
+  ctx.fillStyle = '#111111';
+  ctx.fillRect(0, 0, W, H);
+
+  // axis
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath(); ctx.moveTo(40, H - 30); ctx.lineTo(W - 20, H - 30); ctx.stroke();
+
+  // generate data
+  const points = 200;
+  const data = [];
+  for (let i = 0; i < points; i++) {
+    let v = 0.02 + Math.random() * 0.03;
+    spikes.forEach(s => {
+      const dist = Math.abs(i / points - s.x);
+      if (dist < s.w) {
+        const t = 1 - dist / s.w;
+        v += s.h * Math.pow(t, 1.5) * (0.7 + Math.random() * 0.3);
+        // jagged
+        if (t > 0.3) v += (Math.random() - 0.5) * s.h * 0.15 * t;
+      }
+    });
+    data.push(v);
+  }
+
+  // draw ridge lines
+  for (let l = 0; l < lines; l++) {
+    const t = l / (lines - 1);
+    const yOff = l * spacing;
+    const opacity = 0.15 + t * 0.85;
+    const lw = 0.3 + t * 0.7;
+
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(255,255,255,${opacity})`;
+    ctx.lineWidth = lw;
+
+    for (let i = 0; i < points; i++) {
+      const x = 40 + (i / points) * (W - 60);
+      const y = baseY - data[i] * H * 0.55 - yOff + (Math.random() - 0.5) * 0.5;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // cross-hatch in spike regions
+  if (hatch) {
+    spikes.forEach(s => {
+      if (s.h < 0.3) return;
+      const cx = 40 + s.x * (W - 60);
+      const spikeW = s.w * (W - 60) * 0.6;
+      const spikeH = s.h * H * 0.45;
+      const top = baseY - spikeH - lines * spacing * 0.5;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx, top);
+      ctx.lineTo(cx - spikeW, baseY);
+      ctx.lineTo(cx + spikeW, baseY);
+      ctx.closePath();
+      ctx.clip();
+
+      ctx.strokeStyle = `rgba(255,255,255,0.12)`;
+      ctx.lineWidth = 0.4;
+      const sp = 6;
+      for (let d = -spikeH * 2; d < spikeH * 2; d += sp) {
+        ctx.beginPath();
+        ctx.moveTo(cx - spikeW + d, top - spikeW);
+        ctx.lineTo(cx + spikeW + d, baseY + spikeW);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx + spikeW + d, top - spikeW);
+        ctx.lineTo(cx - spikeW + d, baseY + spikeW);
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+  }
+
+  // debris
+  if (debris) {
+    spikes.forEach(s => {
+      if (s.h < 0.25) return;
+      const cx = 40 + s.x * (W - 60);
+      const peakY = baseY - s.h * H * 0.55 - lines * spacing;
+      const count = Math.floor(20 + s.h * 80);
+
+      for (let i = 0; i < count; i++) {
+        const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.7;
+        const dist = Math.random() * (40 + s.h * 100);
+        const px = cx + Math.cos(angle) * dist * (0.4 + Math.random() * 0.6);
+        const py = peakY + Math.sin(angle) * dist;
+        const size = 0.5 + Math.random() * 3;
+        const op = Math.max(0.05, 1 - dist / (40 + s.h * 100));
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(Math.random() * Math.PI * 2);
+        ctx.strokeStyle = `rgba(255,255,255,${op})`;
+        ctx.fillStyle = `rgba(255,255,255,${op * 0.2})`;
+        ctx.lineWidth = 0.5;
+
+        const type = Math.floor(Math.random() * 4);
+        ctx.beginPath();
+        if (type === 0) { // triangle
+          ctx.moveTo(0, -size); ctx.lineTo(-size * 0.7, size * 0.5); ctx.lineTo(size * 0.7, size * 0.5); ctx.closePath();
+        } else if (type === 1) { // rect
+          ctx.rect(-size / 2, -size / 3, size, size * 0.6);
+        } else if (type === 2) { // diamond
+          ctx.moveTo(0, -size); ctx.lineTo(size * 0.5, 0); ctx.lineTo(0, size); ctx.lineTo(-size * 0.5, 0); ctx.closePath();
+        } else { // dot
+          ctx.arc(0, 0, size * 0.3, 0, Math.PI * 2);
+        }
+        if (Math.random() > 0.5) ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+    });
+  }
+
+  // annotations
+  ctx.font = '10px "Fira Code", monospace';
+  ctx.textAlign = 'left';
+  annotations.forEach(a => {
+    const ax = 40 + a.x * (W - 60);
+    const ay = a.y * H;
+    ctx.fillStyle = `rgba(255,255,255,0.7)`;
+    const lines = a.label.toUpperCase().split('\n');
+    lines.forEach((line, i) => ctx.fillText(line, ax + 8, ay + i * 13));
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(ax, ay + 4); ctx.lineTo(ax, ay + 20); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+}
+
+// Hero — big dramatic ridge
+const heroC = document.getElementById('heroCanvas');
+heroC.width = window.innerWidth;
+heroC.height = window.innerHeight;
+drawRidge(heroC, {
+  lines: 70, spacing: 3, baseY: heroC.height * 0.82,
+  spikes: [
+    { x: 0.2, h: 0.7, w: 0.08 },
+    { x: 0.22, h: 0.5, w: 0.05 },
+    { x: 0.65, h: 0.55, w: 0.07 },
+    { x: 0.68, h: 0.35, w: 0.04 },
+    { x: 0.45, h: 0.15, w: 0.03 },
+    { x: 0.85, h: 0.12, w: 0.025 },
+  ],
+  annotations: [
+    { x: 0.12, y: 0.35, label: 'CRISIS\nERA' },
+    { x: 0.58, y: 0.42, label: 'GROWTH\nSPIKE' },
+  ]
+});
+
+// Section canvases — each with different spike patterns
+function initCanvas(id, spikes, ann) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const parent = c.parentElement;
+  c.width = parent.offsetWidth;
+  c.height = parent.offsetHeight;
+  drawRidge(c, {
+    lines: 40, spacing: 2.5,
+    baseY: c.height * 0.8,
+    spikes: spikes,
+    annotations: ann || []
+  });
+}
+
+window.addEventListener('load', () => {
+  initCanvas('codeRidge',
+    [{ x: 0.35, h: 0.45, w: 0.06 }, { x: 0.7, h: 0.3, w: 0.05 }, { x: 0.15, h: 0.15, w: 0.03 }],
+    [{ x: 0.3, y: 0.3, label: 'GRAPHQL\nAPI' }]
+  );
+  initCanvas('gtmRidge',
+    [{ x: 0.5, h: 0.5, w: 0.08 }, { x: 0.25, h: 0.2, w: 0.04 }, { x: 0.8, h: 0.25, w: 0.04 }],
+    [{ x: 0.45, y: 0.25, label: 'CUSTOMER\nSIGNAL' }]
+  );
+  initCanvas('payRidge',
+    [{ x: 0.4, h: 0.6, w: 0.1 }, { x: 0.7, h: 0.35, w: 0.06 }],
+    [{ x: 0.35, y: 0.2, label: 'MERCHANT\nGPV' }]
+  );
+  initCanvas('caseRidge',
+    [{ x: 0.3, h: 0.25, w: 0.05 }, { x: 0.5, h: 0.45, w: 0.06 }, { x: 0.7, h: 0.65, w: 0.07 }],
+    [{ x: 0.65, y: 0.15, label: '3X\nCONVERSION' }]
+  );
+  initCanvas('kybRidge',
+    [{ x: 0.6, h: 0.4, w: 0.07 }, { x: 0.3, h: 0.2, w: 0.04 }],
+    [{ x: 0.55, y: 0.3, label: 'VERIFICATION\nFLOW' }]
+  );
+  initCanvas('onbRidge',
+    [{ x: 0.4, h: 0.35, w: 0.06 }, { x: 0.65, h: 0.5, w: 0.07 }, { x: 0.2, h: 0.15, w: 0.03 }],
+    [{ x: 0.6, y: 0.25, label: 'ONBOARDING\nAUTOMATION' }]
+  );
+  initCanvas('screenRidge',
+    [{ x: 0.5, h: 0.55, w: 0.08 }, { x: 0.8, h: 0.2, w: 0.04 }],
+    [{ x: 0.45, y: 0.2, label: 'SANCTIONS\nSCREEN' }]
+  );
+  initCanvas('graphRidge',
+    [{ x: 0.3, h: 0.5, w: 0.07 }, { x: 0.55, h: 0.35, w: 0.05 }, { x: 0.75, h: 0.6, w: 0.08 }, { x: 0.15, h: 0.2, w: 0.04 }],
+    [{ x: 0.25, y: 0.2, label: 'BRAND' }, { x: 0.7, y: 0.15, label: 'ENTITY\nGRAPH' }]
+  );
+
+  // CTA canvas
+  const ctaC = document.getElementById('ctaRidge');
+  if (ctaC) {
+    const p = ctaC.parentElement;
+    ctaC.width = p.offsetWidth;
+    ctaC.height = p.offsetHeight;
+    drawRidge(ctaC, {
+      lines: 30, spacing: 2, baseY: ctaC.height * 0.85,
+      spikes: [{ x: 0.3, h: 0.3, w: 0.06 }, { x: 0.6, h: 0.25, w: 0.05 }],
+      debris: false, hatch: false, annotations: []
+    });
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "enigma-landing-ui",
+  "description": "Front-end UI skill for building and maintaining the Enigma Entity Agent Tools landing page. Includes design system tokens, component specs, section blueprints, and interaction patterns.",
+  "author": {
+    "name": "Enigma Technologies",
+    "email": "info@enigma.com"
+  },
+  "version": "1.0.0"
+}
