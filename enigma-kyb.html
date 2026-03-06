@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enigma — KYB</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --usg-bg: #F5F3EF;
+    --usg-bg-pure: #FFFFFF;
+    --usg-bg-muted: #EDEAE4;
+    --usg-bg-dark: #1A1A1A;
+    --usg-bg-specimen: #111111;
+    --usg-bg-inverse: #000000;
+    --usg-text: #1A1A1A;
+    --usg-text-secondary: #666666;
+    --usg-text-tertiary: #999999;
+    --usg-text-inverse: #F5F3EF;
+    --usg-text-inverse-muted: #AAAAAA;
+    --usg-rule: #1A1A1A;
+    --usg-rule-light: #CCCCCC;
+    --usg-rule-hairline: #E0DDD7;
+    --usg-border: #CCCCCC;
+    --usg-border-dark: #333333;
+    --usg-new: #CC3300;
+    --usg-link-hover: #CC3300;
+    --usg-font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Courier New", monospace;
+    --usg-font-condensed: "Arial Narrow", "Helvetica Neue Condensed", sans-serif;
+    --usg-font-sans: "Helvetica Neue", "Arial", -apple-system, sans-serif;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--usg-font-mono);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--usg-text);
+    background: var(--usg-bg);
+  }
+
+  a {
+    color: var(--usg-text);
+    text-decoration: underline;
+    transition: color 150ms ease;
+  }
+  a:hover { color: var(--usg-link-hover); }
+
+  img { max-width: 100%; display: block; }
+
+  .usg-doc {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 80px;
+  }
+
+  @media (max-width: 1024px) { .usg-doc { padding: 0 48px; } }
+  @media (max-width: 640px) { .usg-doc { padding: 0 20px; } }
+
+  /* Rules */
+  .rule { border: none; border-top: 1px solid var(--usg-rule); margin: 0; }
+  .rule--light { border: none; border-top: 1px solid var(--usg-rule-light); margin: 0; }
+  .rule--heavy { border: none; border-top: 2px solid var(--usg-rule); margin: 0; }
+
+  /* Header */
+  .header { padding: 24px 0; }
+  .header-inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .header-logo {
+    font-family: var(--usg-font-condensed);
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--usg-text);
+    text-decoration: none;
+  }
+  .header-logo:hover { color: var(--usg-text); }
+  .header-nav { display: flex; gap: 32px; }
+  .header-nav a {
+    font-family: var(--usg-font-condensed);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--usg-text);
+    text-decoration: none;
+  }
+  .header-nav a:hover { text-decoration: underline; color: var(--usg-text); }
+
+  @media (max-width: 640px) {
+    .header-inner { flex-direction: column; gap: 16px; }
+    .header-nav { flex-wrap: wrap; gap: 16px; }
+  }
+
+  /* Typography */
+  .display {
+    font-family: var(--usg-font-condensed);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+  .h1 {
+    font-family: var(--usg-font-condensed);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .h2 {
+    font-family: var(--usg-font-condensed);
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .h3 {
+    font-family: var(--usg-font-condensed);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .label {
+    font-family: var(--usg-font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-secondary);
+  }
+  .catalog-no {
+    font-family: var(--usg-font-mono);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: var(--usg-text-tertiary);
+    text-transform: uppercase;
+  }
+  .caption {
+    font-family: var(--usg-font-mono);
+    font-size: 12px;
+    color: var(--usg-text-tertiary);
+  }
+  .body-secondary {
+    color: var(--usg-text-secondary);
+  }
+
+  /* Sections */
+  .section { padding: 64px 0; }
+  .section--lg { padding: 96px 0; }
+  .reading { max-width: 720px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--usg-font-condensed);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 12px 24px;
+    border: 1px solid var(--usg-text);
+    background: transparent;
+    color: var(--usg-text);
+    cursor: pointer;
+    border-radius: 0;
+    text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .btn:hover {
+    background: var(--usg-text);
+    color: var(--usg-bg);
+  }
+  .btn--filled {
+    background: var(--usg-text);
+    color: var(--usg-bg);
+  }
+  .btn--filled:hover { background: #333; color: var(--usg-bg); }
+  .btn--link {
+    border: none;
+    padding: 0;
+    background: none;
+    text-decoration: underline;
+  }
+  .btn--link:hover {
+    color: var(--usg-link-hover);
+    background: none;
+  }
+  .btn-group { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Dark panels */
+  .dark {
+    background: var(--usg-bg-specimen);
+    color: var(--usg-text-inverse);
+  }
+  .dark .label { color: var(--usg-text-inverse-muted); }
+  .dark .caption { color: var(--usg-text-inverse-muted); }
+  .dark .catalog-no { color: var(--usg-text-inverse-muted); }
+  .dark .rule { border-top-color: var(--usg-border-dark); }
+  .dark .rule--light { border-top-color: var(--usg-border-dark); }
+  .dark a { color: var(--usg-text-inverse); }
+  .dark a:hover { color: var(--usg-new); }
+  .dark .btn {
+    border-color: var(--usg-text-inverse);
+    color: var(--usg-text-inverse);
+  }
+  .dark .btn:hover {
+    background: var(--usg-text-inverse);
+    color: var(--usg-bg-specimen);
+  }
+  .dark .btn--filled {
+    background: var(--usg-text-inverse);
+    color: var(--usg-bg-specimen);
+  }
+  .dark .btn--filled:hover { background: #ccc; }
+
+  /* Spec tables */
+  .spec-table { width: 100%; border-collapse: collapse; }
+  .spec-table th {
+    font-family: var(--usg-font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-secondary);
+    text-align: left;
+    padding: 8px 16px;
+    border-bottom: 2px solid var(--usg-rule);
+  }
+  .spec-table td {
+    font-family: var(--usg-font-mono);
+    font-size: 14px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--usg-rule-light);
+    vertical-align: top;
+  }
+  .spec-table .spec-label {
+    font-family: var(--usg-font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-secondary);
+    white-space: nowrap;
+    width: 200px;
+  }
+  .spec-table tbody tr:hover { background: var(--usg-bg-muted); }
+
+  .dark .spec-table th { color: var(--usg-text-inverse-muted); border-bottom-color: var(--usg-text-inverse-muted); }
+  .dark .spec-table td { border-bottom-color: var(--usg-border-dark); }
+  .dark .spec-table .spec-label { color: var(--usg-text-inverse-muted); }
+  .dark .spec-table tbody tr:hover { background: rgba(255,255,255,0.05); }
+
+  /* Metrics */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 32px 0;
+    border-top: 1px solid var(--usg-rule);
+    border-bottom: 1px solid var(--usg-rule);
+  }
+  .metric-value {
+    font-family: var(--usg-font-mono);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .metric-label {
+    font-family: var(--usg-font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-secondary);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 640px) {
+    .metric-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Code/terminal blocks */
+  .terminal {
+    background: var(--usg-bg-specimen);
+    color: var(--usg-text-inverse);
+    padding: 32px;
+    font-family: var(--usg-font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+  .terminal .dim { color: var(--usg-text-inverse-muted); }
+  .terminal .highlight { color: var(--usg-new); }
+  .terminal .label-line {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-inverse-muted);
+  }
+
+  /* Two-column */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .two-col > * { padding: 48px; }
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  /* Blockquote */
+  .quote {
+    font-family: var(--usg-font-mono);
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.7;
+    border-left: 2px solid var(--usg-rule);
+    padding-left: 24px;
+    color: var(--usg-text);
+  }
+  .quote-attribution {
+    font-family: var(--usg-font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-secondary);
+    margin-top: 8px;
+    font-style: normal;
+  }
+
+  /* Steps */
+  .step { display: flex; gap: 24px; margin-bottom: 32px; }
+  .step-number {
+    font-family: var(--usg-font-mono);
+    font-size: 24px;
+    color: var(--usg-text-tertiary);
+    flex-shrink: 0;
+    width: 40px;
+  }
+  .step-title {
+    font-family: var(--usg-font-condensed);
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  .step-body {
+    font-family: var(--usg-font-mono);
+    font-size: 13px;
+    color: var(--usg-text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Verification steps (hero animation) */
+  .verify-steps { margin-top: 32px; }
+  .verify-step {
+    display: grid;
+    grid-template-columns: 32px auto 1fr;
+    gap: 16px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--usg-border-dark);
+  }
+  .verify-step:last-child { border-bottom: none; }
+  .verify-num {
+    font-family: var(--usg-font-mono);
+    font-size: 13px;
+    color: var(--usg-text-inverse-muted);
+  }
+  .verify-status {
+    font-family: var(--usg-font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .verify-desc {
+    font-family: var(--usg-font-mono);
+    font-size: 12px;
+    color: var(--usg-text-inverse-muted);
+    line-height: 1.6;
+  }
+  .bar { height: 4px; margin-bottom: 8px; }
+
+  /* Logo strip */
+  .logo-strip {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    padding-top: 24px;
+  }
+  .logo-strip span {
+    font-family: var(--usg-font-condensed);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--usg-text-tertiary);
+  }
+
+  /* Footer */
+  .footer { padding: 24px 0 48px; }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+  }
+
+  /* Comparison table */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .comparison-col { padding: 32px; }
+  .comparison-col + .comparison-col { border-left: 1px solid var(--usg-rule-light); }
+  .comparison-item {
+    font-family: var(--usg-font-mono);
+    font-size: 13px;
+    color: var(--usg-text-secondary);
+    padding: 4px 0;
+  }
+  @media (max-width: 640px) {
+    .comparison { grid-template-columns: 1fr; }
+    .comparison-col + .comparison-col { border-left: none; border-top: 1px solid var(--usg-rule-light); }
+  }
+
+  /* Callout */
+  .callout-card {
+    border: 1px solid var(--usg-rule);
+    padding: 32px;
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header">
+  <div class="usg-doc">
+    <div class="header-inner">
+      <a href="/" class="header-logo">Enigma</a>
+      <nav class="header-nav">
+        <a href="#">Products</a>
+        <a href="#">Gov Archive</a>
+        <a href="#">Documentation</a>
+        <a href="#">Talk to Sales</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<hr class="rule">
+
+<!-- ============ S1: HERO ============ -->
+<div class="section--lg">
+  <div class="usg-doc">
+    <div style="padding: 48px 0;">
+      <span class="catalog-no">KYB-001</span>
+      <h1 class="display" style="margin-top: 8px; max-width: 720px;">Know the business. Not just the paperwork.</h1>
+      <div class="reading" style="margin-top: 24px;">
+        <p class="body-secondary">Corporate registrations tell you a business exists. We show you how it actually operates — where, under what names, who owns it, and what the government knows about it.</p>
+        <p style="margin-top: 16px; font-size: 14px;">The business identity graph. Without it, government records are noise. With it, matched evidence.</p>
+      </div>
+      <div class="btn-group" style="margin-top: 32px;">
+        <a href="#" class="btn--filled btn">See It in Action</a>
+        <a href="#" class="btn">Talk to Sales</a>
+      </div>
+      <div class="logo-strip">
+        <span>Capital One</span>
+        <span>Ramp</span>
+        <span>Wisetack</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Verification Steps — dark panel -->
+<div class="dark">
+  <div class="usg-doc">
+    <div style="padding: 48px 0;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px;">
+        <span class="label" style="color: var(--usg-text-inverse-muted);">Verification Sequence</span>
+        <span style="font-family: var(--usg-font-mono); font-size: 12px; color: var(--usg-text-inverse-muted);">1.78 sec</span>
+      </div>
+      <hr class="rule">
+
+      <div class="verify-steps">
+        <div class="verify-step">
+          <span class="verify-num">1</span>
+          <span class="verify-status" style="color: var(--usg-text-inverse-muted);">Submitted</span>
+          <span class="verify-desc">Name and address received.</span>
+        </div>
+        <div class="verify-step">
+          <span class="verify-num">2</span>
+          <span class="verify-status" style="color: var(--usg-text-inverse);">Matched</span>
+          <span class="verify-desc">Legal entity. DBA linked. Active filing.</span>
+        </div>
+        <div class="verify-step">
+          <span class="verify-num">3</span>
+          <span class="verify-status" style="color: var(--usg-text-inverse);">Business Known</span>
+          <span class="verify-desc">68 locations. 3 operating names. Owner identified. 2 related entities. 4 states.</span>
+        </div>
+        <div class="verify-step">
+          <span class="verify-num">4</span>
+          <span class="verify-status" style="color: var(--usg-text-inverse);">Records Found</span>
+          <span class="verify-desc">Health inspection: passed (NYC DOHMH). UCC filings: 2 active. Cannabis license: none. OSHA: 0 citations. Building permits: 3 active. Each traced to issuing agency.</span>
+        </div>
+        <div class="verify-step">
+          <span class="verify-num">5</span>
+          <span class="verify-status" style="color: var(--usg-new);">Decision Ready</span>
+          <span class="verify-desc">Full identity. Full record. Source on every data point. Ready to decide — core research done.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S2: THE IDENTITY ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">S2</span>
+    <h2 class="h1" style="margin-top: 8px;">A Filing Is Not an Identity</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="body-secondary">A registration tells you a business exists. We tell you whether it's real — every operating name, every location, the owner.</p>
+    </div>
+  </div>
+</div>
+
+<div class="dark">
+  <div class="usg-doc">
+    <div style="padding: 48px 0;">
+      <div style="margin-bottom: 8px;">
+        <span class="label" style="color: var(--usg-text-inverse-muted);">Entity Resolution</span>
+      </div>
+      <div style="font-family: var(--usg-font-condensed); font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;">Gregorys Coffee Inc.</div>
+      <div style="font-size: 12px; color: var(--usg-text-inverse-muted); margin-top: 4px;">New York | Active | Filed 2010</div>
+
+      <hr class="rule" style="margin: 24px 0;">
+
+      <div style="font-family: var(--usg-font-condensed); font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 16px;">Gregorys Coffee</div>
+
+      <table class="spec-table">
+        <tbody>
+          <tr>
+            <td class="spec-label">Operating Names</td>
+            <td>Gregorys Coffee / Rize Coffee</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Legal Entities</td>
+            <td>7 across NY, DE, DC, NV</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Locations</td>
+            <td>68 (54 open, 14 closed) — 9 states</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Owner</td>
+            <td>George Zamfotis — 7 related businesses</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Industry</td>
+            <td>722515 — Snack and Nonalcoholic Beverage Bars</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Latest Filing</td>
+            <td>Gregory's Coffee Franchise LLC (NV, Dec 2024)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size: 13px; color: var(--usg-text-inverse-muted); margin-top: 24px; max-width: 720px;">Plus everything your current vendor already returns — UCC filings, tax liens, entity status, officer details, filing history. Same data, lower cost per match.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S3: THE MECHANISM ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">S3</span>
+    <h2 class="h1" style="margin-top: 8px;">How We Know</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="body-secondary">Card transactions see the operating name. Government filings have the legal entity. We connect them — search one, find both.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Instacart resolution example -->
+<div class="dark">
+  <div class="usg-doc">
+    <div style="padding: 48px 0;">
+      <div style="margin-bottom: 16px;">
+        <span class="label" style="color: var(--usg-text-inverse-muted);">Resolution Example</span>
+      </div>
+
+      <div style="font-family: var(--usg-font-mono); font-size: 13px; line-height: 1.8;">
+        <div style="color: var(--usg-text-inverse-muted); margin-bottom: 16px;">INPUT: "Instacart"</div>
+
+        <div style="margin-bottom: 24px;">
+          <div style="color: var(--usg-text-inverse-muted); font-family: var(--usg-font-condensed); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Registration Search</div>
+          <div style="color: var(--usg-text-inverse-muted); padding-left: 16px;">No match. "Instacart" is not a legal entity name.</div>
+        </div>
+
+        <div>
+          <div style="color: var(--usg-new); font-family: var(--usg-font-condensed); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Enigma</div>
+          <div style="padding-left: 16px;">
+            <div>Card data: "Instacart" processes payments as Maplebear LLC.</div>
+            <div>SOS filing: Maplebear Inc., Delaware.</div>
+            <div>Trade name: "Instacart" is a registered DBA.</div>
+            <div style="color: var(--usg-new); margin-top: 8px;">Match. Entity resolved. All records linked.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Source attribution -->
+<div class="section">
+  <div class="usg-doc">
+    <div class="reading">
+      <p style="font-style: italic; color: var(--usg-text-secondary);">"Now think about your data. How many applications come in with an operating name that doesn't match the legal entity?"</p>
+    </div>
+
+    <hr class="rule--light" style="margin: 32px 0;">
+
+    <span class="label">Source Attribution</span>
+    <table class="spec-table" style="margin-top: 12px; max-width: 480px;">
+      <tbody>
+        <tr>
+          <td class="spec-label">Match Type</td>
+          <td>DBA to Legal Entity</td>
+        </tr>
+        <tr>
+          <td class="spec-label">Confidence</td>
+          <td>High</td>
+        </tr>
+        <tr>
+          <td class="spec-label">Sources</td>
+          <td>Card transaction data, Delaware SOS, DBA filing</td>
+        </tr>
+        <tr>
+          <td class="spec-label">Last Checked</td>
+          <td>2026-01-15</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 24px; font-size: 13px; color: var(--usg-text-secondary); max-width: 720px;">"We show our work. What we found, from what source, at what confidence. When the regulator asks how you confirmed this business, you have the receipts."</p>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S4: GOV ARCHIVE ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">S4</span>
+    <h2 class="h1" style="margin-top: 8px;">What the Government Knows</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="body-secondary">Health inspections. OSHA citations. Cannabis licenses. Building permits. We match those records to the business you asked about.</p>
+    </div>
+  </div>
+</div>
+
+<div class="dark">
+  <div class="usg-doc">
+    <div style="padding: 48px 0;">
+      <div style="margin-bottom: 16px;">
+        <span class="label" style="color: var(--usg-text-inverse-muted);">Government Records — Gregorys Coffee</span>
+      </div>
+
+      <table class="spec-table" style="font-size: 13px;">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Finding</th>
+            <th>Agency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Restaurant Inspection</td><td>Passed</td><td style="color: var(--usg-text-inverse-muted);">NYC DOHMH</td></tr>
+          <tr><td>Fire Safety Inspection</td><td>Inspected</td><td style="color: var(--usg-text-inverse-muted);">FDNY</td></tr>
+          <tr><td>Building Permits</td><td>3 active</td><td style="color: var(--usg-text-inverse-muted);">NYC DOB</td></tr>
+          <tr><td>Workers Compensation</td><td>Active policy</td><td style="color: var(--usg-text-inverse-muted);">NY WCB</td></tr>
+          <tr><td>Restaurant License</td><td>Active</td><td style="color: var(--usg-text-inverse-muted);">NYC DCA</td></tr>
+          <tr><td>Beneficial Ownership</td><td>Filed</td><td style="color: var(--usg-text-inverse-muted);">FinCEN</td></tr>
+          <tr><td>Franchise Tax Permit</td><td>Active</td><td style="color: var(--usg-text-inverse-muted);">TX Comptroller</td></tr>
+          <tr><td>Business License</td><td>Active</td><td style="color: var(--usg-text-inverse-muted);">DC DLCP</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size: 12px; color: var(--usg-text-inverse-muted); margin-top: 24px;">Every finding traced to the issuing agency. Each record matched to the source that produced it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="usg-doc">
+    <div class="reading">
+      <p class="body-secondary">Without a known identity, government records are search results — text matches on a name that might belong to dozens of businesses.</p>
+      <p style="margin-top: 16px;">With it, they are matched evidence. We know exactly which business these records belong to. Source on every finding. Agency named. Is this a real business? Now you know — and you know why.</p>
+    </div>
+
+    <div class="btn-group" style="margin-top: 32px;">
+      <a href="#" class="btn--filled btn">See What We Find on Yours</a>
+      <a href="#" class="btn">Talk to Sales</a>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S4b: THE ANALYST EXPERIENCE ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">S4B</span>
+    <h2 class="h1" style="margin-top: 8px;">When It Goes to Review</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="body-secondary">Not every business auto-approves. When your analyst opens a flagged case, the evidence should already be assembled.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Analyst thread — dark terminal -->
+<div class="terminal" style="margin: 0;">
+  <div class="usg-doc" style="padding-top: 16px; padding-bottom: 16px;">
+<span class="label-line">CASE #4,271 — FLAGGED FOR REVIEW</span>
+<span class="dim">Meridian Home Services</span>
+<span class="dim">Input: 12 Maple St, Newark NJ</span>
+<span class="dim">Flags: TIN mismatch. Address: registered agent.</span>
+<span class="dim">Auto-verification: INCONCLUSIVE</span>
+
+<span style="display:block; border-top: 1px solid var(--usg-border-dark); margin: 16px 0;"></span>
+
+<span class="highlight">ANALYST</span>
+  What do we know about Meridian Home Services?
+
+<span style="color: var(--usg-text-inverse);">ENIGMA AI</span>
+  Searching identity graph...
+  Searching Gov Archive...
+  Searching open sources...
+
+  <span style="color: var(--usg-text-inverse);">IDENTITY RESOLVED</span>
+    Meridian Home Services LLC — Delaware.
+    DBA: "Meridian Homes" (NJ trade name).
+    Owner: Robert Chen — 3 related entities.
+    2 addresses: Newark NJ (confirmed by card
+    transactions), Wilmington DE (registered
+    agent — CMRA).
+
+  <span style="color: var(--usg-text-inverse);">GOVERNMENT RECORDS MATCHED</span>
+    NJ Contractor License    Active     NJ DCA
+    Workers Comp Policy      Active     NJ DOLWD
+    Building Permits         12 active  Newark DOB
+    OSHA Citations           0          OSHA
+    Beneficial Ownership     Filed      FinCEN
+
+  <span style="color: var(--usg-text-inverse);">ADDRESS RESOLVED</span>
+    DE address is a Commercial Mail Receiving
+    Agency. Physical operations confirmed at
+    Newark NJ via card transaction data and
+    NJ contractor license.
+
+  <span style="color: var(--usg-text-inverse);">TIN NOTE</span>
+    Input TIN belongs to dissolved entity
+    "Meridian Homes Inc." (NJ, 2019). Active
+    entity TIN differs. Likely stale application
+    data — verify with applicant.
+
+  <span class="dim">5 sources. 38 seconds.</span>
+
+<span style="display:block; border-top: 1px solid var(--usg-border-dark); margin: 16px 0;"></span>
+
+<span class="highlight">ANALYST</span>
+  Show me Robert Chen's other businesses.
+
+<span style="color: var(--usg-text-inverse);">ENIGMA AI</span>
+  Robert Chen — associated entities:
+  <span class="dim">Meridian Home Services LLC (DE) — active</span>
+  <span class="dim">MHS Property Management LLC (NJ) — active</span>
+  <span class="dim">Meridian Homes Inc. (NJ) — dissolved 2019</span>
+
+  All share the Newark NJ operating address.
+  No adverse media. No watchlist hits.
+
+  <span class="dim">Sources: DE SOS, NJ SOS, FinCEN BOI,
+  card transaction data.</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="usg-doc">
+    <div class="reading">
+      <h3 class="h2">Three Data Layers. One Report.</h3>
+      <p class="body-secondary" style="margin-top: 16px;">The identity graph resolves the business. Gov Archive matches government records to it. Open sources add context. Every finding cites the agency. Every claim is verifiable.</p>
+      <p style="margin-top: 12px;">When the regulator asks how you confirmed this business, the report is the answer.</p>
+    </div>
+
+    <!-- Time comparison -->
+    <div class="comparison" style="margin-top: 48px; border-top: 1px solid var(--usg-rule); border-bottom: 1px solid var(--usg-rule);">
+      <div class="comparison-col" style="padding-left: 0;">
+        <div class="h3" style="margin-bottom: 16px;">Without</div>
+        <div class="comparison-item">Search NJ SOS</div>
+        <div class="comparison-item">Search DE SOS</div>
+        <div class="comparison-item">Search FinCEN</div>
+        <div class="comparison-item">Google the business</div>
+        <div class="comparison-item">Check NJ DCA licenses</div>
+        <div class="comparison-item">Check OSHA records</div>
+        <div class="comparison-item">Cross-reference addresses</div>
+        <div class="comparison-item">Compile your own summary</div>
+        <div style="margin-top: 16px;">
+          <span class="metric-value" style="font-size: 1.5rem;">~30 min</span>
+          <div class="caption" style="margin-top: 4px;">Fragments from 8 tabs</div>
+        </div>
+      </div>
+      <div class="comparison-col">
+        <div class="h3" style="margin-bottom: 16px;">With Enigma AI</div>
+        <div class="comparison-item">Ask one question</div>
+        <div class="comparison-item">Read sourced report</div>
+        <div class="comparison-item">Follow up as needed</div>
+        <div class="comparison-item">Decide</div>
+        <div style="margin-top: 16px;">
+          <span class="metric-value" style="font-size: 1.5rem; color: var(--usg-new);">~3 min</span>
+          <div class="caption" style="margin-top: 4px;">Sourced and cited</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Perpetual KYB callout -->
+    <div class="callout-card" style="margin-top: 48px;">
+      <h3 class="h3" style="margin-bottom: 12px;">Perpetual KYB</h3>
+      <p class="body-secondary" style="font-size: 13px;">Same tool. Different questions. Onboarding investigation. Annual review. Ownership change. Adverse media flag. The evidence base doesn't expire — the identity graph, the government records, the sourced citations. Every review starts from what's known.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S5: WHAT CHANGES ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">S5</span>
+    <h2 class="h1" style="margin-top: 8px;">What Changes</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="body-secondary">More auto-approvals. Faster manual reviews. Fewer businesses stuck in your queue. The identity graph doesn't just find more — it clears more.</p>
+    </div>
+
+    <div class="metric-grid" style="margin-top: 48px;">
+      <div>
+        <div class="metric-value">60%+</div>
+        <div class="metric-label">Cost Savings vs. Fintech KYB Vendors</div>
+      </div>
+      <div>
+        <div class="metric-value">5-10 min</div>
+        <div class="metric-label">Per Manual Case, Down from 30</div>
+      </div>
+      <div>
+        <div class="metric-value">Per Match</div>
+        <div class="metric-label">No Match, No Charge</div>
+      </div>
+    </div>
+
+    <!-- Outcome blocks -->
+    <div style="margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+      <div>
+        <h3 class="h3" style="margin-bottom: 8px;">More Auto-Approvals</h3>
+        <p style="font-size: 13px; color: var(--usg-text-secondary);">Identity matching, address checks, TIN confirmation — each runs against the same resolved identity. The business is already known. The checks are more accurate.</p>
+      </div>
+      <div>
+        <h3 class="h3" style="margin-bottom: 8px;">Faster Manual Reviews</h3>
+        <p style="font-size: 13px; color: var(--usg-text-secondary);">30 min to 5-10 min per case. The full investigation thread, sourced and cited.</p>
+      </div>
+      <div>
+        <h3 class="h3" style="margin-bottom: 8px;">More Customers Activating</h3>
+        <p style="font-size: 13px; color: var(--usg-text-secondary);">Every business in your queue is a customer who applied and is waiting. Better data, faster decisions, fewer customers who leave before you approve them.</p>
+      </div>
+      <div>
+        <h3 class="h3" style="margin-bottom: 8px;">And It Costs Less</h3>
+        <p style="font-size: 13px; color: var(--usg-text-secondary);">60%+ cost savings after one customer switched primary KYB vendor. Per-match pricing. No match, no charge.</p>
+      </div>
+    </div>
+
+    @media (max-width: 640px) {
+      div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr; }
+    }
+
+    <!-- Quote -->
+    <div style="margin-top: 48px;">
+      <blockquote class="quote">
+        "If we're paying for verification, we need it to actually help us move faster — not create more work."
+        <div class="quote-attribution">— Katie Beach, VP of Compliance, Wisetack</div>
+      </blockquote>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ CAPABILITY TABLE ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">Capabilities</span>
+    <h2 class="h1" style="margin-top: 8px;">Capability Reference</h2>
+
+    <table class="spec-table" style="margin-top: 32px;">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>What It Does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="spec-label">Identify</td><td>Business identity match</td></tr>
+        <tr><td class="spec-label">Verify</td><td>Full SOS record + filing history</td></tr>
+        <tr><td class="spec-label">TIN / EIN Verification</td><td>Real-time IRS matching</td></tr>
+        <tr><td class="spec-label">OFAC &amp; Sanctions</td><td>Entity + individual screening</td></tr>
+        <tr><td class="spec-label">Address Verification</td><td>Business-at-address confirmation</td></tr>
+        <tr><td class="spec-label">Virtual Address Detection</td><td>Registered agent / CMRA flagging</td></tr>
+        <tr><td class="spec-label">Negative News</td><td>Adverse media screening</td></tr>
+        <tr><td class="spec-label">Business Owner Info</td><td>Full ownership + related businesses</td></tr>
+        <tr><td class="spec-label">Gov Archive</td><td>Govt records matched to known identity</td></tr>
+        <tr><td class="spec-label">MCP / AI Due Diligence</td><td>Natural language research tool</td></tr>
+        <tr><td class="spec-label">Perpetual KYB</td><td>Ongoing annual reviews</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 16px; font-size: 13px; color: var(--usg-text-secondary);">Per-match pricing on identity checks. Per-check on add-ons. Per-seat on MCP. No charge when we don't match.</p>
+
+    <div class="callout-card" style="margin-top: 32px;">
+      <h3 class="h3" style="margin-bottom: 12px;">You Don't Need All Eleven</h3>
+      <p style="font-size: 13px; color: var(--usg-text-secondary);">Start with what your workflow requires — identity and sanctions screening run under $1.50 combined per check. Add capabilities as you grow.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S5: PROOF ============ -->
+<div class="section">
+  <div class="usg-doc">
+    <span class="catalog-no">Proof</span>
+    <h2 class="h1" style="margin-top: 8px;">They Tested Us</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="body-secondary">Every engagement starts with a file test. Here's what customers found.</p>
+    </div>
+
+    <div style="margin-top: 32px; border: 1px solid var(--usg-rule); padding: 32px;">
+      <div class="label" style="margin-bottom: 8px;">Wisetack — Home Improvement Lending</div>
+      <blockquote class="quote">
+        "If we're paying for verification, we need it to actually help us move faster — not create more work."
+        <div class="quote-attribution">— Katie Beach, VP of Compliance</div>
+      </blockquote>
+      <p style="margin-top: 16px; font-size: 13px;">3 vendors to 2. 60%+ cost savings. Fewer errors.</p>
+    </div>
+
+    <div style="margin-top: 32px;">
+      <span class="label">Trust Signals</span>
+      <p style="margin-top: 8px; font-size: 13px; color: var(--usg-text-secondary);">SOC 2 Type II certified. Per-match pricing — no charge when we don't match. Multi-vendor recommended — we work alongside your existing stack.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ============ S6: PLAN ============ -->
+<div class="dark">
+  <div class="usg-doc">
+    <div class="section">
+      <span class="catalog-no" style="color: var(--usg-text-inverse-muted);">S6</span>
+      <h2 class="display" style="margin-top: 8px;">Start in Five Days</h2>
+      <p style="margin-top: 16px; font-size: 14px; color: var(--usg-text-inverse-muted); max-width: 480px;">Send 100 records. Get results. The data makes the case.</p>
+
+      <div style="margin-top: 48px;">
+        <div class="step">
+          <span class="step-number" style="color: var(--usg-text-inverse-muted);">1</span>
+          <div>
+            <div class="step-title">Send Your File</div>
+            <div class="step-body" style="color: var(--usg-text-inverse-muted);">100 records. Business names, addresses, states. Standard MNDA — typically executed in 24-48 hours. Free. No commitment. No contract required.</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number" style="color: var(--usg-text-inverse-muted);">2</span>
+          <div>
+            <div class="step-title">See Your Results</div>
+            <div class="step-body" style="color: var(--usg-text-inverse-muted);">We run your file through production — not a demo environment. You see exactly what you'd get.</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number" style="color: var(--usg-text-inverse-muted);">3</span>
+          <div>
+            <div class="step-title">Decide</div>
+            <div class="step-body" style="color: var(--usg-text-inverse-muted);">Keep your current vendor. Add us to the waterfall. ~$2 per match. No charge when we don't match. Most vendors charge per call — we charge per match.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid var(--usg-border-dark); padding: 32px; margin-top: 32px;">
+        <h3 class="h3" style="margin-bottom: 12px;">You Don't Have to Switch</h3>
+        <p style="font-size: 13px; color: var(--usg-text-inverse-muted);">Most customers run multiple KYB vendors. Add Enigma to your workflow and see what we find that others don't. We recommend it — put us head-to-head.</p>
+        <p style="font-size: 13px; color: var(--usg-text-inverse-muted); margin-top: 12px;">Your team doesn't scale by adding analysts to the review queue. It scales by giving them better data.</p>
+      </div>
+
+      <hr class="rule" style="margin: 32px 0;">
+
+      <div style="max-width: 720px;">
+        <span class="label" style="color: var(--usg-text-inverse-muted);">Integration</span>
+        <p style="margin-top: 8px; font-size: 13px; color: var(--usg-text-inverse-muted);">Most KYB customers integrate through Alloy or Taktile. 4-6 weeks from contract to production. API-first. Direct integration also available. Dedicated customer success support through integration and beyond.</p>
+      </div>
+
+      <hr class="rule" style="margin: 32px 0;">
+
+      <div style="max-width: 720px;">
+        <span class="label" style="color: var(--usg-text-inverse-muted);">Build or Buy?</span>
+        <p style="margin-top: 8px; font-size: 13px; color: var(--usg-text-inverse-muted);">The data assets behind this cannot be replicated internally. Card transaction consortia. 50-state SOS monitoring. Municipal government records from thousands of agencies. You could build the API calls. You cannot build the data.</p>
+      </div>
+
+      <div class="btn-group" style="margin-top: 48px;">
+        <a href="#" class="btn--filled btn">Start Your Evaluation — Free</a>
+        <a href="#" class="btn">Talk to Sales</a>
+        <a href="#" class="btn--link btn" style="color: var(--usg-text-inverse);">Get the One-Pager</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<hr class="rule">
+<footer class="footer">
+  <div class="usg-doc">
+    <div class="footer-inner">
+      <span class="caption">Enigma Technologies, Inc.</span>
+      <span class="caption">enigma.com</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
