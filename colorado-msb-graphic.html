@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1152">
+<title>Colorado MSB Registration Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --usg-bg: #F5F3EF;
+    --usg-bg-muted: #EDEAE4;
+    --usg-bg-dark: #1A1A1A;
+    --usg-bg-specimen: #111111;
+    --usg-text: #1A1A1A;
+    --usg-text-secondary: #666666;
+    --usg-text-tertiary: #999999;
+    --usg-text-inverse: #F5F3EF;
+    --usg-text-inverse-muted: #AAAAAA;
+    --usg-rule: #1A1A1A;
+    --usg-rule-light: #CCCCCC;
+    --usg-border-dark: #333333;
+    --usg-new: #CC3300;
+    --usg-font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Courier New", monospace;
+    --usg-font-condensed: "Arial Narrow", "Helvetica Neue Condensed", sans-serif;
+  }
+
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  body {
+    width: 1152px;
+    height: 648px;
+    overflow: hidden;
+    background: var(--usg-bg);
+    color: var(--usg-text);
+    font-family: var(--usg-font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .frame {
+    width: 1152px;
+    height: 648px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 20px 48px 16px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+  }
+
+  .header-org {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--usg-text);
+  }
+
+  .header-catalog {
+    font-family: var(--usg-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--usg-text-tertiary);
+    text-transform: uppercase;
+  }
+
+  .header-date {
+    font-family: var(--usg-font-mono);
+    font-size: 11px;
+    color: var(--usg-text-tertiary);
+  }
+
+  .rule { border: none; border-top: 1px solid var(--usg-rule); }
+  .rule--light { border-top-color: var(--usg-rule-light); }
+
+  /* MAIN */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  /* LEFT: dark specimen panel */
+  .panel-dark {
+    background: var(--usg-bg-specimen);
+    color: var(--usg-text-inverse);
+    padding: 40px 48px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .panel-dark-top {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-label {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-inverse-muted);
+    margin-bottom: 8px;
+  }
+
+  .stat-hero {
+    font-family: var(--usg-font-mono);
+    font-size: 72px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--usg-text-inverse);
+  }
+
+  .stat-unit {
+    font-family: var(--usg-font-condensed);
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--usg-text-inverse);
+    margin-top: 8px;
+  }
+
+  .stat-context {
+    font-family: var(--usg-font-mono);
+    font-size: 12px;
+    color: var(--usg-text-inverse-muted);
+    line-height: 1.6;
+    margin-top: 20px;
+  }
+
+  .comparisons {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--usg-border-dark);
+  }
+
+  .comp-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .comp-multiplier {
+    font-family: var(--usg-font-mono);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--usg-text-inverse);
+  }
+
+  .comp-vs {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-inverse-muted);
+  }
+
+  /* Horizontal bar chart area */
+  .bar-section {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--usg-border-dark);
+  }
+
+  .bar-section-label {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-inverse-muted);
+    margin-bottom: 14px;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 40px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .bar-state {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--usg-text-inverse-muted);
+    text-align: right;
+  }
+
+  .bar-track {
+    height: 16px;
+    background: var(--usg-border-dark);
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--usg-text-inverse);
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .bar-fill--highlight {
+    background: var(--usg-new);
+  }
+
+  .bar-value {
+    font-family: var(--usg-font-mono);
+    font-size: 11px;
+    color: var(--usg-text-inverse-muted);
+  }
+
+  /* RIGHT: light data panel */
+  .panel-light {
+    padding: 40px 48px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 1px solid var(--usg-rule);
+  }
+
+  .section-heading {
+    font-family: var(--usg-font-condensed);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--usg-text);
+    margin-bottom: 16px;
+  }
+
+  .title-block {
+    margin-bottom: 24px;
+  }
+
+  .title-main {
+    font-family: var(--usg-font-condensed);
+    font-size: 26px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    color: var(--usg-text);
+  }
+
+  .title-sub {
+    font-family: var(--usg-font-mono);
+    font-size: 12px;
+    color: var(--usg-text-secondary);
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+
+  /* Spec table */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+  }
+
+  .spec-table td {
+    padding: 7px 0;
+    border-bottom: 1px solid var(--usg-rule-light);
+    vertical-align: top;
+  }
+
+  .spec-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .spec-label {
+    font-family: var(--usg-font-condensed);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--usg-text-secondary);
+    width: 160px;
+    padding-right: 16px;
+  }
+
+  .spec-value {
+    font-family: var(--usg-font-mono);
+    font-size: 13px;
+    color: var(--usg-text);
+  }
+
+  .spec-value--highlight {
+    color: var(--usg-new);
+    font-weight: 500;
+  }
+
+  .bottom-block {
+    padding-top: 20px;
+    border-top: 1px solid var(--usg-rule);
+  }
+
+  .narrative {
+    font-family: var(--usg-font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--usg-text-secondary);
+  }
+
+  /* FOOTER */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 48px 16px;
+  }
+
+  .footer-text {
+    font-family: var(--usg-font-mono);
+    font-size: 10px;
+    color: var(--usg-text-tertiary);
+  }
+
+  .footer-classification {
+    font-family: var(--usg-font-condensed);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--usg-new);
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- HEADER -->
+  <div>
+    <div class="header">
+      <div class="header-left">
+        <span class="header-org">Enigma</span>
+        <span class="header-catalog">RPT-MSB-2026-CO-079</span>
+      </div>
+      <span class="header-date">2026.03.06</span>
+    </div>
+    <hr class="rule">
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT: dark panel -->
+    <div class="panel-dark">
+      <div class="panel-dark-top">
+        <span class="stat-label">Colorado MSB Registrations per 100K Residents</span>
+        <span class="stat-hero">79</span>
+        <span class="stat-unit">Registrations / 100K</span>
+        <p class="stat-context">Highest per-capita MSB registration rate of any U.S. state. Driven by Colorado's 2018 cryptocurrency exemption from state money transmitter licensing requirements.</p>
+
+        <div class="comparisons">
+          <div class="comp-item">
+            <span class="comp-multiplier">5x</span>
+            <span class="comp-vs">vs. California</span>
+          </div>
+          <div class="comp-item">
+            <span class="comp-multiplier">11x</span>
+            <span class="comp-vs">vs. New York</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar-section">
+        <div class="bar-section-label">Registrations per 100K Residents</div>
+        <div class="bar-row">
+          <span class="bar-state">Colorado</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--highlight" style="width: 100%;"></div></div>
+          <span class="bar-value">79</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-state">California</span>
+          <div class="bar-track"><div class="bar-fill" style="width: 20%;"></div></div>
+          <span class="bar-value">~16</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-state">Texas</span>
+          <div class="bar-track"><div class="bar-fill" style="width: 14%;"></div></div>
+          <span class="bar-value">~11</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-state">New York</span>
+          <div class="bar-track"><div class="bar-fill" style="width: 9%;"></div></div>
+          <span class="bar-value">~7</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: light panel -->
+    <div class="panel-light">
+      <div>
+        <div class="title-block">
+          <h1 class="title-main">The Colorado Anomaly: How a Crypto Exemption Broke the MSB Map</h1>
+          <p class="title-sub">FinCEN self-reported registration data reveals an unprecedented clustering of money services businesses in Colorado following the state's 2018 regulatory carve-out.</p>
+        </div>
+
+        <hr class="rule--light" style="border:none;border-top:1px solid #CCCCCC;margin:0 0 16px">
+
+        <div class="section-heading">Registrant Profile Anomalies</div>
+        <table class="spec-table">
+          <tr>
+            <td class="spec-label">Zero Branches</td>
+            <td class="spec-value"><span class="spec-value--highlight">90%</span> of CO registrants report zero branch locations</td>
+          </tr>
+          <tr>
+            <td class="spec-label">State Coverage</td>
+            <td class="spec-value">Claim activity in <span class="spec-value--highlight">all 50 states</span></td>
+          </tr>
+          <tr>
+            <td class="spec-label">Activity Codes</td>
+            <td class="spec-value"><span class="spec-value--highlight">~2x</span> national average codes checked per filing</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Trigger Event</td>
+            <td class="spec-value">CO 2018 crypto exemption from state MTL</td>
+          </tr>
+          <tr>
+            <td class="spec-label">Registration System</td>
+            <td class="spec-value">FinCEN self-reported, no federal verification</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="bottom-block">
+        <p class="narrative">Colorado's exemption of cryptocurrency businesses from state money transmitter licensing, combined with FinCEN's self-reported registration framework, created a low-friction pathway. Entities exploited this at unprecedented rates, registering shell-like operations with maximum jurisdictional claims and minimal physical presence.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div>
+    <hr class="rule">
+    <div class="footer">
+      <span class="footer-text">Source: FinCEN MSB Registration Data / Enigma Analysis</span>
+      <span class="footer-classification">Analytical Brief</span>
+      <span class="footer-text">enigma.com</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
