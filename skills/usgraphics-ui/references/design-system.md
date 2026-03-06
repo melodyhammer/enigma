@@ -182,15 +182,17 @@ a:hover { color: var(--usg-link-hover); }
 ## Typography Classes
 
 ```css
-/* Headings — always condensed, always uppercase */
+/* Display heading — mono, uppercase */
 .usg-display {
-  font-family: var(--usg-font-condensed);
+  font-family: var(--usg-font-mono);
   font-size: var(--usg-text-display);
-  font-weight: var(--usg-weight-bold);
+  font-weight: var(--usg-weight-regular);
   text-transform: uppercase;
-  letter-spacing: var(--usg-tracking-wide);
+  letter-spacing: var(--usg-tracking-tight);
   line-height: var(--usg-leading-tight);
 }
+
+/* Headings — always condensed, always uppercase */
 
 .usg-h1 {
   font-family: var(--usg-font-condensed);
