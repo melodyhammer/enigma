@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enigma — Government Archive</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #F5F3EF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #EDEAE4;
+    --bg-input: #FFFFFF;
+    --text: #1A1A1A;
+    --text-2: #666666;
+    --text-3: #999999;
+    --rule: #1A1A1A;
+    --rule-lt: #CCCCCC;
+    --accent: #CC3300;
+    --accent-dim: rgba(204, 51, 0, 0.08);
+    --teal: #1A1A1A;
+    --teal-dim: rgba(26, 26, 26, 0.05);
+    --green: #666666;
+    --mono: "IBM Plex Mono", "SF Mono", "Menlo", "Courier New", monospace;
+    --cond: "Arial Narrow", "Helvetica Neue Condensed", sans-serif;
+  }
+
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  a { color: var(--text); text-decoration: underline; transition: color 150ms ease; }
+  a:hover { color: var(--accent); }
+
+  .doc { max-width: 1120px; margin: 0 auto; padding: 0 64px; }
+  @media (max-width: 1024px) { .doc { padding: 0 48px; } }
+  @media (max-width: 640px) { .doc { padding: 0 20px; } }
+
+  hr.rule { border: none; border-top: 1px solid var(--rule); margin: 0; }
+
+  /* Header */
+  .hdr { padding: 20px 0; border-bottom: 1px solid var(--rule); }
+  .hdr-in { display: flex; align-items: center; justify-content: space-between; }
+  .hdr-left { display: flex; align-items: center; gap: 24px; }
+  .hdr-logo {
+    font-family: var(--mono); font-size: 18px; font-weight: 500;
+    color: var(--text); text-decoration: none; letter-spacing: 0.02em;
+  }
+  .hdr-product {
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2);
+  }
+  .hdr-right { display: flex; gap: 12px; }
+  @media (max-width: 640px) {
+    .hdr-in { flex-direction: column; gap: 16px; }
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 10px 20px; border: 1px solid var(--text-2);
+    background: transparent; color: var(--text);
+    cursor: pointer; border-radius: 0; text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .btn:hover { background: var(--text); color: var(--bg); }
+  .btn-f { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-f:hover { background: #333; color: #F5F3EF; }
+  .btn-accent { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .btn-accent:hover { background: #aa2a00; }
+  .btn-grp { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* Type */
+  .display {
+    font-family: var(--mono); font-weight: 400; text-transform: uppercase;
+    letter-spacing: -0.02em; line-height: 1.15;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+  .h1 {
+    font-family: var(--mono); font-weight: 400; text-transform: uppercase;
+    letter-spacing: -0.01em; line-height: 1.2;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+  .h2 {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; line-height: 1.2;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+  }
+  .h3 {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; line-height: 1.2; font-size: 0.8125rem;
+  }
+  .label {
+    font-family: var(--cond); font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-2);
+  }
+  .cat {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    color: var(--text-3); text-transform: uppercase;
+  }
+  .caption { font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5; }
+  .t2 { color: var(--text-2); }
+  .t3 { color: var(--text-3); }
+
+  /* Sections */
+  .sec { padding: 80px 0; }
+  .sec-sm { padding: 48px 0; }
+
+  /* Metrics row */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  }
+  .stat-grid-2 { grid-template-columns: repeat(3, 1fr); }
+  .stat {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .stat-val {
+    font-family: var(--mono); font-size: 24px; font-weight: 400;
+    line-height: 1; letter-spacing: -0.01em;
+  }
+  .stat-label {
+    font-family: var(--cond); font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-3); margin-top: 6px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 0;
+    transition: border-color 150ms ease;
+  }
+  .card:hover { border-color: var(--text-3); }
+  .card-img {
+    width: 100%;
+    height: 160px;
+    background: var(--bg-card-hover);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--rule);
+  }
+  .card-body { padding: 20px; }
+  .card-tag {
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--accent-dim); color: var(--accent);
+    padding: 3px 8px; display: inline-block; margin-bottom: 10px;
+  }
+  .card-title {
+    font-family: var(--cond); font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    margin-bottom: 8px; line-height: 1.3;
+  }
+  .card-desc {
+    font-family: var(--mono); font-size: 11px; color: var(--text-2);
+    line-height: 1.6;
+  }
+  .card-meta {
+    font-family: var(--mono); font-size: 10px; color: var(--text-3);
+    margin-top: 12px; line-height: 1.6;
+  }
+
+  /* Featured grid */
+  .feat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  @media (max-width: 900px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .feat-grid { grid-template-columns: 1fr; } }
+
+  /* Network viz placeholder */
+  .viz {
+    width: 100%; height: 160px;
+    position: relative; overflow: hidden;
+  }
+  .viz svg { width: 100%; height: 100%; }
+  .viz-dot {
+    fill: var(--accent);
+    opacity: 0.7;
+  }
+  .viz-line {
+    stroke: var(--accent);
+    stroke-width: 0.5;
+    opacity: 0.3;
+  }
+
+  /* Use case query cards */
+  .query-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 24px;
+  }
+  .query-card:hover { border-color: var(--text-3); }
+  .query-prompt {
+    font-family: var(--mono); font-size: 12px; color: var(--text-2);
+    line-height: 1.6; margin-bottom: 20px;
+  }
+  .query-result {
+    border-top: 1px solid var(--rule);
+    padding-top: 16px;
+  }
+  .query-result-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule-lt);
+    font-family: var(--mono); font-size: 11px; color: var(--text-2);
+    line-height: 1.5;
+  }
+  .query-result-item:last-child { border-bottom: none; }
+  .query-dot {
+    width: 6px; height: 6px; flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .query-dot--amber { background: var(--accent); }
+  .query-dot--teal { background: var(--teal); }
+  .query-dot--green { background: var(--green); }
+  .query-dot--red { background: #CC3300; }
+  .query-source {
+    font-family: var(--mono); font-size: 10px; color: var(--text-3);
+    margin-top: 4px;
+  }
+  .query-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  @media (max-width: 768px) { .query-grid { grid-template-columns: 1fr; } }
+
+  /* Use case prompt cards (right side of hero) */
+  .prompt-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 16px 20px;
+    display: flex; gap: 14px; align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .prompt-icon {
+    width: 32px; height: 32px; flex-shrink: 0;
+    border: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .prompt-text {
+    font-family: var(--mono); font-size: 12px; color: var(--text-2);
+    line-height: 1.6;
+  }
+  .prompt-text strong {
+    color: var(--text); font-weight: 500; display: block;
+    margin-bottom: 4px; font-size: 12px;
+  }
+  .prompt-meta {
+    font-family: var(--mono); font-size: 10px; color: var(--text-3);
+    margin-top: 6px; line-height: 1.5;
+  }
+
+  /* Bars */
+  .bar-section { margin-top: 32px; }
+  .bar-row {
+    display: grid; grid-template-columns: 120px 1fr 40px;
+    align-items: center; gap: 12px; margin-bottom: 6px;
+  }
+  .bar-label {
+    font-family: var(--cond); font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text-2); text-align: right;
+  }
+  .bar-track { height: 14px; background: var(--rule-lt); position: relative; }
+  .bar-fill {
+    height: 100%; position: absolute; left: 0; top: 0;
+    transition: width 300ms ease;
+  }
+  .bar-fill--teal { background: var(--teal); }
+  .bar-fill--amber { background: var(--accent); }
+  .bar-val {
+    font-family: var(--mono); font-size: 11px; color: var(--text-2);
+  }
+
+  /* Two-col hero */
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+  /* What's inside */
+  .inside-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 768px) { .inside-grid { grid-template-columns: 1fr; } }
+
+  /* Source badges */
+  .source-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    margin-bottom: 6px;
+  }
+  .source-dot { width: 8px; height: 8px; flex-shrink: 0; }
+  .source-name {
+    font-family: var(--cond); font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2);
+  }
+  .source-count {
+    font-family: var(--mono); font-size: 11px; color: var(--text-3);
+    margin-left: auto;
+  }
+  .source-bar-row {
+    display: grid; grid-template-columns: 40px 140px 1fr 40px;
+    align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .source-icon {
+    width: 32px; height: 32px;
+    border: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    background: var(--bg-card);
+  }
+
+  /* Section icon */
+  .sec-icon {
+    display: flex; gap: 4px; margin-bottom: 16px;
+  }
+  .sec-icon-box {
+    width: 16px; height: 16px; border: 1.5px solid var(--accent);
+  }
+
+  /* Amber line */
+  .amber-line {
+    width: 100%; height: 1px;
+    background: var(--rule);
+    margin: 48px 0;
+  }
+
+  /* Footer */
+  .ftr { padding: 24px 0; border-top: 1px solid var(--rule); }
+  .ftr-in {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .ftr-logo {
+    font-family: var(--mono); font-size: 16px; font-weight: 500;
+    color: var(--text); text-decoration: none;
+  }
+
+  /* More datasets */
+  .more-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  @media (max-width: 768px) { .more-grid { grid-template-columns: 1fr; } }
+
+  .more-card {
+    text-align: center;
+    padding: 24px;
+  }
+  .more-card-img {
+    width: 120px; height: 120px; margin: 0 auto 16px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Icon grid for section headers */
+  .icon-grid {
+    display: grid; grid-template-columns: repeat(2, 16px); gap: 4px;
+    margin-bottom: 16px;
+  }
+  .icon-sq {
+    width: 16px; height: 16px; border: 1.5px solid var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="doc">
+    <div class="hdr-in">
+      <div class="hdr-left">
+        <a href="/" class="hdr-logo">enigma</a>
+        <span class="hdr-product">Government Archive</span>
+      </div>
+      <div class="hdr-right">
+        <a href="#contact" class="btn">Contact</a>
+        <a href="#explore" class="btn btn-f">Explore Datasets</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="sec" style="padding-bottom: 0;">
+  <div class="doc">
+    <div class="hero-grid">
+      <div>
+        <h1 class="display" style="max-width: 520px;">2566 Government Datasets for Risk and Compliance Teams.</h1>
+        <p style="margin-top: 20px; font-size: 13px; color: var(--text-2); max-width: 440px; line-height: 1.7;">Primary-source records from 106 agencies. Enforcement actions, facility inspections, financial filings, infrastructure permits — structured, mapped, and ready to query.</p>
+
+        <!-- Stats -->
+        <div class="stat-grid" style="margin-top: 32px;">
+          <div class="stat">
+            <div class="stat-val">106</div>
+            <div class="stat-label">Agencies</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">2455</div>
+            <div class="stat-label">Datasets</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">2509</div>
+            <div class="stat-label">Attributes</div>
+          </div>
+        </div>
+        <div class="stat-grid" style="border-top: none;">
+          <div class="stat" style="border-bottom: none;">
+            <div class="stat-val">0</div>
+            <div class="stat-label">Data Patents</div>
+          </div>
+          <div class="stat" style="border-bottom: none;">
+            <div class="stat-val">1800-2055</div>
+            <div class="stat-label">Coverage</div>
+          </div>
+          <div class="stat" style="border-bottom: none;">
+            <div class="stat-val">2566</div>
+            <div class="stat-label">Datasets</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: use case prompts -->
+      <div style="margin-top: 16px;">
+        <div class="prompt-card">
+          <div class="prompt-icon">&#9635;</div>
+          <div>
+            <div class="prompt-text">
+              <strong>Screen a bank's stability before opening a correspondent relationship</strong>
+              FDIC CALL REPORT | 1 M FIELDS
+            </div>
+            <div class="prompt-meta">Bank Name: First Republic Bank | State: CA | Closing Date: 2023-03-31<br>Effective Date: ...</div>
+          </div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-icon">&#9673;</div>
+          <div>
+            <div class="prompt-text">
+              <strong>Check if a supplier's facility has toxic chemical releases before onboarding</strong>
+              EPA TOXIC RELEASE INVENTORY | TRI CHEMICALS | 21,000 FACILITIES
+            </div>
+            <div class="prompt-meta">Facility: Acme Chemical Corp. | Chemical: Toluene | Rel Release: 12,345 lbs<br>County: ...</div>
+          </div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-icon">&#9670;</div>
+          <div>
+            <div class="prompt-text">
+              <strong>Flag unusual insider selling ahead of M&A due diligence</strong>
+              SEC INSIDER TRANSACTION FORMS | 1 M
+            </div>
+            <div class="prompt-meta">Insider: Jane Doe, CFO | Transaction: Sale | Shares: 50,000 | Price: $142.30<br>2024-12-15</div>
+          </div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-icon">&#9632;</div>
+          <div>
+            <div class="prompt-text">
+              <strong>Audit a fleet for outstanding safety recalls before renewal</strong>
+              NHTSA RECALLS | 50 YEARS OF VEHICLE SAFETY DEFECTS
+            </div>
+            <div class="prompt-meta">Make/Model: Commercial Full-Size | Recall: Fuel leak seat ignition source<br>Status: ...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Regulator section -->
+<div class="sec">
+  <div class="doc">
+    <div class="hero-grid">
+      <div>
+        <div style="width: 48px; height: 48px; border: 1.5px solid var(--accent); display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+          <div style="width: 20px; height: 20px; border: 1.5px solid var(--accent);"></div>
+        </div>
+        <h2 class="h1" style="max-width: 480px;">The Same Records Regulators Use to Make Enforcement Decisions — Structured for Your Team.</h2>
+        <p style="margin-top: 16px; font-size: 13px; color: var(--text-2); max-width: 440px; line-height: 1.7;">Every dataset here is public record. We've mapped the schemas, identified the risk-relevant fields, and made it queryable.</p>
+      </div>
+      <div></div>
+    </div>
+  </div>
+</div>
+
+<div class="amber-line"></div>
+
+<!-- FEATURED DATASETS -->
+<div class="sec">
+  <div class="doc">
+    <span class="label" style="margin-bottom: 24px; display: block;">Featured Datasets</span>
+
+    <div class="feat-grid">
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="card-img" style="background: radial-gradient(circle at 50% 50%, rgba(26,26,26,0.06) 0%, transparent 70%), var(--bg);">
+          <svg width="100" height="80" viewBox="0 0 100 80">
+            <line x1="20" y1="60" x2="30" y2="30" stroke="#1A1A1A" stroke-width="0.8" opacity="0.5"/>
+            <line x1="30" y1="30" x2="50" y2="20" stroke="#1A1A1A" stroke-width="0.8" opacity="0.5"/>
+            <line x1="50" y1="20" x2="70" y2="35" stroke="#1A1A1A" stroke-width="0.8" opacity="0.5"/>
+            <line x1="70" y1="35" x2="80" y2="55" stroke="#1A1A1A" stroke-width="0.8" opacity="0.5"/>
+            <circle cx="20" cy="60" r="3" fill="#1A1A1A" opacity="0.8"/>
+            <circle cx="30" cy="30" r="4" fill="#1A1A1A" opacity="0.9"/>
+            <circle cx="50" cy="20" r="5" fill="#1A1A1A"/>
+            <circle cx="70" cy="35" r="3" fill="#1A1A1A" opacity="0.7"/>
+            <circle cx="80" cy="55" r="4" fill="#1A1A1A" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">NHTSA</div>
+          <div class="card-title">NHTSA Fatality Analysis List</div>
+          <div class="card-desc">Every American road fatality since 1975. Location, vehicle, cause of crash.</div>
+          <div class="card-meta">Fields: Vehicle Make | Crash Type | State | Year<br>~1.2M records | Updated annually</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="card-img" style="background: radial-gradient(circle at 40% 40%, rgba(26,26,26,0.08) 0%, transparent 60%), var(--bg);">
+          <svg width="100" height="80" viewBox="0 0 100 80">
+            <line x1="10" y1="40" x2="40" y2="25" stroke="#1A1A1A" stroke-width="0.6" opacity="0.4"/>
+            <line x1="40" y1="25" x2="60" y2="45" stroke="#1A1A1A" stroke-width="0.6" opacity="0.4"/>
+            <line x1="60" y1="45" x2="90" y2="30" stroke="#1A1A1A" stroke-width="0.6" opacity="0.4"/>
+            <line x1="40" y1="25" x2="70" y2="15" stroke="#1A1A1A" stroke-width="0.6" opacity="0.3"/>
+            <line x1="60" y1="45" x2="85" y2="60" stroke="#1A1A1A" stroke-width="0.6" opacity="0.3"/>
+            <circle cx="40" cy="25" r="6" fill="#1A1A1A" opacity="0.9"/>
+            <circle cx="60" cy="45" r="5" fill="#1A1A1A" opacity="0.8"/>
+            <circle cx="90" cy="30" r="3" fill="#1A1A1A" opacity="0.6"/>
+            <circle cx="10" cy="40" r="3" fill="#1A1A1A" opacity="0.5"/>
+            <circle cx="70" cy="15" r="4" fill="#1A1A1A" opacity="0.7"/>
+            <circle cx="85" cy="60" r="3" fill="#1A1A1A" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">SEC</div>
+          <div class="card-title">Insider Transactions Data Sets</div>
+          <div class="card-desc">What corporate insiders buy and sell. Open-market transactions filing data.</div>
+          <div class="card-meta">Fields: Insider | Company | Transaction | Shares<br>~4M records | Updated daily</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <div class="card-img" style="background: radial-gradient(circle at 60% 50%, rgba(26,26,26,0.06) 0%, transparent 65%), var(--bg);">
+          <svg width="100" height="80" viewBox="0 0 100 80">
+            <circle cx="50" cy="40" r="20" fill="none" stroke="#1A1A1A" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="50" cy="40" r="12" fill="none" stroke="#1A1A1A" stroke-width="0.8" opacity="0.5"/>
+            <circle cx="30" cy="30" r="8" fill="none" stroke="#1A1A1A" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="70" cy="50" r="10" fill="none" stroke="#1A1A1A" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="50" cy="40" r="3" fill="#1A1A1A"/>
+            <circle cx="35" cy="28" r="2" fill="#1A1A1A" opacity="0.6"/>
+            <circle cx="68" cy="48" r="2" fill="#1A1A1A" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">CFPB</div>
+          <div class="card-title">HMDA Mortgage Origination Database</div>
+          <div class="card-desc">Nationwide mortgage applications, approvals, and denials by lender and geography.</div>
+          <div class="card-meta">Fields: Lender | Loan Type | Action | Census Tract<br>~15M records/yr | Updated annually</div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card">
+        <div class="card-img" style="background: radial-gradient(circle at 50% 50%, rgba(204,51,0,0.06) 0%, rgba(26,26,26,0.04) 50%, transparent 70%), var(--bg);">
+          <svg width="100" height="80" viewBox="0 0 100 80">
+            <rect x="20" y="20" width="15" height="40" fill="#1A1A1A" opacity="0.3"/>
+            <rect x="42" y="30" width="15" height="30" fill="#1A1A1A" opacity="0.4"/>
+            <rect x="64" y="15" width="15" height="45" fill="#1A1A1A" opacity="0.5"/>
+            <circle cx="27" cy="18" r="2" fill="#CC3300" opacity="0.8"/>
+            <circle cx="49" cy="28" r="2" fill="#CC3300" opacity="0.7"/>
+            <circle cx="71" cy="13" r="2" fill="#CC3300" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">EPA</div>
+          <div class="card-title">TRI Toxic Release Inventory Reports</div>
+          <div class="card-desc">21,000+ facilities reporting chemical releases. Facility-level environmental risk.</div>
+          <div class="card-meta">Fields: Facility | Chemical | Release Qty | Method<br>~3.5M records | Updated annually</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="amber-line"></div>
+
+<!-- WHAT'S INSIDE -->
+<div class="sec">
+  <div class="doc">
+    <div class="inside-grid">
+      <div>
+        <div class="icon-grid">
+          <div class="icon-sq"></div>
+          <div class="icon-sq"></div>
+          <div class="icon-sq"></div>
+          <div class="icon-sq"></div>
+        </div>
+        <h2 class="h1" style="margin-bottom: 16px;">What's Inside</h2>
+        <p style="font-size: 13px; color: var(--text-2); line-height: 1.7;">106 federal datasets, the rest state and local. 6 schemas mapped with field-level metadata — so tag what column are geographic (2455 datasets), business entities (2509), dates, financials, and contact info. You see what's in the data before you query.</p>
+
+        <!-- Left bars: Risk Domains -->
+        <div class="bar-section">
+          <span class="label" style="display: block; margin-bottom: 12px;">Risk Domains</span>
+          <div class="bar-row">
+            <span class="bar-label">Risk Related</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--amber" style="width: 85%;"></div></div>
+            <span class="bar-val">1,240</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Compliance</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--amber" style="width: 60%;"></div></div>
+            <span class="bar-val">872</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Operational</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--amber" style="width: 50%;"></div></div>
+            <span class="bar-val">650</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Financial</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--amber" style="width: 35%;"></div></div>
+            <span class="bar-val">420</span>
+          </div>
+        </div>
+
+        <!-- Left bars: Jurisdictions -->
+        <div class="bar-section">
+          <span class="label" style="display: block; margin-bottom: 12px;">Jurisdictions</span>
+          <div class="bar-row">
+            <span class="bar-label">Federal</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 40%;"></div></div>
+            <span class="bar-val">106</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">State</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 75%;"></div></div>
+            <span class="bar-val">1,420</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Local</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 70%;"></div></div>
+            <span class="bar-val">1,040</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: source agency bars -->
+      <div>
+        <span class="label" style="display: block; margin-bottom: 16px;">Source Agencies</span>
+
+        <div class="source-bar-row">
+          <div class="source-icon" style="color: var(--accent);">&#9635;</div>
+          <span style="font-family: var(--cond); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2);">Federal</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 90%;"></div></div>
+          <span class="bar-val">106</span>
+        </div>
+        <div class="source-bar-row">
+          <div class="source-icon" style="color: var(--teal);">&#9673;</div>
+          <span style="font-family: var(--cond); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2);">State</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 95%;"></div></div>
+          <span class="bar-val">782</span>
+        </div>
+        <div class="source-bar-row">
+          <div class="source-icon" style="color: var(--green);">&#9670;</div>
+          <span style="font-family: var(--cond); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2);">Municipal</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 80%;"></div></div>
+          <span class="bar-val">540</span>
+        </div>
+        <div class="source-bar-row">
+          <div class="source-icon" style="color: var(--text-3);">&#9632;</div>
+          <span style="font-family: var(--cond); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2);">Datasets by Type</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 70%;"></div></div>
+          <span class="bar-val">780</span>
+        </div>
+
+        <hr class="rule" style="margin: 24px 0;">
+
+        <span class="label" style="display: block; margin-bottom: 12px;">Top Categories</span>
+        <div class="bar-row">
+          <span class="bar-label">Enforcement</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 88%;"></div></div>
+          <span class="bar-val">620</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Licensing</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 72%;"></div></div>
+          <span class="bar-val">510</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Inspections</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 60%;"></div></div>
+          <span class="bar-val">425</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Permits</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 50%;"></div></div>
+          <span class="bar-val">355</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Financial</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 42%;"></div></div>
+          <span class="bar-val">295</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Filings</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 35%;"></div></div>
+          <span class="bar-val">240</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Compliance</span>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" style="width: 20%;"></div></div>
+          <span class="bar-val">121</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="amber-line"></div>
+
+<!-- WAYS TO USE THIS DATA -->
+<div class="sec">
+  <div class="doc">
+    <div class="icon-grid">
+      <div class="icon-sq"></div>
+      <div class="icon-sq"></div>
+      <div class="icon-sq"></div>
+      <div class="icon-sq"></div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 8px;">Ways to Use This Data</h2>
+    <p style="font-size: 13px; color: var(--text-2); margin-bottom: 48px;">Real scenarios, real datasets. Each one is a query away.</p>
+
+    <div class="query-grid">
+      <!-- Query 1 -->
+      <div class="query-card">
+        <div class="label" style="margin-bottom: 12px;">KYB / Onboarding</div>
+        <div class="query-prompt">A new client claims to be a registered investment adviser. Before onboarding, verify their registration and check for enforcement history.</div>
+        <div class="query-result">
+          <div class="query-result-item">
+            <div class="query-dot query-dot--amber"></div>
+            <div>
+              SEC REGISTERED INVESTMENT ADVISERS AND EXEMPT REPORTING ADVISERS
+              <div class="query-source">SEC | Investment Adviser Public Disclosure</div>
+            </div>
+          </div>
+          <div class="query-result-item">
+            <div class="query-dot query-dot--teal"></div>
+            <div>
+              SEC LITIGATION RELEASES FOR THE SEC SITE
+              <div class="query-source">SEC | Enforcement Actions</div>
+            </div>
+          </div>
+          <div class="query-result-item">
+            <div class="query-dot query-dot--green"></div>
+            <div>
+              FINRA TRANSACTIONS DATA SETS
+              <div class="query-source">FINRA | BrokerCheck Records</div>
+            </div>
+          </div>
+        </div>
+        <div class="caption" style="margin-top: 12px;">Query surfaces the actual firm, all disciplinary records across 4 databases, and links to enforcement.</div>
+      </div>
+
+      <!-- Query 2 -->
+      <div class="query-card">
+        <div class="label" style="margin-bottom: 12px;">ESG / Diligence</div>
+        <div class="query-prompt">Building an ESG score for portfolio companies. Pull facility-level toxic emissions and cross-reference with EPA enforcement.</div>
+        <div class="query-result">
+          <div class="query-result-item">
+            <div class="query-dot query-dot--amber"></div>
+            <div>
+              EPA TOXIC RELEASE INVENTORY | FULL HIST
+              <div class="query-source">EPA | TRI Basic Data Files</div>
+            </div>
+          </div>
+          <div class="query-result-item">
+            <div class="query-dot query-dot--red"></div>
+            <div>
+              EPA ENFORCEMENT AND COMPLIANCE HISTORY ONLINE
+              <div class="query-source">EPA | ECHO Facility Search</div>
+            </div>
+          </div>
+          <div class="query-result-item">
+            <div class="query-dot query-dot--teal"></div>
+            <div>
+              EPA ENFORCEMENT ACTION DATA SET
+              <div class="query-source">EPA | Formal Actions</div>
+            </div>
+          </div>
+        </div>
+        <div class="caption" style="margin-top: 12px;">Per facility, per chemical, per year. Cross-references with enforcement for compliance violations.</div>
+      </div>
+
+      <!-- Query 3 -->
+      <div class="query-card">
+        <div class="label" style="margin-bottom: 12px;">Lending / Credit</div>
+        <div class="query-prompt">An acquisition target operates consumer lending. Check for unresolved complaints and enforcement actions against their brand.</div>
+        <div class="query-result">
+          <div class="query-result-item">
+            <div class="query-dot query-dot--amber"></div>
+            <div>
+              CFPB CONSUMER COMPLAINT DATABASE
+              <div class="query-source">CFPB | Consumer Complaints</div>
+            </div>
+          </div>
+          <div class="query-result-item">
+            <div class="query-dot query-dot--red"></div>
+            <div>
+              FTC NOTICES OF CONSENT COLLECTION, CASE FILES
+              <div class="query-source">FTC | Enforcement Actions</div>
+            </div>
+          </div>
+        </div>
+        <div class="caption" style="margin-top: 12px;">6 open complaints for deceptive lending practices. Recent consent order. Escalation to compliance.</div>
+      </div>
+
+      <!-- Query 4 -->
+      <div class="query-card">
+        <div class="label" style="margin-bottom: 12px;">Energy / Infrastructure</div>
+        <div class="query-prompt">Evaluating a nuclear energy investment. How often has each reactor had regulatory violations, and what triggered them?</div>
+        <div class="query-result">
+          <div class="query-result-item">
+            <div class="query-dot query-dot--amber"></div>
+            <div>
+              NRC INSPECTION AND ENFORCEMENT ACTIONS RECORDS
+              <div class="query-source">NRC | Reactor Oversight</div>
+            </div>
+          </div>
+          <div class="query-result-item">
+            <div class="query-dot query-dot--teal"></div>
+            <div>
+              NRC ENFORCEMENT AND COMPLIANCE HISTORY
+              <div class="query-source">NRC | Enforcement Actions</div>
+            </div>
+          </div>
+        </div>
+        <div class="caption" style="margin-top: 12px;">$210,000 in fines last quarter. Multiple safety system deficiency notices with root cause tags.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="amber-line"></div>
+
+<!-- CTA -->
+<div class="sec" style="text-align: center;">
+  <div class="doc">
+    <h2 class="h1" style="margin-bottom: 12px;">Start Querying.</h2>
+    <p style="font-size: 13px; color: var(--text-2); margin-bottom: 32px;">2566 datasets. Every schema mapped. Every field tagged.</p>
+    <div class="btn-grp" style="justify-content: center;">
+      <a href="#" class="btn">Contact</a>
+      <a href="#" class="btn btn-f">Explore Datasets</a>
+    </div>
+    <p class="caption" style="margin-top: 24px;">Enigma Government Archive | Data intelligence from public filings.</p>
+  </div>
+</div>
+
+<div class="amber-line"></div>
+
+<!-- MORE DATASETS -->
+<div class="sec-sm">
+  <div class="doc">
+    <span class="label" style="margin-bottom: 24px; display: block;">More Datasets</span>
+    <div class="more-grid">
+      <div class="more-card">
+        <div class="more-card-img">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="30" fill="none" stroke="#1A1A1A" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="50" cy="50" r="15" fill="none" stroke="#1A1A1A" stroke-width="0.8" opacity="0.5"/>
+            <line x1="20" y1="50" x2="80" y2="50" stroke="#1A1A1A" stroke-width="0.3" opacity="0.3"/>
+            <line x1="50" y1="20" x2="50" y2="80" stroke="#1A1A1A" stroke-width="0.3" opacity="0.3"/>
+            <circle cx="50" cy="50" r="3" fill="#1A1A1A"/>
+            <circle cx="35" cy="35" r="2" fill="#1A1A1A" opacity="0.5"/>
+            <circle cx="65" cy="65" r="2" fill="#1A1A1A" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="card-tag">FEC</div>
+        <div class="card-title">Campaign Finance Filings</div>
+        <div class="card-desc" style="font-size: 11px;">Every PAC, committee, and individual contribution to Federal elections and candidates.</div>
+      </div>
+      <div class="more-card">
+        <div class="more-card-img">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="25" y="30" width="10" height="40" fill="#1A1A1A" opacity="0.3"/>
+            <rect x="45" y="20" width="10" height="50" fill="#1A1A1A" opacity="0.5"/>
+            <rect x="65" y="35" width="10" height="35" fill="#1A1A1A" opacity="0.4"/>
+            <line x1="20" y1="72" x2="80" y2="72" stroke="#1A1A1A" stroke-width="0.5" opacity="0.5"/>
+            <circle cx="30" cy="28" r="2" fill="#CC3300" opacity="0.7"/>
+            <circle cx="50" cy="18" r="2" fill="#CC3300" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="card-tag">DOL</div>
+        <div class="card-title">Revenue Data — Employee Benefits</div>
+        <div class="card-desc" style="font-size: 11px;">Form 5500 employee benefit plan filings — plan assets, contributions, and fund composition.</div>
+      </div>
+      <div class="more-card">
+        <div class="more-card-img">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <path d="M20 70 Q35 30 50 50 Q65 70 80 25" fill="none" stroke="#666666" stroke-width="1" opacity="0.6"/>
+            <path d="M25 65 Q40 40 55 55 Q70 65 85 35" fill="none" stroke="#1A1A1A" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="50" cy="50" r="3" fill="#666666" opacity="0.8"/>
+            <circle cx="80" cy="25" r="3" fill="#666666"/>
+          </svg>
+        </div>
+        <div class="card-tag">DOE</div>
+        <div class="card-title">Electric Vehicle Charging Network</div>
+        <div class="card-desc" style="font-size: 11px;">All alternative fueling stations — EV charging stations, hydrogen, and more.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="doc">
+    <div class="ftr-in">
+      <a href="/" class="ftr-logo">enigma</a>
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <span class="caption">Enigma Technologies</span>
+        <span class="caption">2026</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
