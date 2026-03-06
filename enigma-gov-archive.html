@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enigma — Gov Archive</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #F5F3EF;
+    --bg-muted: #EDEAE4;
+    --bg-dark: #111111;
+    --text: #1A1A1A;
+    --text-2: #666666;
+    --text-3: #999999;
+    --text-inv: #F5F3EF;
+    --text-inv-m: #AAAAAA;
+    --rule: #1A1A1A;
+    --rule-lt: #CCCCCC;
+    --border-dk: #333333;
+    --red: #CC3300;
+    --mono: "IBM Plex Mono", "SF Mono", "Menlo", "Courier New", monospace;
+    --cond: "Arial Narrow", "Helvetica Neue Condensed", sans-serif;
+  }
+
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  a { color: var(--text); text-decoration: underline; transition: color 150ms ease; }
+  a:hover { color: var(--red); }
+
+  .doc {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 80px;
+  }
+  @media (max-width: 1024px) { .doc { padding: 0 48px; } }
+  @media (max-width: 640px) { .doc { padding: 0 20px; } }
+
+  .reading { max-width: 720px; }
+
+  hr.rule { border: none; border-top: 1px solid var(--rule); margin: 0; }
+  hr.rule-lt { border: none; border-top: 1px solid var(--rule-lt); margin: 0; }
+  hr.rule-hv { border: none; border-top: 2px solid var(--rule); margin: 0; }
+
+  /* Header */
+  .hdr { padding: 24px 0; }
+  .hdr-in { display: flex; align-items: baseline; justify-content: space-between; }
+  .hdr-logo {
+    font-family: var(--cond); font-size: 16px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text); text-decoration: none;
+  }
+  .hdr-logo:hover { color: var(--text); }
+  .hdr-nav { display: flex; gap: 32px; }
+  .hdr-nav a {
+    font-family: var(--cond); font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text); text-decoration: none;
+  }
+  .hdr-nav a:hover { text-decoration: underline; }
+  @media (max-width: 640px) {
+    .hdr-in { flex-direction: column; gap: 16px; }
+    .hdr-nav { flex-wrap: wrap; gap: 16px; }
+  }
+
+  /* Type */
+  .display {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.02em; line-height: 1.08;
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  .h1 {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.02em; line-height: 1.15;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  .h2 {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.02em; line-height: 1.2;
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+  }
+  .h3 {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; line-height: 1.2; font-size: 1rem;
+  }
+  .label {
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2);
+  }
+  .cat {
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.1em;
+    color: var(--text-3); text-transform: uppercase;
+  }
+  .caption { font-family: var(--mono); font-size: 12px; color: var(--text-3); }
+  .t2 { color: var(--text-2); }
+
+  /* Section */
+  .sec { padding: 64px 0; }
+  .sec-lg { padding: 96px 0; }
+
+  /* Button */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--cond); font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 12px 24px; border: 1px solid var(--text);
+    background: transparent; color: var(--text);
+    cursor: pointer; border-radius: 0; text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .btn:hover { background: var(--text); color: var(--bg); }
+  .btn-f { background: var(--text); color: var(--bg); }
+  .btn-f:hover { background: #333; color: var(--bg); }
+  .btn-grp { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Dark */
+  .dark { background: var(--bg-dark); color: var(--text-inv); }
+  .dark .label { color: var(--text-inv-m); }
+  .dark .caption { color: var(--text-inv-m); }
+  .dark .cat { color: var(--text-inv-m); }
+  .dark hr.rule { border-top-color: var(--border-dk); }
+  .dark .btn { border-color: var(--text-inv); color: var(--text-inv); }
+  .dark .btn:hover { background: var(--text-inv); color: var(--bg-dark); }
+  .dark .btn-f { background: var(--text-inv); color: var(--bg-dark); }
+  .dark .btn-f:hover { background: #ccc; }
+  .dark a { color: var(--text-inv); }
+  .dark a:hover { color: var(--red); }
+
+  /* Spec table */
+  .spec { width: 100%; border-collapse: collapse; }
+  .spec th {
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2);
+    text-align: left; padding: 8px 16px; border-bottom: 2px solid var(--rule);
+  }
+  .spec td {
+    font-family: var(--mono); font-size: 14px; padding: 8px 16px;
+    border-bottom: 1px solid var(--rule-lt); vertical-align: top;
+  }
+  .spec .sl {
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2);
+    white-space: nowrap; width: 200px;
+  }
+  .spec tbody tr:hover { background: var(--bg-muted); }
+  .dark .spec th { color: var(--text-inv-m); border-bottom-color: var(--text-inv-m); }
+  .dark .spec td { border-bottom-color: var(--border-dk); }
+  .dark .spec .sl { color: var(--text-inv-m); }
+  .dark .spec tbody tr:hover { background: rgba(255,255,255,0.05); }
+
+  /* Metrics */
+  .metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    padding: 32px 0;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .m-val {
+    font-family: var(--mono); font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400; line-height: 1; letter-spacing: -0.02em;
+  }
+  .m-label {
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-2); margin-top: 4px;
+  }
+  .dark .m-label { color: var(--text-inv-m); }
+  @media (max-width: 640px) { .metrics { grid-template-columns: 1fr; } }
+
+  /* Body prose */
+  .prose p { margin-bottom: 20px; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  /* List */
+  .record-list { list-style: none; padding: 0; }
+  .record-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule-lt);
+    font-family: var(--mono);
+    font-size: 13px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .record-list li::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--text);
+    flex-shrink: 0;
+    position: relative;
+    top: -1px;
+  }
+  .dark .record-list li { border-bottom-color: var(--border-dk); }
+  .dark .record-list li::before { background: var(--text-inv); }
+
+  /* Callout */
+  .callout {
+    border: 1px solid var(--rule);
+    padding: 32px;
+  }
+  .dark .callout { border-color: var(--border-dk); }
+
+  /* Author */
+  .author {
+    font-family: var(--cond); font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text-2);
+  }
+
+  /* Two col */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* Footer */
+  .ftr { padding: 24px 0 48px; }
+  .ftr-in {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 24px;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+  }
+  .flow-step {
+    padding: 24px 16px;
+    border-right: 1px solid var(--border-dk);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-num {
+    font-family: var(--mono); font-size: 20px; color: var(--text-inv-m);
+  }
+  .flow-title {
+    font-family: var(--cond); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .flow-desc {
+    font-family: var(--mono); font-size: 11px; color: var(--text-inv-m);
+    line-height: 1.6;
+  }
+  @media (max-width: 768px) {
+    .flow { grid-template-columns: 1fr; }
+    .flow-step { border-right: none; border-bottom: 1px solid var(--border-dk); }
+    .flow-step:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="doc">
+    <div class="hdr-in">
+      <a href="/" class="hdr-logo">Enigma</a>
+      <nav class="hdr-nav">
+        <a href="#">Products</a>
+        <a href="#">Gov Archive</a>
+        <a href="#">Documentation</a>
+        <a href="#">Talk to Sales</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<hr class="rule">
+
+<!-- HERO -->
+<div class="sec-lg">
+  <div class="doc">
+    <div style="padding: 48px 0 0;">
+      <span class="cat">GA-001 / Gov Archive</span>
+      <h1 class="display" style="margin-top: 12px; max-width: 800px;">Thousands of Agencies Have Records on Your Business. Nobody Connected Them Until Now.</h1>
+      <div style="margin-top: 16px;">
+        <span class="author">Hicham Oudghiri</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero metrics — dark -->
+<div class="dark">
+  <div class="doc">
+    <div class="metrics" style="border-color: var(--border-dk);">
+      <div>
+        <div class="m-val">1.5B</div>
+        <div class="m-label">Government Records</div>
+      </div>
+      <div>
+        <div class="m-val">~7,000</div>
+        <div class="m-label">Government Datasets</div>
+      </div>
+      <div>
+        <div class="m-val">3 Levels</div>
+        <div class="m-label">Federal, State, Local</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- INTRO -->
+<div class="sec">
+  <div class="doc">
+    <div class="reading prose">
+      <p>Government agencies generate some of the most detailed, authoritative records about how businesses operate in America. Business registrations, health inspections, environmental compliance filings, professional licenses, UCC liens, employee benefit plans, building permits, campaign finance disclosures — thousands of agencies, at every level of government, document how businesses form, operate, and interact with the public.</p>
+
+      <p>The problem is that no one — including the government itself — can use this information coherently. Federal agencies aren't connected to each other. State systems add another layer of complexity. Municipal records fragment even further. A restaurant's health inspection in New York looks nothing like its food safety record in Chicago, which looks nothing like its liquor license in Maryland — even though all three describe the same business.</p>
+
+      <p class="t2">The data that should provide the most complete picture of a business is scattered across roughly 7,000 datasets, each with its own schema, format, and update cadence.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- THE GAP -->
+<div class="sec">
+  <div class="doc">
+    <div class="reading prose">
+      <p>At Enigma, we've spent years building structured data on U.S. businesses — entity resolution, verified identities, card revenue signals. Our structured graph draws from a few hundred high-value sources that we've mapped, standardized, and resolved into a unified view of business identity. This is the data that already powers our KYB and compliance products.</p>
+
+      <p>But thousands of government databases contain information that our structured approach has not yet reached. The variety of schemas across 7,000 sources makes traditional one-by-one integration impractical at that scale. A different approach was needed for this long tail of valuable but highly disparate data — a system that could draw from the power of these records without requiring each dataset to be individually mapped into our graph.</p>
+
+      <p style="font-size: 16px; color: var(--text);">That's the Enigma Gov Archive.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- WHAT WE BUILT -->
+<div class="sec">
+  <div class="doc">
+    <span class="cat">Section 01</span>
+    <h2 class="h1" style="margin-top: 8px;">What We Built</h2>
+    <div class="reading prose" style="margin-top: 24px;">
+      <p>Gov Archive is a growing collection of 1.5 billion government records across approximately 7,000 datasets from federal, state, and local agencies — business licenses, regulatory filings, legal records, permits, inspections, and more. The Archive now powers deeper capabilities across Enigma's products, surfacing signals from government filings that were previously out of reach.</p>
+      <p>Two things make it work:</p>
+    </div>
+  </div>
+</div>
+
+<!-- Two pillars — dark -->
+<div class="dark">
+  <div class="doc">
+    <div style="padding: 48px 0;">
+      <div class="two-col">
+        <div>
+          <span class="label" style="color: var(--text-inv-m);">Pillar 01</span>
+          <h3 class="h2" style="margin-top: 8px;">The Archive Itself</h3>
+          <div class="prose" style="margin-top: 16px; font-size: 13px; color: var(--text-inv-m);">
+            <p>1.5 billion records and growing. Four months ago the archive held 300 million. The collection spans business licenses, OSHA citations, EPA compliance records, state cannabis licensing, UCC filings, building permits, government contract data, and thousands of other filing types.</p>
+            <p>Each source refreshes on its own cadence — some daily, some weekly, some monthly — and the system tracks freshness at the dataset level.</p>
+          </div>
+        </div>
+        <div>
+          <span class="label" style="color: var(--text-inv-m);">Pillar 02</span>
+          <h3 class="h2" style="margin-top: 8px;">Entity Resolution as Foundation</h3>
+          <div class="prose" style="margin-top: 16px; font-size: 13px; color: var(--text-inv-m);">
+            <p>Every search is grounded in Enigma's verified business identity — the same infrastructure that powers our KYB and compliance products. The system doesn't just search text. It knows which business it's looking for, including every name variation, every legal entity, every DBA.</p>
+            <p>This is what separates Gov Archive from pointing a search engine at government websites. Without identity grounding, government records are mainly noise. With it, they become signal.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin: 32px 0;">
+
+      <div class="callout" style="border-color: var(--red);">
+        <span class="label" style="color: var(--red);">Now</span>
+        <p style="margin-top: 8px; font-size: 13px; color: var(--text-inv-m);">We're resolving Gov Archive records directly into the entity graph, so a cannabis license found in a state database or an EIN discovered in an incentive filing becomes part of the verified business identity itself — not just a search result alongside it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- HOW IT WORKS -->
+<div class="sec">
+  <div class="doc">
+    <span class="cat">Section 02</span>
+    <h2 class="h1" style="margin-top: 8px;">How It Works</h2>
+    <div class="reading prose" style="margin-top: 24px;">
+      <p>When you query a business through Enigma's products, the system starts with what Enigma already knows. It resolves the business to a verified entity in our graph and expands to every known name variation — brand names, legal entity names, DBAs. It then searches across 1.5 billion government records using all of those variations.</p>
+
+      <p>An LLM evaluates the results for relevancy, deduplicates across sources and jurisdictions, and synthesizes what it finds into a comprehensive profile — with every data point traced to the specific government agency, dataset, and filing it came from.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Process flow — dark -->
+<div class="dark">
+  <div class="doc">
+    <div style="padding: 48px 0;">
+      <span class="label" style="color: var(--text-inv-m);">Query Sequence</span>
+      <div class="flow" style="margin-top: 16px; border-top: 1px solid var(--border-dk); border-bottom: 1px solid var(--border-dk);">
+        <div class="flow-step">
+          <span class="flow-num">1</span>
+          <span class="flow-title">Resolve</span>
+          <span class="flow-desc">Business resolved to verified entity in Enigma graph</span>
+        </div>
+        <div class="flow-step">
+          <span class="flow-num">2</span>
+          <span class="flow-title">Expand</span>
+          <span class="flow-desc">Every name variation — brand, legal entity, DBA</span>
+        </div>
+        <div class="flow-step">
+          <span class="flow-num">3</span>
+          <span class="flow-title">Search</span>
+          <span class="flow-desc">1.5B records queried across all variations</span>
+        </div>
+        <div class="flow-step">
+          <span class="flow-num">4</span>
+          <span class="flow-title">Evaluate</span>
+          <span class="flow-desc">LLM deduplicates, scores relevancy across jurisdictions</span>
+        </div>
+        <div class="flow-step">
+          <span class="flow-num">5</span>
+          <span class="flow-title">Cite</span>
+          <span class="flow-desc">Every data point traced to agency, dataset, and filing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="doc">
+    <div class="reading prose">
+      <p>What used to require hours of manual research across dozens of government websites now takes seconds — with an audit trail that points to official filings, not web pages.</p>
+
+      <p class="t2">And the precision keeps improving. Our engineering team built an evolutionary optimization framework that continuously refines how the system formulates its queries, testing thousands of variations against real government data. Better questions yield more precise answers — and every iteration makes the next search sharper.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- WHAT IT FINDS -->
+<div class="sec">
+  <div class="doc">
+    <span class="cat">Section 03</span>
+    <h2 class="h1" style="margin-top: 8px;">What It Finds</h2>
+    <div class="reading" style="margin-top: 16px;">
+      <p class="t2">A single query about a business can return records from a dozen or more government datasets:</p>
+    </div>
+  </div>
+</div>
+
+<div class="dark">
+  <div class="doc">
+    <div style="padding: 48px 0;">
+      <span class="label" style="color: var(--text-inv-m);">Record Types Surfaced</span>
+      <ul class="record-list" style="margin-top: 16px;">
+        <li>Health department inspection results from multiple cities</li>
+        <li>Business licenses and operating permits</li>
+        <li>EPA environmental compliance records</li>
+        <li>OSHA workplace safety citations</li>
+        <li>Department of Labor employee benefit filings</li>
+        <li>State cannabis licensing records connecting LLCs to trade names</li>
+        <li>UCC lien filings</li>
+        <li>Building permits and municipal violations</li>
+        <li>Government contract spending data</li>
+      </ul>
+
+      <hr class="rule" style="margin: 32px 0;">
+
+      <p style="font-size: 13px; color: var(--text-inv-m);">Each record carries full provenance: the government agency, the dataset name, and when it was last updated. This is the audit trail that compliance teams require. Every data point traces to an official government source.</p>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="doc">
+    <div class="reading prose">
+      <p>Beyond standalone signals, Gov Archive also strengthens the structured data Enigma already provides — surfacing EINs from state incentive databases, confirming addresses from permit records, filling gaps that standard corporate data sources don't cover.</p>
+
+      <p>This means the system compounds. Every search that uncovers an EIN from a state database or confirms an address through a permit record isn't just a search result — it's new ground truth flowing back into the entity graph. The archive doesn't just answer questions about businesses — it discovers things about them that no one knew before.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- WHY THIS MATTERS -->
+<div class="sec">
+  <div class="doc">
+    <span class="cat">Section 04</span>
+    <h2 class="h1" style="margin-top: 8px;">Why This Matters</h2>
+  </div>
+</div>
+
+<div class="doc">
+  <div class="two-col" style="padding-bottom: 64px;">
+    <div>
+      <span class="label">Enhanced Due Diligence</span>
+      <div class="prose" style="margin-top: 12px;">
+        <p class="t2" style="font-size: 13px;">Gov Archive surfaces signals that aren't available through any other commercial source — OSHA violations, EPA compliance records, active litigation, licensing status across jurisdictions. All from authoritative government sources, all fully cited, all in seconds instead of hours.</p>
+        <p class="t2" style="font-size: 13px;">As the system resolves more government records into the entity graph, these signals become part of the structured profile — risk indicators from government filings, delivered alongside the data compliance teams already use.</p>
+      </div>
+    </div>
+    <div>
+      <span class="label">KYB Workflows</span>
+      <div class="prose" style="margin-top: 12px;">
+        <p class="t2" style="font-size: 13px;">When automated checks can't find enough data to make a decision — which happens on a significant share of applications — Gov Archive provides the additional evidence that lets analysts resolve cases faster, with citations they can trust.</p>
+        <p class="t2" style="font-size: 13px;">The goal isn't just faster reviews. It's fewer reviews — because more decisions can be made automatically when the data is there.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cannabis use case — dark callout -->
+<div class="dark">
+  <div class="doc">
+    <div style="padding: 48px 0;">
+      <span class="label" style="color: var(--red);">Case Study</span>
+      <h3 class="h2" style="margin-top: 8px;">Cannabis Dispensary Onboarding</h3>
+      <div class="prose" style="margin-top: 16px; font-size: 13px; color: var(--text-inv-m);">
+        <p>A major payroll platform needed to onboard cannabis dispensaries, which meant verifying businesses across a patchwork of state-by-state licensing regimes. Many of these businesses couldn't be verified through standard data sources — the licensing records simply didn't exist in any commercial database.</p>
+        <p>We sourced cannabis licenses from every state, ingested them into the archive, and made them queryable in a matter of weeks. Without this infrastructure, that would have required custom scrapers for every state agency. With it, the next request like this gets faster — the system learns from every new source it ingests.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="doc">
+    <div class="reading">
+      <p class="t2">These are the use cases we know about today. The archive spans virtually every domain of regulated business activity in America — and we're actively discovering what else it makes possible.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- THE BEGINNING -->
+<div class="sec">
+  <div class="doc">
+    <span class="cat">Section 05</span>
+    <h2 class="h1" style="margin-top: 8px;">The Beginning, Not the End</h2>
+  </div>
+</div>
+
+<div class="dark">
+  <div class="doc">
+    <div style="padding: 48px 0;">
+      <div class="metrics" style="border-color: var(--border-dk);">
+        <div>
+          <div class="m-val" style="color: var(--text-inv-m);">300M</div>
+          <div class="m-label">Records — Four Months Ago</div>
+        </div>
+        <div>
+          <div class="m-val">1.5B</div>
+          <div class="m-label">Records — Today</div>
+        </div>
+        <div>
+          <div class="m-val">5x</div>
+          <div class="m-label">Growth in Four Months</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="doc">
+    <div class="reading prose">
+      <p>But the ambition extends beyond the archive. On the ingestion side, the system that discovers and indexes new government sources is learning to handle unfamiliar data formats more effectively — adapting to schemas it hasn't seen before, reducing the manual work required to bring a new source online.</p>
+
+      <p>On the delivery side, we're developing on-demand attributes: structured data points extracted from Gov Archive records and delivered through API alongside Enigma's standard KYB output, so compliance teams can access government signals without changing their existing workflows.</p>
+
+      <p>Government records are among the most trusted sources of information about businesses in America. They've been locked away — not because they're secret, but because they're scattered across thousands of agencies with no common format, no shared schema, and no unified way to search them.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- CTA -->
+<div class="dark">
+  <div class="doc">
+    <div class="sec-lg" style="text-align: left;">
+      <h2 class="display" style="max-width: 720px;">The Next Time You Need to Know What the Government Knows About a Business — Ask Gov Archive.</h2>
+      <p style="margin-top: 16px; color: var(--text-inv-m); max-width: 600px;">Every agency, every level, every jurisdiction. For the first time, you'll get an answer.</p>
+      <div class="btn-grp" style="margin-top: 32px;">
+        <a href="#" class="btn btn-f">See Gov Archive in Action</a>
+        <a href="#" class="btn">Talk to Sales</a>
+        <a href="#" class="btn" style="border-color: var(--border-dk); color: var(--text-inv-m);">Read the Documentation</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<hr class="rule">
+<footer class="ftr">
+  <div class="doc">
+    <div class="ftr-in">
+      <span class="caption">Enigma Technologies, Inc.</span>
+      <span class="caption">enigma.com</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
